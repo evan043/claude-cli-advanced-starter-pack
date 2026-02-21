@@ -85,7 +85,11 @@ export async function visionRun(projectRoot, options) {
       if (validateResult.result?.mvp?.missing?.length > 0) {
         console.log('Missing items:');
         for (const item of validateResult.result.mvp.missing) {
-          console.log(`  - ${item}`);
+          if (typeof item === 'string') {
+            console.log(`  - ${item}`);
+          } else {
+            console.log(`  - ${item.check || 'item'}: ${item.details || item.status || 'incomplete'}`);
+          }
         }
       }
     }

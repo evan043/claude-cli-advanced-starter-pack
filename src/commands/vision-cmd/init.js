@@ -93,14 +93,18 @@ export async function visionInit(projectRoot, options) {
 
   console.log(`\n✓ Vision created: ${initResult.vision.slug}`);
   console.log(`  Title: ${initResult.vision.title}`);
-  console.log(`  Intent: ${initResult.intent}`);
+  console.log(`  Intent: ${initResult.intent?.intent || initResult.intent || 'build'}`);
   console.log(`  Complexity: ${initResult.complexity?.scale || initResult.complexity}`);
   console.log(`  Features: ${initResult.features.length}`);
 
-  if (initResult.accountRequirements?.accounts?.length > 0) {
+  const accountRequirements = Array.isArray(initResult.accountRequirements)
+    ? initResult.accountRequirements
+    : (initResult.accountRequirements?.accounts || []);
+
+  if (accountRequirements.length > 0) {
     console.log('\n📋 Account Requirements Detected:');
-    for (const account of initResult.accountRequirements.accounts) {
-      console.log(`  - ${account.service}: ${account.reason}`);
+    for (const account of accountRequirements) {
+      console.log(`  - ${account.service}: ${account.accountType || 'account required'}`);
     }
   }
 
@@ -111,7 +115,10 @@ export async function visionInit(projectRoot, options) {
 
     if (analysisResult.success) {
       const r = analysisResult.results;
-      console.log(`  Similar apps found: ${r.similarApps?.length || 0}`);
+      const similarAppsCount = Array.isArray(r.similarApps)
+        ? r.similarApps.length
+        : (r.similarApps?.results?.length || 0);
+      console.log(`  Similar apps found: ${similarAppsCount}`);
       console.log(`  NPM packages suggested: ${r.npmPackages?.length || 0}`);
       console.log(`  MCP servers matched: ${r.mcpServers?.length || 0}`);
     }
@@ -141,6 +148,30 @@ export async function visionInit(projectRoot, options) {
     } else {
       console.log('  ✓ No critical vulnerabilities found');
     }
+  }
+
+  // Run planning to generate executable hierarchy/tasks by default
+  console.log('\n📋 Creating planning hierarchy...');
+  const planningResult = await orchestrator.plan();
+
+  if (planningResult.success) {
+    const p = planningResult.result || {};
+    const planType = p.decision?.planType || orchestrator.vision?.plan_type || 'unknown';
+    console.log(`  Plan type: ${planType}`);
+    console.log(`  Epic created: ${p.epic?.slug ? 'Yes' : 'No'}`);
+    console.log(`  Roadmaps: ${p.roadmaps?.length || 0}`);
+    console.log(`  Phase plans: ${p.phaseDevPlans?.length || 0}`);
+  } else {
+    console.log(`  ⚠️ Planning failed: ${planningResult.error}`);
+  }
+
+  // Create agents after planning
+  console.log('\n🤖 Creating agents...');
+  const agentsResult = await orchestrator.createAgents();
+  if (agentsResult.success) {
+    console.log(`  Agents created: ${agentsResult.agents?.length || 0}`);
+  } else {
+    console.log(`  ⚠️ Agent creation failed: ${agentsResult.error}`);
   }
 
   // Display decision engine result if planning was run

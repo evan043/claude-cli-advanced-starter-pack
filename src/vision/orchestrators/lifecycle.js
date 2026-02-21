@@ -76,6 +76,9 @@ export async function initialize(orchestrator, prompt, options = {}) {
     const complexity = estimateComplexity(parsedPrompt);
     const intent = detectIntent(prompt);
     const features = extractFeatures(prompt);
+    const normalizedFeatures = Array.isArray(parsedPrompt?.parsed?.features)
+      ? parsedPrompt.parsed.features
+      : features.map(f => f?.feature || f?.name || f).filter(Boolean);
 
     log(orchestrator, 'info', `Detected intent: ${intent}`, {
       complexity,
@@ -103,8 +106,9 @@ export async function initialize(orchestrator, prompt, options = {}) {
     await updateVision(orchestrator.projectRoot, orchestrator.vision.slug, (vision) => {
       vision.prompt = parsedPrompt;
       vision.metadata.estimated_complexity = complexity;
-      vision.metadata.detected_intent = intent;
-      vision.metadata.features = features;
+      vision.metadata.detected_intent = intent?.intent || intent;
+      vision.metadata.features = normalizedFeatures;
+      vision.metadata.feature_details = features;
       vision.orchestrator = {
         stage: orchestrator.stage,
         config: orchestrator.config,
@@ -115,10 +119,13 @@ export async function initialize(orchestrator, prompt, options = {}) {
 
     // Detect account requirements
     log(orchestrator, 'info', 'Detecting account requirements...');
-    const accountRequirements = detectAccountRequirements(parsedPrompt);
+    const detectedRequirements = detectAccountRequirements(parsedPrompt);
+    const accountRequirements = Array.isArray(detectedRequirements)
+      ? detectedRequirements
+      : (Array.isArray(detectedRequirements?.accounts) ? detectedRequirements.accounts : []);
 
-    if (accountRequirements.accounts.length > 0) {
-      log(orchestrator, 'info', `Detected ${accountRequirements.accounts.length} account requirements`, accountRequirements.accounts);
+    if (accountRequirements.length > 0) {
+      log(orchestrator, 'info', `Detected ${accountRequirements.length} account requirements`, accountRequirements);
 
       await updateVision(orchestrator.projectRoot, orchestrator.vision.slug, (vision) => {
         vision.requirements = vision.requirements || {};

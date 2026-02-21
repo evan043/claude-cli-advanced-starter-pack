@@ -29,22 +29,20 @@ export async function analyze(orchestrator) {
       toolRecommendations: []
     };
 
-    const prompt = orchestrator.vision.prompt;
-    const features = orchestrator.vision.metadata?.features || [];
+    const prompt = orchestrator.vision.prompt || {};
+    const parsedPrompt = prompt.parsed || {};
+    const features = (orchestrator.vision.metadata?.features || parsedPrompt.features || [])
+      .map(f => (typeof f === 'string' ? f : (f?.feature || f?.name || '')))
+      .filter(Boolean);
+    const technologies = parsedPrompt.technologies || [];
 
     // Web search for similar apps (if enabled)
     if (orchestrator.config.analysis.webSearchEnabled) {
       log(orchestrator, 'info', 'Searching for similar apps...');
-      results.similarApps = await searchSimilarApps(
-        prompt.summary || orchestrator.vision.title,
-        orchestrator.config.analysis.maxSimilarApps
-      );
+      results.similarApps = await searchSimilarApps(features);
 
       log(orchestrator, 'info', 'Searching for UI patterns...');
-      results.uiPatterns = await searchUIPatterns(
-        features,
-        prompt.intent
-      );
+      results.uiPatterns = await searchUIPatterns(features);
     }
 
     // Discover npm packages
@@ -55,7 +53,7 @@ export async function analyze(orchestrator) {
     );
 
     // Discover pip packages (if Python detected)
-    if (prompt.technologies?.includes('python') || prompt.technologies?.includes('fastapi')) {
+    if (technologies.includes('python') || technologies.includes('fastapi')) {
       log(orchestrator, 'info', 'Discovering pip packages...');
       results.pipPackages = await discoverPipPackages(
         features,

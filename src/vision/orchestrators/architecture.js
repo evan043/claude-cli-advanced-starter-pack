@@ -33,40 +33,44 @@ export async function architect(orchestrator) {
       componentList: []
     };
 
-    const prompt = orchestrator.vision.prompt;
-    const features = orchestrator.vision.metadata?.features || [];
+    const prompt = orchestrator.vision.prompt || {};
+    const parsedPrompt = prompt.parsed || {};
+    const technologies = parsedPrompt.technologies || [];
+    const features = (orchestrator.vision.metadata?.features || parsedPrompt.features || [])
+      .map(f => (typeof f === 'string' ? f : (f?.feature || f?.name || '')))
+      .filter(Boolean);
+
+    const components = buildComponents(features, technologies);
+    const flowFeatures = buildFlowFeatures(features);
 
     // Generate component diagram
     log(orchestrator, 'info', 'Generating component diagram...');
-    artifacts.diagrams.component = await generateComponentDiagram({
-      title: orchestrator.vision.title,
-      features,
-      technologies: prompt.technologies || []
-    });
+    artifacts.diagrams.component = await generateComponentDiagram(components, { technologies });
 
     // Generate data flow diagram
     log(orchestrator, 'info', 'Generating data flow diagram...');
-    artifacts.diagrams.dataFlow = await generateDataFlowDiagram({
-      features,
-      intent: prompt.intent
-    });
+    artifacts.diagrams.dataFlow = await generateDataFlowDiagram(flowFeatures, { technologies });
 
     // Generate sequence diagrams for key flows
     log(orchestrator, 'info', 'Generating sequence diagrams...');
     artifacts.diagrams.sequences = [];
     for (const feature of features.slice(0, 3)) { // Top 3 features
-      const sequence = await generateSequenceDiagram({
-        feature: feature.name || feature,
-        actors: ['User', 'Frontend', 'Backend', 'Database']
-      });
+      const sequence = await generateSequenceDiagram([{
+        caller: 'User',
+        handler: 'API',
+        method: 'POST',
+        path: `/api/${feature.replace(/\s+/g, '-').toLowerCase()}`,
+        usesDatabase: true,
+        processing: `Process ${feature}`
+      }]);
       artifacts.diagrams.sequences.push({
-        feature: feature.name || feature,
+        feature,
         diagram: sequence
       });
     }
 
     // Generate REST endpoints if backend detected
-    if (prompt.technologies?.some(t =>
+    if (technologies.some(t =>
       ['fastapi', 'express', 'django', 'flask', 'nest'].includes(t?.toLowerCase())
     )) {
       log(orchestrator, 'info', 'Generating API contracts...');
@@ -78,7 +82,7 @@ export async function architect(orchestrator) {
     }
 
     // Generate state design if frontend detected
-    if (prompt.technologies?.some(t =>
+    if (technologies.some(t =>
       ['react', 'vue', 'angular', 'svelte'].includes(t?.toLowerCase())
     )) {
       log(orchestrator, 'info', 'Designing state management...');
@@ -90,11 +94,18 @@ export async function architect(orchestrator) {
 
     // Generate ASCII wireframes
     log(orchestrator, 'info', 'Generating ASCII wireframes...');
-    artifacts.wireframes = await generateASCIIWireframe({
-      title: orchestrator.vision.title,
-      features,
-      layout: prompt.constraints?.layout || 'standard'
-    });
+    artifacts.wireframes = await generateASCIIWireframe(
+      {
+        navbar: { items: ['Overview', 'Bots', 'Plugins', 'Settings'] },
+        sidebar: { items: ['Dashboard', 'Bot Registry', 'Lifecycle', 'Policies'] },
+        stats: [
+          { title: 'Bots', value: '12' },
+          { title: 'Plugins', value: '8' },
+          { title: 'Envs', value: '3' }
+        ]
+      },
+      { type: inferLayoutType(features), width: 70 }
+    );
 
     // Extract component list from wireframes
     artifacts.componentList = extractComponentList(artifacts.wireframes);
@@ -131,4 +142,41 @@ export async function architect(orchestrator) {
       stage: orchestrator.stage
     };
   }
+}
+
+function buildComponents(features, technologies) {
+  const hasFrontend = technologies.some(t => ['react', 'vue', 'angular', 'svelte', 'next.js'].includes(String(t).toLowerCase()));
+  const hasBackend = technologies.some(t => ['node', 'express', 'fastapi', 'django', 'flask', 'nest'].includes(String(t).toLowerCase()));
+  const components = [];
+
+  if (hasFrontend) {
+    components.push({ name: 'Frontend', type: 'Frontend', dependencies: ['API'] });
+  }
+  if (hasBackend || features.length > 0) {
+    components.push({ name: 'API', type: 'API', dependencies: ['Database'] });
+  }
+  components.push({ name: 'Database', type: 'Database', dependencies: [] });
+
+  return components;
+}
+
+function buildFlowFeatures(features) {
+  if (!features.length) {
+    return [{
+      name: 'Core Flow',
+      flows: ['User -> API', 'API -> Database', 'Database -> API', 'API -> User']
+    }];
+  }
+
+  return features.slice(0, 5).map(feature => ({
+    name: feature,
+    flows: ['User -> API', `API -> ${feature}`, `${feature} -> Database`, 'Database -> API', 'API -> User']
+  }));
+}
+
+function inferLayoutType(features) {
+  if (features.some(f => /form|input|create|edit/i.test(f))) return 'form';
+  if (features.some(f => /table|list|grid/i.test(f))) return 'table';
+  if (features.some(f => /modal|dialog/i.test(f))) return 'modal';
+  return 'dashboard';
 }

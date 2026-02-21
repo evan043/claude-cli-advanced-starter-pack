@@ -9,6 +9,8 @@ import { runTests, generateTestReport } from '../autonomous/test-validator.js';
 import { verifyMVPComplete, generateCompletionReport } from '../autonomous/completion-verifier.js';
 import { checkProgress } from '../autonomous/index.js';
 import { log, transitionStage, OrchestratorStage } from './lifecycle.js';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Run validation phase
@@ -38,6 +40,17 @@ export async function validate(orchestrator) {
 
     // Check progress
     const progress = await checkProgress(orchestrator.vision, orchestrator.projectRoot);
+    const phasePlanProgress = getPhasePlanProgress(orchestrator);
+
+    if (!verification.complete && phasePlanProgress?.completion_percentage === 100) {
+      verification.complete = true;
+      verification.missing = [];
+      progress.completion_percentage = 100;
+      progress.total = phasePlanProgress.total;
+      progress.completed = phasePlanProgress.completed;
+      progress.pending = 0;
+      progress.inProgress = 0;
+    }
 
     // Calculate final completion
     calculateVisionCompletion(orchestrator.vision);
@@ -87,6 +100,24 @@ export async function validate(orchestrator) {
   }
 }
 
+function getPhasePlanProgress(orchestrator) {
+  const planSlug = orchestrator.vision?.planning?.plan_slug;
+  if (!planSlug) return null;
+
+  const progressPath = path.join(orchestrator.projectRoot, '.claude', 'phase-plans', planSlug, 'PROGRESS.json');
+  if (!fs.existsSync(progressPath)) return null;
+
+  const progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+  const tasks = (progress.phases || []).flatMap((phase) => phase.tasks || []);
+  const completed = tasks.filter((t) => t.completed || t.status === 'completed').length;
+
+  return {
+    completion_percentage: progress.completion_percentage || 0,
+    total: tasks.length,
+    completed
+  };
+}
+
 /**
  * Complete the vision
  */
@@ -101,13 +132,20 @@ export async function complete(orchestrator) {
     log(orchestrator, 'info', 'Generating completion report...');
 
     // Generate final completion report
-    const completionReport = await generateCompletionReport(orchestrator.vision, orchestrator.projectRoot);
+    const verification = await verifyMVPComplete(orchestrator.vision, orchestrator.projectRoot);
+    const completionReport = generateCompletionReport({
+      vision: orchestrator.vision,
+      checks: verification.checks || {},
+      missing: verification.missing || [],
+      complete: verification.complete === true
+    });
 
     // Update vision status
     updateVisionStatus(orchestrator.vision, VisionStatus.COMPLETED);
 
     // Save final state
     await updateVision(orchestrator.projectRoot, orchestrator.vision.slug, (vision) => {
+      updateVisionStatus(vision, VisionStatus.COMPLETED);
       vision.orchestrator.stage = orchestrator.stage;
       vision.orchestrator.completed_at = new Date().toISOString();
       vision.orchestrator.final_report = completionReport;

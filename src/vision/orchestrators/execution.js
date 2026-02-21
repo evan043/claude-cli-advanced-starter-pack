@@ -50,6 +50,25 @@ export async function execute(orchestrator, options = {}) {
 
     // Load planning data
     if (!orchestrator.vision.planning?.epic_path) {
+      const planSlug = orchestrator.vision.planning?.plan_slug;
+      const phasePlanPath = planSlug
+        ? path.join(orchestrator.projectRoot, '.claude', 'phase-plans', planSlug, 'PROGRESS.json')
+        : null;
+
+      if (phasePlanPath && fs.existsSync(phasePlanPath)) {
+        log(orchestrator, 'info', `No epic hierarchy found; executing phase-dev-plan: ${planSlug}`);
+        const currentPlan = JSON.parse(fs.readFileSync(phasePlanPath, 'utf8'));
+        const result = await runAutonomousLoop(
+          { ...orchestrator.vision, currentPlan, currentPlanPath: phasePlanPath },
+          orchestrator.projectRoot
+        );
+        return {
+          success: result.success,
+          stage: orchestrator.stage,
+          result
+        };
+      }
+
       log(orchestrator, 'warn', 'No planning data found, falling back to autonomous loop');
       const result = await runAutonomousLoop(orchestrator.vision, orchestrator.projectRoot);
       return {

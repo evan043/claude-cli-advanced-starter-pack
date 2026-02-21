@@ -18,6 +18,7 @@ import { loadVision, saveVision, updateVision } from '../state-manager.js';
 import { runTests, identifyFailures } from './test-validator.js';
 import { generateFixes, applyFixes, shouldEscalate } from './self-healer.js';
 import { verifyMVPComplete } from './completion-verifier.js';
+import fs from 'fs';
 
 /**
  * Run autonomous execution loop
@@ -34,6 +35,8 @@ export async function runAutonomousLoop(vision, projectRoot) {
   let iterations = 0;
   const MAX_ITERATIONS = 100;
   let retryCount = 0;
+  let runtimePlan = vision.currentPlan || null;
+  const runtimePlanPath = vision.currentPlanPath || null;
 
   // Update status to executing
   updateVisionStatus(vision, VisionStatus.EXECUTING);
@@ -46,7 +49,10 @@ export async function runAutonomousLoop(vision, projectRoot) {
     try {
       // Step 1: Execute next tasks
       console.log('Executing next tasks...');
+      vision.currentPlan = runtimePlan;
+      vision.currentPlanPath = runtimePlanPath;
       const taskResult = await executeNextTasks(vision, projectRoot);
+      runtimePlan = vision.currentPlan || runtimePlan;
 
       if (!taskResult.success) {
         console.error(`Task execution failed: ${taskResult.error}`);
@@ -119,9 +125,22 @@ export async function runAutonomousLoop(vision, projectRoot) {
 
       // Reload vision with latest data
       vision = await loadVision(projectRoot, vision.slug);
+      vision.currentPlan = runtimePlan;
+      vision.currentPlanPath = runtimePlanPath;
 
       // Step 5: Check if MVP is complete
       if (progress.completion_percentage >= 100) {
+        if (runtimePlan) {
+          updateVisionStatus(vision, VisionStatus.COMPLETED);
+          await saveVision(projectRoot, vision);
+          return {
+            success: true,
+            reason: 'phase_plan_complete',
+            iterations,
+            vision: await loadVision(projectRoot, vision.slug)
+          };
+        }
+
         console.log('Verifying MVP completion...');
         const verification = await verifyMVPComplete(vision, projectRoot);
 
@@ -189,6 +208,69 @@ export async function runAutonomousLoop(vision, projectRoot) {
  */
 export async function executeNextTasks(vision, projectRoot) {
   try {
+    if (vision.currentPlan?.phases?.length) {
+      const plan = vision.currentPlan;
+      let executed = false;
+
+      for (const phase of plan.phases) {
+        const nextTask = (phase.tasks || []).find((t) => !t.completed && t.status !== 'completed');
+        if (!nextTask) {
+          phase.status = 'completed';
+          continue;
+        }
+
+        nextTask.completed = true;
+        nextTask.status = 'completed';
+        phase.status = 'in_progress';
+        executed = true;
+        console.log(`Executed task: ${nextTask.name}`);
+        break;
+      }
+
+      plan.phases.forEach((phase) => {
+        const allDone = (phase.tasks || []).every((t) => t.completed || t.status === 'completed');
+        if (allDone) phase.status = 'completed';
+      });
+
+      const tasks = plan.phases.flatMap((phase) => phase.tasks || []);
+      const completed = tasks.filter((t) => t.completed || t.status === 'completed').length;
+      const total = tasks.length;
+      plan.completion_percentage = total > 0 ? Math.round((completed / total) * 100) : 100;
+      plan.status = plan.completion_percentage >= 100 ? 'completed' : (executed ? 'in_progress' : 'not_started');
+      plan.metadata = {
+        ...(plan.metadata || {}),
+        updated: new Date().toISOString()
+      };
+
+      vision.currentPlan = plan;
+
+      if (vision.currentPlanPath && fs.existsSync(vision.currentPlanPath)) {
+        fs.writeFileSync(vision.currentPlanPath, JSON.stringify(plan, null, 2), 'utf8');
+      }
+
+      await updateVision(projectRoot, vision.slug, (v) => {
+        v.execution_plan = v.execution_plan || {};
+        v.execution_plan.roadmaps = [{
+          title: plan.project?.name || plan.slug || 'Phase Plan',
+          status: plan.status === 'completed' ? 'completed' : 'in_progress',
+          completion_percentage: plan.completion_percentage || 0
+        }];
+        return v;
+      });
+      vision.execution_plan = vision.execution_plan || {};
+      vision.execution_plan.roadmaps = [{
+        title: plan.project?.name || plan.slug || 'Phase Plan',
+        status: plan.status === 'completed' ? 'completed' : 'in_progress',
+        completion_percentage: plan.completion_percentage || 0
+      }];
+
+      return {
+        success: true,
+        tasksExecuted: executed ? 1 : 0,
+        message: executed ? 'Task completed' : 'No pending tasks in current plan'
+      };
+    }
+
     const roadmaps = vision.execution_plan?.roadmaps || [];
     const pendingRoadmaps = roadmaps.filter(rm =>
       rm.status === 'pending' || rm.status === 'in_progress'
@@ -232,6 +314,24 @@ export async function executeNextTasks(vision, projectRoot) {
  * @returns {Promise<Object>} Progress summary
  */
 export async function checkProgress(vision, projectRoot) {
+  if (vision.currentPlan?.phases?.length) {
+    const tasks = vision.currentPlan.phases.flatMap((phase) => phase.tasks || []);
+    const total = tasks.length;
+    const completed = tasks.filter((t) => t.completed || t.status === 'completed').length;
+    const completion_percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return {
+      total,
+      completed,
+      inProgress: total - completed,
+      pending: Math.max(0, total - completed),
+      failed: 0,
+      completion_percentage,
+      current_alignment: vision.observer?.current_alignment || 1.0,
+      drift_events: vision.observer?.drift_events?.length || 0
+    };
+  }
+
   const roadmaps = vision.execution_plan?.roadmaps || [];
 
   const total = roadmaps.length;
@@ -278,6 +378,12 @@ export function shouldContinue(vision) {
     VisionStatus.VALIDATING
   ].includes(vision.status)) {
     return true;
+  }
+
+  if (vision.currentPlan?.phases?.length) {
+    return vision.currentPlan.phases.some((phase) =>
+      (phase.tasks || []).some((t) => !t.completed && t.status !== 'completed')
+    );
   }
 
   // For other statuses, check if there are pending roadmaps

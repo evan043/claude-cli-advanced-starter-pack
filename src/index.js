@@ -280,3 +280,6 @@ export {
   createAnalysisPrompt,
   checkMcpAvailability,
 } from './analysis/competitor-analysis.js';
+
+// OpenClaw Bot Extensibility
+export { OpenClawBotManager } from './openclaw/index.js';
