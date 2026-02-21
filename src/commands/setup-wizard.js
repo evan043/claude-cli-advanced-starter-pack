@@ -225,6 +225,7 @@ Run the Claude CLI Advanced Starter Pack setup wizard.
 
 This command launches the interactive setup wizard for configuring:
 - .claude folder structure
+- .codex prompt sync + slash router in AGENTS.md
 - GitHub project integration
 - Agents, hooks, and skills
 

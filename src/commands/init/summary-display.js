@@ -13,8 +13,9 @@ import { showSuccess, showError } from '../../cli/menu.js';
  * @param {Array} existingCmdNames - Existing command names
  * @param {boolean} hasExistingClaudeDir - Had existing .claude dir
  * @param {boolean} overwrite - Overwrite mode enabled
+ * @param {Object} codexSetup - Codex setup result
  */
-export function displayInstallationSummary(projectName, installed, existingCmdNames, hasExistingClaudeDir, overwrite) {
+export function displayInstallationSummary(projectName, installed, existingCmdNames, hasExistingClaudeDir, overwrite, codexSetup = null) {
   console.log('');
 
   // Count what was preserved
@@ -54,6 +55,19 @@ export function displayInstallationSummary(projectName, installed, existingCmdNa
     summaryLines.push('  ├── settings.json');
     summaryLines.push('  └── settings.local.json');
     summaryLines.push('');
+    summaryLines.push('Codex Integration:');
+    summaryLines.push(`  .codex/prompts synced: ${codexSetup?.promptsSynced || 0}`);
+    if ((codexSetup?.promptsSkipped || 0) > 0) {
+      summaryLines.push(`  .codex/prompts skipped: ${codexSetup.promptsSkipped}`);
+    }
+    if (codexSetup?.routerCreated) {
+      summaryLines.push('  AGENTS.md router block: created');
+    } else if (codexSetup?.routerUpdated) {
+      summaryLines.push('  AGENTS.md router block: updated');
+    } else {
+      summaryLines.push('  AGENTS.md router block: already present');
+    }
+    summaryLines.push('');
     summaryLines.push(`Commands Available: ${installed.length + preservedCommands.length}`);
     summaryLines.push(...installed.slice(0, 6).map((c) => `  /${c}${newCommands.includes(c) ? ' (new)' : ''}`));
     if (installed.length > 6) {
@@ -88,14 +102,15 @@ export function displayNextSteps(featuresRequiringConfig) {
   console.log(chalk.bold('Next Steps:\n'));
   console.log(`${chalk.cyan('  1.')  } Launch Claude Code CLI in this project`);
   console.log(`${chalk.cyan('  2.')  } Type ${chalk.bold('/menu')} to see the interactive project menu`);
+  console.log(`${chalk.cyan('  3.')  } In Codex, use slash commands via ${chalk.bold('.codex/prompts')} (router in AGENTS.md)`);
 
   // Show post-config reminder if features need it
   if (featuresRequiringConfig.length > 0) {
-    console.log(chalk.cyan('  3.') + chalk.yellow(' Configure enabled features via /menu → Project Settings'));
+    console.log(chalk.cyan('  4.') + chalk.yellow(' Configure enabled features via /menu → Project Settings'));
     console.log(chalk.dim(`       Features pending configuration: ${featuresRequiringConfig.map((f) => f.label).join(', ')}`));
-    console.log(`${chalk.cyan('  4.')  } Use any installed command by typing its name (e.g., /e2e-test)`);
+    console.log(`${chalk.cyan('  5.')  } Use any installed command by typing its name (e.g., /e2e-test)`);
   } else {
-    console.log(`${chalk.cyan('  3.')  } Use any installed command by typing its name (e.g., /e2e-test)`);
+    console.log(`${chalk.cyan('  4.')  } Use any installed command by typing its name (e.g., /e2e-test)`);
   }
 
   console.log('');

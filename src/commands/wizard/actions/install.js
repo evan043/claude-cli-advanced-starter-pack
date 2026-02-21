@@ -190,7 +190,8 @@ export async function runAutoInstall() {
           `Docs:      ${chalk.cyan('4')} ${chalk.dim('(INDEX, README, gotchas, constitution)')}\n\n${ 
           chalk.bold('Next Steps:\n') 
           }${chalk.dim('1. Launch Claude Code CLI\n') 
-          }${chalk.dim('2. Run ')  }${chalk.yellow('/project-implementation-for-ccasp')  }${chalk.dim(' for full setup')}`,
+          }${chalk.dim('2. Run ')  }${chalk.yellow('/project-implementation-for-ccasp')  }${chalk.dim(' for full setup\n')
+          }${chalk.dim('3. Codex prompts are synced to ') }${chalk.yellow('.codex/prompts')}`,
         {
           padding: 1,
           borderStyle: 'round',

@@ -45,6 +45,7 @@ import { createStarterFiles } from './init/starter-files.js';
 import { selectFeatures } from './init/feature-selection.js';
 import { selectCommands } from './init/command-selection.js';
 import { handleSmartMerge, createMergeHelpers } from './init/smart-merge.js';
+import { setupCodexSupport } from './init/codex-setup.js';
 import {
   generateDocumentation,
   generateTechStack,
@@ -227,14 +228,17 @@ export async function runInit(options = {}) {
     // Step 9: Update ccasp-state.json
     updateCcaspState(claudeDir);
 
-    // Step 10: Register in global registry
+    // Step 10: Setup Codex prompt routing/support
+    const codexSetup = setupCodexSupport(cwd);
+
+    // Step 11: Register in global registry
     registerInGlobalRegistry(cwd, projectName, selectedFeatures, options);
 
-    // Step 11: Auto-generate stack-specific agents
+    // Step 12: Auto-generate stack-specific agents
     await generateStackAgents(selectedFeatures, cwd);
 
     // Display summary
-    displayInstallationSummary(projectName, installed, existingCmdNames, hasExistingClaudeDir, overwrite);
+    displayInstallationSummary(projectName, installed, existingCmdNames, hasExistingClaudeDir, overwrite, codexSetup);
     displayFailures(failed);
     displayNextSteps(featuresRequiringConfig);
 
