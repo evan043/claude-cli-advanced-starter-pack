@@ -5,6 +5,7 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { injectRuntimeCompatibilityShim } from './runtime-compat.js';
 
 const ROUTER_START = '<!-- CCASP-CODEX-SLASH-ROUTER:START -->';
 const ROUTER_END = '<!-- CCASP-CODEX-SLASH-ROUTER:END -->';
@@ -26,22 +27,6 @@ function getRouterBlock() {
     '',
     'Do not ignore valid `/command` messages and do not respond with "slash commands are unsupported" when a mapped prompt exists.',
     ROUTER_END
-  ].join('\n');
-}
-
-function getCodexCompatibilityShim() {
-  return [
-    '<!-- CCASP-CODEX-COMPAT:START -->',
-    '# Codex Runtime Compatibility',
-    '',
-    'This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:',
-    '- `AskUserQuestion` => ask the user directly in chat.',
-    '- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.',
-    '- `Read`/`Write` => use shell/filesystem tools in this workspace.',
-    '- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.',
-    '- Keep intent and output format identical; only adapt execution mechanics.',
-    '<!-- CCASP-CODEX-COMPAT:END -->',
-    ''
   ].join('\n');
 }
 
@@ -101,9 +86,7 @@ export function syncCodexPrompts(cwd) {
     const dst = join(promptsDir, file);
     try {
       const content = readFileSync(src, 'utf8');
-      const shim = getCodexCompatibilityShim();
-      const hasShim = content.includes('CCASP-CODEX-COMPAT:START');
-      const rewritten = hasShim ? content : `${shim}${content}`;
+      const rewritten = injectRuntimeCompatibilityShim(content);
       writeFileSync(dst, rewritten, 'utf8');
       synced += 1;
     } catch {

@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from 
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createLogger } from '../../utils/logger.js';
+import { injectRuntimeCompatibilityShim } from './runtime-compat.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -84,7 +85,7 @@ export async function deployCommands(config) {
         }
       }
 
-      writeFileSync(cmdPath, content, 'utf8');
+      writeFileSync(cmdPath, injectRuntimeCompatibilityShim(content), 'utf8');
       installed.push(cmdName);
     } catch (error) {
       failed.push({ name: cmdName, error: error.message });

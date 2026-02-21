@@ -30,7 +30,8 @@
     "lint": "eslint src/",
     "prepublishOnly": "npm run test:all",
     "scan:runtime-compat": "node scripts/scan-runtime-compat.mjs",
-    "smoke:cross-runtime": "node scripts/smoke-codex-claude-sync.mjs"
+    "smoke:cross-runtime": "node scripts/smoke-codex-claude-sync.mjs",
+    "fix:runtime-compat": "node scripts/apply-runtime-compat-shim.mjs"
   },
   "keywords": [
     "claude",
