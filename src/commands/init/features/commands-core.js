@@ -80,6 +80,42 @@ export const CORE_COMMANDS = [
     selected: true,
   },
   {
+    name: 'vision-init',
+    description: 'Initialize autonomous vision workflow from a natural-language prompt',
+    category: 'Vision',
+    selected: true,
+  },
+  {
+    name: 'vision-run',
+    description: 'Execute a vision slug through autonomous delivery',
+    category: 'Vision',
+    selected: true,
+  },
+  {
+    name: 'vision-status',
+    description: 'Inspect current status and progress for a vision',
+    category: 'Vision',
+    selected: true,
+  },
+  {
+    name: 'vision-list',
+    description: 'List available visions and their state',
+    category: 'Vision',
+    selected: true,
+  },
+  {
+    name: 'vision-adjust',
+    description: 'Adjust a vision scope/plan after initialization',
+    category: 'Vision',
+    selected: true,
+  },
+  {
+    name: 'vision-dashboard',
+    description: 'Open dashboard view for vision portfolio status',
+    category: 'Vision',
+    selected: true,
+  },
+  {
     name: 'create-agent',
     description: 'Create L1/L2/L3 agents for Claude Code',
     category: 'Claude Code',

@@ -25,9 +25,15 @@
  */
 export function detectAccountRequirements(tools = [], mcpServers = []) {
   const requirements = new Map();
+  const normalizedTools = Array.isArray(tools)
+    ? tools
+    : (tools && Array.isArray(tools.tools) ? tools.tools : []);
+  const normalizedMcpServers = Array.isArray(mcpServers)
+    ? mcpServers
+    : (mcpServers && Array.isArray(mcpServers.mcpServers) ? mcpServers.mcpServers : []);
 
   // Detect from MCP servers (primary source)
-  mcpServers.forEach(mcp => {
+  normalizedMcpServers.forEach(mcp => {
     const mcpReqs = getMCPAccountRequirements(mcp.server);
     mcpReqs.forEach(req => {
       requirements.set(req.service, req);
@@ -35,7 +41,7 @@ export function detectAccountRequirements(tools = [], mcpServers = []) {
   });
 
   // Detect from npm/pip packages
-  tools.forEach(tool => {
+  normalizedTools.forEach(tool => {
     const toolReqs = getToolAccountRequirements(tool.name);
     toolReqs.forEach(req => {
       // Only add if not already present (MCP takes precedence)
