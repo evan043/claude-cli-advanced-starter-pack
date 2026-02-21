@@ -1,6 +1,6 @@
 {
   "name": "claude-cli-advanced-starter-pack",
-  "version": "2.11.4",
+  "version": "2.11.6",
   "description": "Advanced Claude Code CLI toolkit - agents, hooks, skills, MCP servers, phased development, and GitHub integration",
   "main": "src/index.js",
   "bin": {
@@ -28,7 +28,9 @@
     "test:orchestration": "node tests/orchestration.test.js",
     "test:hierarchy": "node tests/run-hierarchy-tests.js",
     "lint": "eslint src/",
-    "prepublishOnly": "npm run test:all"
+    "prepublishOnly": "npm run test:all",
+    "scan:runtime-compat": "node scripts/scan-runtime-compat.mjs",
+    "smoke:cross-runtime": "node scripts/smoke-codex-claude-sync.mjs"
   },
   "keywords": [
     "claude",
@@ -66,6 +68,7 @@
     "glob": "^10.3.10",
     "inquirer": "^9.2.23",
     "ora": "^8.0.1",
+    "ts-morph": "^27.0.2",
     "uuid": "^13.0.0",
     "ws": "^8.19.0",
     "yaml": "^2.4.1"

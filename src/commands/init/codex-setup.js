@@ -3,7 +3,7 @@
  * Syncs slash command prompts and ensures AGENTS.md router instructions.
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 const ROUTER_START = '<!-- CCASP-CODEX-SLASH-ROUTER:START -->';
@@ -20,11 +20,28 @@ function getRouterBlock() {
     '- Parse the first token as the command id (remove leading `/`).',
     '- Read `.codex/prompts/<command-id>.md` if it exists.',
     '- Treat that prompt file as the primary instruction set for the task.',
+    '- Apply cross-runtime compatibility: if a prompt references Claude-only tools, use Codex equivalents (ask user directly for AskUserQuestion, use web.search/open for WebSearch/WebFetch, and shell/file tools for Read/Write).',
     '- Treat remaining user text after the command as command arguments/context.',
     '- If the prompt file does not exist, list available commands from `.codex/prompts/*.md` and ask the user to choose one.',
     '',
     'Do not ignore valid `/command` messages and do not respond with "slash commands are unsupported" when a mapped prompt exists.',
     ROUTER_END
+  ].join('\n');
+}
+
+function getCodexCompatibilityShim() {
+  return [
+    '<!-- CCASP-CODEX-COMPAT:START -->',
+    '# Codex Runtime Compatibility',
+    '',
+    'This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:',
+    '- `AskUserQuestion` => ask the user directly in chat.',
+    '- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.',
+    '- `Read`/`Write` => use shell/filesystem tools in this workspace.',
+    '- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.',
+    '- Keep intent and output format identical; only adapt execution mechanics.',
+    '<!-- CCASP-CODEX-COMPAT:END -->',
+    ''
   ].join('\n');
 }
 
@@ -83,7 +100,11 @@ export function syncCodexPrompts(cwd) {
     const src = join(commandsDir, file);
     const dst = join(promptsDir, file);
     try {
-      copyFileSync(src, dst);
+      const content = readFileSync(src, 'utf8');
+      const shim = getCodexCompatibilityShim();
+      const hasShim = content.includes('CCASP-CODEX-COMPAT:START');
+      const rewritten = hasShim ? content : `${shim}${content}`;
+      writeFileSync(dst, rewritten, 'utf8');
       synced += 1;
     } catch {
       skipped += 1;

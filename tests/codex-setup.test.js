@@ -21,6 +21,8 @@ test('syncCodexPrompts copies .claude/commands into .codex/prompts', () => {
     assert.equal(result.skipped, 0);
     assert.equal(existsSync(join(root, '.codex', 'prompts', 'vision-init.md')), true);
     assert.equal(existsSync(join(root, '.codex', 'prompts', 'menu.md')), true);
+    const copied = readFileSync(join(root, '.codex', 'prompts', 'vision-init.md'), 'utf8');
+    assert.match(copied, /CCASP-CODEX-COMPAT:START/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
