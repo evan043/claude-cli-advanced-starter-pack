@@ -1,3 +1,32 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# vision-run — Codex Runtime
+
+Executes a Vision phase autonomously. The Vision Driver Bot uses Claude Code CLI's Task() orchestration and hooks system which are unavailable in Codex.
+
+## Manual Vision Execution in Codex
+
+1. Tell me which Vision phase to work on
+2. I'll read the vision/phase plan from your local files
+3. I'll execute tasks sequentially (not in parallel — no multi-agent in Codex)
+4. I'll update the progress file after each task
+
+**Limitations vs Claude Code CLI:**
+- No parallel agent execution (sequential only)
+- No automatic hook triggers
+- No autonomous loop (each task requires your confirmation)
+
+**For fully autonomous Vision execution, use Claude Code CLI: `/vision-run`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Start or resume autonomous execution of a Vision
 options:

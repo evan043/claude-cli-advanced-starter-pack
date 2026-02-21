@@ -1,3 +1,33 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# vision-init — Codex Runtime
+
+This command initializes a Vision (long-horizon product development plan). The full Vision system uses Task() orchestration and Claude Code CLI hooks.
+
+## Simplified Vision Init in Codex
+
+I can create a basic Vision document for you manually:
+
+1. **Tell me your vision**: What product/feature are you building?
+2. **I'll generate**: A `VISION.md` document with:
+   - Vision statement
+   - Success metrics
+   - High-level phases
+   - Initial epic breakdown
+
+The Vision document will be saved locally and can be executed step-by-step in subsequent conversations.
+
+**For full automated Vision orchestration with agent spawning, use Claude Code CLI: `/vision-init`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Initialize a new Vision from natural language prompt - autonomous MVP development
 options:

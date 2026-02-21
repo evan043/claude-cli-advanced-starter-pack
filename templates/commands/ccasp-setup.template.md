@@ -1,3 +1,40 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+
+<!-- CODEX-OVERRIDE:START -->
+# ccasp-setup — Codex Runtime
+
+CCASP Setup in Codex works differently — instead of writing to `CLAUDE.md` (which Claude Code reads), project config goes in `AGENTS.md` (which Codex reads).
+
+## What /ccasp-setup Does
+
+Configures your project with:
+- GitHub repository details
+- Deployment targets (Railway/Cloudflare)
+- Tech stack detection
+- Testing configuration
+
+## Running Setup in Codex
+
+**Step 1:** Tell me what you want to configure. I'll ask the minimum required questions:
+- What is your GitHub repo? (owner/repo)
+- What platform is your backend on? (Railway/Heroku/render/fly/vercel)
+- What platform is your frontend on? (Cloudflare/Vercel/Netlify)
+
+**Step 2:** I'll write the config to `AGENTS.md` under a project config section (Codex-readable) instead of `CLAUDE.md`.
+
+**Step 3:** I'll also create/update `.ccasp/config.yaml` with runtime settings.
+
+**Note:** For full CLAUDE.md-based project config (used by Claude Code CLI), run `/ccasp-setup` in Claude Code.
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: CCASP Setup Wizard - one-shot linear project configuration
 model: sonnet

@@ -1,3 +1,29 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# orchestration-guide — Codex Runtime
+
+This guide describes Claude Code CLI's multi-agent orchestration patterns using Task(). These patterns are Claude Code CLI-specific.
+
+## Codex Equivalent Patterns
+
+In Codex, orchestration is done through:
+1. **Sequential steps** — work through tasks one by one in a single conversation
+2. **File-based state** — save progress to JSON files between steps
+3. **Explicit handoffs** — write completion summaries to files for next steps
+
+The core orchestration concepts (phases, epics, roadmaps) are the same. Only the execution mechanism differs.
+
+For learning about CCASP orchestration concepts (applicable to both runtimes), I'll explain the patterns. Tell me what you want to understand.
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Agent orchestration patterns guide
 model: haiku

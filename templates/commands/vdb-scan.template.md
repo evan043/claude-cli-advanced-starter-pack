@@ -1,3 +1,30 @@
+<!-- CODEX-SUPPORT: unsupported -->
+
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+
+<!-- CODEX-OVERRIDE:START -->
+# vdb-scan — Not Supported in Codex
+
+This command requires Claude Code CLI infrastructure that has no Codex equivalent:
+- **Vision Driver Bot (VDB)**: Requires Claude Code hooks system for autonomous session management
+- **Task() orchestration**: Multi-agent spawning is Claude Code CLI-specific
+- **Pre/PostToolUse hooks**: Codex does not support Claude's hook system
+
+## Use Claude Code CLI Instead
+
+To use this command, switch to Claude Code CLI and run `/vdb-scan`.
+
+VDB provides autonomous development with self-healing execution loops — this requires the full Claude Code CLI runtime environment.
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Vision Driver Bot board scan
 model: haiku

@@ -1,3 +1,58 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# deploy-full — Codex Runtime
+
+This command deploys your full-stack app. In Codex, Railway MCP and the `Task()` agent spawner are unavailable. Use the manual steps below.
+
+## Pre-deployment
+
+```bash
+git status       # confirm clean working tree
+git branch --show-current   # confirm on correct branch
+npm test         # run tests before deploying
+```
+
+## Backend Deployment (Railway)
+
+Railway auto-deploy is disabled. Trigger a deploy via Railway dashboard or Railway CLI:
+
+```bash
+# Option 1: Railway CLI (if installed)
+railway up
+
+# Option 2: Push to trigger CI (if Railway is linked to git)
+git push origin main
+
+# Option 3: Railway Dashboard
+# Go to https://railway.app → your project → Deploy
+```
+
+## Frontend Deployment (Cloudflare Pages)
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name=<your-project-name>
+```
+
+## Verification
+
+After deployment, verify by running:
+```bash
+curl https://<your-backend-url>/health
+```
+And opening your frontend URL in a browser.
+
+**For full automated parallel deployment with Railway MCP, use Claude Code CLI: `/deploy-full`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Parallel full-stack deployment (backend + frontend)
 model: haiku

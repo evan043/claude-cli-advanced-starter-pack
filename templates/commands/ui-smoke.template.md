@@ -1,3 +1,30 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# ui-smoke — Codex Runtime
+
+Run smoke tests via shell. Playwright MCP is unavailable in Codex.
+
+```bash
+# Run only smoke-tagged tests
+npx playwright test --grep "smoke"
+
+# Or run the smoke test suite file directly
+npx playwright test e2e/smoke.spec.ts
+```
+
+If no smoke tests exist yet, tell me and I'll generate a basic smoke test file.
+
+**For Playwright MCP browser integration, use Claude Code CLI: `/ui-smoke`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Run quick Neovim UI smoke test for nvim-ccasp
 ---

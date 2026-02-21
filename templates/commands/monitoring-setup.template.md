@@ -1,3 +1,44 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# monitoring-setup — Codex Runtime
+
+This command configures monitoring for your deployed services. Railway MCP is unavailable in Codex.
+
+## What I Can Do
+
+1. Generate monitoring configuration files (uptime checks, alert rules)
+2. Show you the Railway CLI commands to set up monitoring
+3. Provide curl commands to manually test health endpoints
+
+## Manual Railway Monitoring Setup
+
+```bash
+# Install Railway CLI if needed
+npm install -g @railway/cli
+railway login
+
+# List your services
+railway status
+
+# Set up environment variables for monitoring
+railway variables set MONITORING_ENABLED=true
+```
+
+## Alternative: Uptime Monitors
+
+I can generate configuration for third-party monitors (UptimeRobot, BetterUptime, etc.) that work without Railway MCP. Just tell me your service URLs.
+
+**For full Railway MCP monitoring setup, use Claude Code CLI: `/monitoring-setup`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Set up monitoring and observability for your application
 type: project

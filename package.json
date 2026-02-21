@@ -1,6 +1,6 @@
 {
   "name": "claude-cli-advanced-starter-pack",
-  "version": "2.11.6",
+  "version": "2.11.7",
   "description": "Advanced Claude Code CLI toolkit - agents, hooks, skills, MCP servers, phased development, and GitHub integration",
   "main": "src/index.js",
   "bin": {
@@ -31,7 +31,11 @@
     "prepublishOnly": "npm run test:all",
     "scan:runtime-compat": "node scripts/scan-runtime-compat.mjs",
     "smoke:cross-runtime": "node scripts/smoke-codex-claude-sync.mjs",
-    "fix:runtime-compat": "node scripts/apply-runtime-compat-shim.mjs"
+    "fix:runtime-compat": "node scripts/apply-runtime-compat-shim.mjs",
+    "check:command-parity": "node scripts/check-command-prompt-parity.mjs",
+    "fix:command-parity": "node scripts/check-command-prompt-parity.mjs --sync",
+    "check:content-quality": "node scripts/check-command-prompt-parity.mjs --content-only",
+    "report:codex-capability": "node scripts/report-codex-capability.mjs"
   },
   "keywords": [
     "claude",

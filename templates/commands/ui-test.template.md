@@ -1,3 +1,48 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# ui-test — Codex Runtime
+
+This command runs Playwright E2E tests. Playwright MCP is unavailable in Codex, but I can run tests via shell if Playwright is installed.
+
+## Run Tests via Shell
+
+```bash
+# Run all E2E tests
+npx playwright test
+
+# Run with headed browser (if display available)
+npx playwright test --headed
+
+# Run specific test file
+npx playwright test tests/auth.spec.ts
+
+# Run with specific grep pattern
+npx playwright test --grep "login"
+```
+
+## View Test Results
+
+```bash
+# Show HTML report
+npx playwright show-report
+
+# Show test output in terminal
+npx playwright test --reporter=list
+```
+
+Tell me which tests to run and I'll execute them via shell commands.
+
+**For Playwright MCP integration with visual browser control, use Claude Code CLI: `/ui-test`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Run Neovim UI tests for the nvim-ccasp plugin
 ---

@@ -1,3 +1,37 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# db-migrate — Codex Runtime
+
+Run database migrations via shell. Database MCP tools are unavailable in Codex.
+
+```bash
+# Prisma migrations
+npx prisma migrate deploy      # production
+npx prisma migrate dev         # development (creates migration)
+
+# SQLAlchemy/Alembic
+python -m alembic upgrade head
+
+# Django
+python manage.py migrate
+
+# Flyway
+flyway migrate
+```
+
+Tell me which ORM/migration tool you use and I'll run the appropriate command.
+
+**For database MCP integration, use Claude Code CLI: `/db-migrate`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Database migration management and schema versioning
 type: project

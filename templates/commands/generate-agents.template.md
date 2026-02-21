@@ -1,3 +1,31 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# generate-agents — Codex Runtime
+
+This command generates agent configuration files. In Codex, the `Task()` multi-agent spawner is unavailable. This command will run sequentially instead.
+
+## What I'll Do
+
+1. Read your existing project structure (`package.json`, tech stack files)
+2. Analyze what kinds of tasks you have (frontend, backend, testing, deployment)
+3. Generate `.ccasp/agents/` configuration YAML files for each agent type
+4. Create a summary of what agents were generated
+
+## Run
+
+Tell me which agent types to generate (or say "auto-detect") and I'll create the configuration files. I'll work through each agent type one at a time.
+
+**For parallel multi-agent generation, use Claude Code CLI: `/generate-agents`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Generate stack-specific agents
 model: sonnet

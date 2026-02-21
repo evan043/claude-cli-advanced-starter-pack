@@ -1,1 +1,65 @@
-C:/Users/erola/.ccasp/compiled/claude-cli-advanced-starter-pack-ece38a/workflows/vision-driver-bot.yml
+name: Cross-Runtime Compatibility Check
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'templates/commands/**'
+      - '.claude/commands/**'
+      - '.codex/prompts/**'
+      - 'src/commands/init/**'
+      - 'src/ccasp/**'
+      - 'src/ccasp_cli/**'
+      - 'scripts/**'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'templates/commands/**'
+      - '.claude/commands/**'
+      - '.codex/prompts/**'
+      - 'src/commands/init/**'
+      - 'src/ccasp/**'
+      - 'src/ccasp_cli/**'
+      - 'scripts/**'
+
+jobs:
+  cross-runtime-parity:
+    name: Codex/Claude Command Parity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check filename parity (.claude/commands vs .codex/prompts)
+        run: npm run check:command-parity
+
+      - name: Validate Codex prompt content quality
+        run: node scripts/check-command-prompt-parity.mjs --content-only
+
+      - name: Scan for unshimmed high-severity Claude-only references
+        run: |
+          node scripts/scan-runtime-compat.mjs > /tmp/compat-report.json
+          node -e "
+            const report = JSON.parse(require('fs').readFileSync('/tmp/compat-report.json', 'utf8'));
+            const high = Object.entries(report.totals || {}).filter(([,v]) => v.severity === 'high' && v.count > 0);
+            if (high.length > 0) {
+              console.error('High-severity unshimmed issues:');
+              high.forEach(([id, v]) => console.error('  ' + id + ': ' + v.count));
+              process.exit(1);
+            }
+            console.log('Compat scan OK — no high-severity unshimmed issues.');
+          "
+
+      - name: Generate capability report (informational)
+        run: npm run report:codex-capability
+        continue-on-error: true

@@ -1,3 +1,32 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# ui-bug — Codex Runtime
+
+Investigate and fix a UI bug. Playwright MCP (browser screenshot/interaction) is unavailable in Codex.
+
+## What I Can Do Without Playwright MCP
+
+1. **Read the source code** of the affected component
+2. **Analyze the bug** based on your description
+3. **Propose a fix** with code changes
+4. **Generate a test** to reproduce and verify the fix
+5. **Run the test** via: `npx playwright test --grep "bug-description"`
+
+## To Start
+
+Describe the UI bug you're seeing (what component, what behavior, what's expected). I'll investigate the code and propose a fix.
+
+**For live browser screenshot debugging, use Claude Code CLI: `/ui-bug`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: File a structured bug report for Neovim UI issues
 ---

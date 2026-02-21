@@ -1,3 +1,28 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# vision-status — Codex Runtime
+
+Check the status of your current Vision.
+
+```bash
+# Check vision progress files
+cat .claude/visions/*/PROGRESS.json 2>/dev/null || echo "No visions found"
+
+# List all visions
+ls .claude/visions/ 2>/dev/null || echo "No .claude/visions directory"
+```
+
+I'll read and summarize the vision status from your local files.
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: View Vision status, progress, and alignment metrics
 options:

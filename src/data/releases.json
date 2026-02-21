@@ -1,6 +1,52 @@
 {
   "releases": [
     {
+      "version": "2.11.7",
+      "date": "2026-02-21",
+      "summary": "Feature: implement custom window drag/resize for frameless Neovide",
+      "highlights": [
+        "implement custom window drag/resize for frameless Neovide",
+        "add deploy configuration panel to flyout",
+        "add session reorder button to footer taskbar",
+        "add always-on symlink sync for project templates",
+        "per-session slash commands and active session targeting",
+        "Fixed: launch correct CLI commands when restoring saved layouts",
+        "Fixed: prevent dead-end state when all sessions are closed"
+      ],
+      "newFeatures": {
+        "commands": [],
+        "agents": [],
+        "skills": [],
+        "hooks": [],
+        "other": []
+      },
+      "breaking": [],
+      "deprecated": []
+    },
+    {
+      "version": "2.11.5",
+      "date": "2026-02-21",
+      "summary": "Feature: implement custom window drag/resize for frameless Neovide",
+      "highlights": [
+        "implement custom window drag/resize for frameless Neovide",
+        "add deploy configuration panel to flyout",
+        "add session reorder button to footer taskbar",
+        "add always-on symlink sync for project templates",
+        "per-session slash commands and active session targeting",
+        "Fixed: launch correct CLI commands when restoring saved layouts",
+        "Fixed: prevent dead-end state when all sessions are closed"
+      ],
+      "newFeatures": {
+        "commands": [],
+        "agents": [],
+        "skills": [],
+        "hooks": [],
+        "other": []
+      },
+      "breaking": [],
+      "deprecated": []
+    },
+    {
       "version": "2.2.6",
       "date": "2026-02-03",
       "summary": "Feature: add smart sync with customization preservation",

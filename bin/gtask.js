@@ -30,9 +30,9 @@ import { runClaudeAudit } from '../src/commands/claude-audit.js';
 import { runRoadmap } from '../src/commands/roadmap.js';
 import { runCreateRoadmap } from '../src/commands/create-roadmap.js';
 import { runGitHubEpicMenu } from '../src/commands/github-epic-menu.js';
-import { runInit } from '../src/commands/init.js';
+import { runInit } from '../src/ccasp/init.js';
 import { showHelp } from '../src/commands/help.js';
-import { runSetupWizard } from '../src/commands/setup-wizard.js';
+import { runWizard } from '../src/ccasp/wizard.js';
 import { installSkillCommand, listSkills } from '../src/commands/install-skill.js';
 import { runInstallScripts } from '../src/commands/install-scripts.js';
 import { runPanel, launchPanel } from '../src/commands/panel.js';
@@ -65,12 +65,20 @@ program
 // Init command - deploy to project
 program
   .command('init')
-  .description('Deploy Claude CLI Advanced Starter Pack to current project')
-  .option('--force', 'Overwrite existing commands')
-  .option('--no-register', 'Do not register project in global registry')
-  .option('--dev', 'Development mode: reuse existing tech-stack.json, process templates, skip prompts')
+  .description('Initialize CCASP in the current directory')
+  .option('--dry-run', 'Preview changes without writing')
+  .option('--repair-links', 'Repair broken links')
+  .option('--convert-legacy', 'Convert legacy Claude/Codex setup')
+  .option('--enable-claude', 'Enable Claude runtime')
+  .option('--enable-codex', 'Enable Codex runtime')
   .action(async (options) => {
-    await runInit(options);
+    await runInit({
+      dryRun: Boolean(options.dryRun),
+      repairLinks: Boolean(options.repairLinks),
+      convertLegacy: options.convertLegacy ? true : undefined,
+      enableClaude: options.enableClaude ? true : undefined,
+      enableCodex: options.enableCodex ? true : undefined,
+    });
   });
 
 // Uninstall command - remove CCASP from project
@@ -359,9 +367,14 @@ program
 program
   .command('wizard')
   .alias('w')
-  .description('Interactive setup wizard (vibe-code friendly, mobile-ready)')
-  .action(async () => {
-    await runSetupWizard();
+  .description('Interactive CCASP setup wizard')
+  .option('--dry-run', 'Preview changes without writing')
+  .option('--repair-links', 'Repair broken links')
+  .action(async (options) => {
+    await runWizard({
+      dryRun: Boolean(options.dryRun),
+      repairLinks: Boolean(options.repairLinks),
+    });
   });
 
 // Install skill

@@ -1,3 +1,39 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# tunnel-start — Codex Runtime
+
+This command starts a local tunnel to expose your dev server publicly. System-level tunnel tools may have limited availability in Codex sandbox.
+
+## Options
+
+### Option 1: npx localtunnel (no install required)
+```bash
+npx localtunnel --port 5173
+```
+
+### Option 2: ngrok (if installed)
+```bash
+ngrok http 5173
+```
+
+### Option 3: cloudflared (if installed)
+```bash
+cloudflared tunnel --url http://localhost:5173
+```
+
+Tell me which option you want and I'll run it. If none are available, I'll help you install one.
+
+**For managed tunnel with CCASP integration, use Claude Code CLI: `/tunnel-start`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Start tunnel service for exposing local development server
 model: haiku

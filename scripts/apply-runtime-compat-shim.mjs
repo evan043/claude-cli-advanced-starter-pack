@@ -3,7 +3,7 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import process from 'node:process';
-import { injectRuntimeCompatibilityShim, hasRuntimeCompatibilityShim } from '../src/commands/init/runtime-compat.js';
+import { prepareForCodex, hasRuntimeCompatibilityShim } from '../src/commands/init/runtime-compat.js';
 
 function collectMarkdown(dir, out = []) {
   if (!existsSync(dir)) return out;
@@ -43,7 +43,7 @@ for (const dir of dirs) {
       skipped += 1;
       continue;
     }
-    writeFileSync(file, injectRuntimeCompatibilityShim(content), 'utf8');
+    writeFileSync(file, prepareForCodex(content), 'utf8');
     updated += 1;
   }
 }

@@ -1,3 +1,30 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# ui-snapshot — Codex Runtime
+
+Capture UI snapshots for visual regression. Playwright MCP is unavailable in Codex.
+
+## Alternative: Update Playwright Snapshots via Shell
+
+```bash
+# Update all snapshots
+npx playwright test --update-snapshots
+
+# Update snapshots for specific test
+npx playwright test tests/visual.spec.ts --update-snapshots
+```
+
+**For live Playwright MCP snapshot capture, use Claude Code CLI: `/ui-snapshot`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Capture Neovim window layout snapshot for debugging
 ---

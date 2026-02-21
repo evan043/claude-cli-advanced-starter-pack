@@ -1,3 +1,31 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# tunnel-stop — Codex Runtime
+
+Stop any running tunnel processes.
+
+```bash
+# Kill localtunnel
+pkill -f "localtunnel" 2>/dev/null || echo "No localtunnel running"
+
+# Kill ngrok
+pkill -f "ngrok" 2>/dev/null || echo "No ngrok running"
+
+# Kill cloudflared
+pkill -f "cloudflared" 2>/dev/null || echo "No cloudflared running"
+```
+
+Tell me which tunnel you started and I'll stop it cleanly.
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Stop the running tunnel service
 model: haiku

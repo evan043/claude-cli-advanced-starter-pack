@@ -1,3 +1,34 @@
+<!-- CCASP-CODEX-COMPAT:START -->
+# Codex Runtime Compatibility
+
+This prompt was authored for Claude-style slash workflows. In Codex runtime, adapt tool calls as follows:
+- `AskUserQuestion` => ask the user directly in chat.
+- `WebSearch`/`WebFetch` => use available web tools (`search_query`, `open`, `find`) and cite links.
+- `Read`/`Write` => use shell/filesystem tools in this workspace.
+- Claude-only MCP calls (for example Playwright MCP names) => use available equivalents or clearly state fallback.
+- Keep intent and output format identical; only adapt execution mechanics.
+<!-- CCASP-CODEX-COMPAT:END -->
+<!-- CODEX-OVERRIDE:START -->
+# happy-start — Codex Runtime
+
+This command starts the Happy Engineering development environment. Happy MCP tools are Claude Code CLI-specific and unavailable in Codex.
+
+## What I Can Do
+
+Start your development server manually:
+
+```bash
+# Start the dev server (common options)
+npm run dev        # Vite/React
+npm start          # CRA
+npx next dev       # Next.js
+python -m uvicorn backend.main:app --reload --port 8001  # FastAPI
+```
+
+Tell me your project type and I'll start the right dev server.
+
+**For Happy Engineering MCP integration with dashboard, use Claude Code CLI: `/happy-start`**
+<!-- CODEX-OVERRIDE:END -->
 ---
 description: Start a Happy Mode session for mobile app integration
 model: sonnet

@@ -1,7 +1,7 @@
 {
   "claude-settings": {
     "name": "claude-settings",
-    "capturedAt": "2026-02-11T15:20:46.389Z",
+    "capturedAt": "2026-02-21T15:15:11.566Z",
     "exports": {
       "DEFAULT_GITHUB_SETTINGS": {
         "name": "DEFAULT_GITHUB_SETTINGS",
@@ -165,7 +165,7 @@
   },
   "init": {
     "name": "init",
-    "capturedAt": "2026-02-11T15:20:47.325Z",
+    "capturedAt": "2026-02-21T15:15:12.454Z",
     "exports": {
       "runInit": {
         "name": "runInit",
@@ -189,7 +189,7 @@
   },
   "claude-audit": {
     "name": "claude-audit",
-    "capturedAt": "2026-02-11T15:20:47.397Z",
+    "capturedAt": "2026-02-21T15:15:12.514Z",
     "exports": {
       "ENHANCEMENT_TEMPLATES": {
         "name": "ENHANCEMENT_TEMPLATES",
@@ -236,7 +236,7 @@
   },
   "menu": {
     "name": "menu",
-    "capturedAt": "2026-02-11T15:20:47.398Z",
+    "capturedAt": "2026-02-21T15:15:12.515Z",
     "exports": {
       "showError": {
         "name": "showError",
@@ -303,7 +303,7 @@
   },
   "setup-wizard": {
     "name": "setup-wizard",
-    "capturedAt": "2026-02-11T15:20:47.398Z",
+    "capturedAt": "2026-02-21T15:15:12.515Z",
     "exports": {
       "createBackup": {
         "name": "createBackup",
@@ -343,7 +343,7 @@
   },
   "explore-mcp": {
     "name": "explore-mcp",
-    "capturedAt": "2026-02-11T15:20:47.398Z",
+    "capturedAt": "2026-02-21T15:15:12.515Z",
     "exports": {
       "runExploreMcp": {
         "name": "runExploreMcp",
@@ -372,7 +372,7 @@
   },
   "detect-tech-stack": {
     "name": "detect-tech-stack",
-    "capturedAt": "2026-02-11T15:20:47.399Z",
+    "capturedAt": "2026-02-21T15:15:12.516Z",
     "exports": {
       "default": {
         "name": "default",
@@ -405,7 +405,7 @@
   },
   "cli-flows-settings": {
     "name": "cli-flows-settings",
-    "capturedAt": "2026-02-11T15:20:47.399Z",
+    "capturedAt": "2026-02-21T15:15:12.516Z",
     "exports": {
       "configureDeployment": {
         "name": "configureDeployment",
@@ -463,7 +463,7 @@
   },
   "roadmap-github-integration": {
     "name": "roadmap-github-integration",
-    "capturedAt": "2026-02-11T15:20:47.399Z",
+    "capturedAt": "2026-02-21T15:15:12.516Z",
     "exports": {
       "addProgressComment": {
         "name": "addProgressComment",
@@ -684,7 +684,7 @@
   },
   "vdb-decision-engine": {
     "name": "vdb-decision-engine",
-    "capturedAt": "2026-02-11T15:20:47.399Z",
+    "capturedAt": "2026-02-21T15:15:12.516Z",
     "exports": {
       "DecisionEngine": {
         "name": "DecisionEngine",
@@ -710,7 +710,7 @@
   },
   "create-phase-dev-wizard": {
     "name": "create-phase-dev-wizard",
-    "capturedAt": "2026-02-11T15:20:47.403Z",
+    "capturedAt": "2026-02-21T15:15:12.520Z",
     "exports": {
       "promptEnhancements": {
         "name": "promptEnhancements",
@@ -757,7 +757,7 @@
   },
   "testing-config": {
     "name": "testing-config",
-    "capturedAt": "2026-02-11T15:20:47.404Z",
+    "capturedAt": "2026-02-21T15:15:12.520Z",
     "exports": {
       "CREDENTIAL_SOURCES": {
         "name": "CREDENTIAL_SOURCES",
@@ -969,7 +969,7 @@
   },
   "init-command-templates": {
     "name": "init-command-templates",
-    "capturedAt": "2026-02-11T15:20:47.404Z",
+    "capturedAt": "2026-02-21T15:15:12.520Z",
     "exports": {
       "COMMAND_TEMPLATES": {
         "name": "COMMAND_TEMPLATES",
@@ -1020,7 +1020,7 @@
   },
   "roadmap": {
     "name": "roadmap",
-    "capturedAt": "2026-02-11T15:20:47.404Z",
+    "capturedAt": "2026-02-21T15:15:12.521Z",
     "exports": {
       "runRoadmap": {
         "name": "runRoadmap",
@@ -1042,7 +1042,7 @@
   },
   "create-phase-dev-codebase-analyzer": {
     "name": "create-phase-dev-codebase-analyzer",
-    "capturedAt": "2026-02-11T15:20:47.404Z",
+    "capturedAt": "2026-02-21T15:15:12.521Z",
     "exports": {
       "analyzeCodebase": {
         "name": "analyzeCodebase",
@@ -1075,7 +1075,7 @@
   },
   "agents-spawner": {
     "name": "agents-spawner",
-    "capturedAt": "2026-02-11T15:20:47.404Z",
+    "capturedAt": "2026-02-21T15:15:12.521Z",
     "exports": {
       "AGENT_CONFIGS": {
         "name": "AGENT_CONFIGS",
@@ -1245,7 +1245,7 @@
   },
   "cli-flows-main": {
     "name": "cli-flows-main",
-    "capturedAt": "2026-02-11T15:20:47.409Z",
+    "capturedAt": "2026-02-21T15:15:12.524Z",
     "exports": {
       "showMainMenu": {
         "name": "showMainMenu",
@@ -1258,7 +1258,7 @@
   },
   "vision-agent-factory": {
     "name": "vision-agent-factory",
-    "capturedAt": "2026-02-11T15:20:47.409Z",
+    "capturedAt": "2026-02-21T15:15:12.525Z",
     "exports": {
       "DOMAIN_PATTERNS": {
         "name": "DOMAIN_PATTERNS",
@@ -1384,7 +1384,7 @@
   },
   "create-phase-dev-l2-orchestrator": {
     "name": "create-phase-dev-l2-orchestrator",
-    "capturedAt": "2026-02-11T15:20:47.410Z",
+    "capturedAt": "2026-02-21T15:15:12.525Z",
     "exports": {
       "aggregateExplorationResults": {
         "name": "aggregateExplorationResults",
@@ -1454,7 +1454,7 @@
   },
   "explore-mcp-registry": {
     "name": "explore-mcp-registry",
-    "capturedAt": "2026-02-11T15:20:47.410Z",
+    "capturedAt": "2026-02-21T15:15:12.525Z",
     "exports": {
       "CORE_TESTING_MCPS": {
         "name": "CORE_TESTING_MCPS",
@@ -1715,7 +1715,7 @@
   },
   "roadmap-multi-project-builder": {
     "name": "roadmap-multi-project-builder",
-    "capturedAt": "2026-02-11T15:20:47.410Z",
+    "capturedAt": "2026-02-21T15:15:12.525Z",
     "exports": {
       "default": {
         "name": "default",
@@ -1768,7 +1768,7 @@
   },
   "github-epic-menu": {
     "name": "github-epic-menu",
-    "capturedAt": "2026-02-11T15:20:47.427Z",
+    "capturedAt": "2026-02-21T15:15:12.540Z",
     "exports": {
       "listEpics": {
         "name": "listEpics",
@@ -1810,7 +1810,7 @@
   },
   "vision-state-manager": {
     "name": "vision-state-manager",
-    "capturedAt": "2026-02-11T15:20:47.428Z",
+    "capturedAt": "2026-02-21T15:15:12.540Z",
     "exports": {
       "acquireFileLock": {
         "name": "acquireFileLock",
@@ -2130,7 +2130,7 @@
   },
   "dev-deploy": {
     "name": "dev-deploy",
-    "capturedAt": "2026-02-11T15:20:47.428Z",
+    "capturedAt": "2026-02-21T15:15:12.541Z",
     "exports": {
       "runDevDeploy": {
         "name": "runDevDeploy",
@@ -2145,7 +2145,7 @@
   },
   "create-roadmap": {
     "name": "create-roadmap",
-    "capturedAt": "2026-02-11T15:20:47.435Z",
+    "capturedAt": "2026-02-21T15:15:12.548Z",
     "exports": {
       "runCreateRoadmap": {
         "name": "runCreateRoadmap",
@@ -2160,7 +2160,7 @@
   },
   "pm-hierarchy-schema": {
     "name": "pm-hierarchy-schema",
-    "capturedAt": "2026-02-11T15:20:47.446Z",
+    "capturedAt": "2026-02-21T15:15:12.558Z",
     "exports": {
       "COMPLETION_TRACKING_SCHEMA": {
         "name": "COMPLETION_TRACKING_SCHEMA",
@@ -2358,7 +2358,7 @@
   },
   "config-github-config": {
     "name": "config-github-config",
-    "capturedAt": "2026-02-11T15:20:47.446Z",
+    "capturedAt": "2026-02-21T15:15:12.558Z",
     "exports": {
       "DEFAULT_GITHUB_SETTINGS": {
         "name": "DEFAULT_GITHUB_SETTINGS",
@@ -2407,7 +2407,7 @@
   },
   "config-tech-stack-config": {
     "name": "config-tech-stack-config",
-    "capturedAt": "2026-02-11T15:20:47.447Z",
+    "capturedAt": "2026-02-21T15:15:12.558Z",
     "exports": {
       "applyTechStackTemplates": {
         "name": "applyTechStackTemplates",
@@ -2447,7 +2447,7 @@
   },
   "orchestration-progress-aggregator": {
     "name": "orchestration-progress-aggregator",
-    "capturedAt": "2026-02-11T15:20:47.447Z",
+    "capturedAt": "2026-02-21T15:15:12.558Z",
     "exports": {
       "HierarchyStatus": {
         "name": "HierarchyStatus",
@@ -2558,7 +2558,7 @@
   },
   "vdb-board-sync": {
     "name": "vdb-board-sync",
-    "capturedAt": "2026-02-11T15:20:47.451Z",
+    "capturedAt": "2026-02-21T15:15:12.562Z",
     "exports": {
       "BoardSync": {
         "name": "BoardSync",
@@ -2614,7 +2614,7 @@
   },
   "github-client": {
     "name": "github-client",
-    "capturedAt": "2026-02-11T15:20:47.453Z",
+    "capturedAt": "2026-02-21T15:15:12.564Z",
     "exports": {
       "addIssueComment": {
         "name": "addIssueComment",
@@ -2848,7 +2848,7 @@
   },
   "phase-dev-completion-reporter": {
     "name": "phase-dev-completion-reporter",
-    "capturedAt": "2026-02-11T15:20:47.454Z",
+    "capturedAt": "2026-02-21T15:15:12.565Z",
     "exports": {
       "calculateCompletionMetrics": {
         "name": "calculateCompletionMetrics",
@@ -2905,7 +2905,7 @@
   },
   "agents-templates": {
     "name": "agents-templates",
-    "capturedAt": "2026-02-11T15:20:47.458Z",
+    "capturedAt": "2026-02-21T15:15:12.570Z",
     "exports": {
       "AGENT_LEVELS": {
         "name": "AGENT_LEVELS",
@@ -3019,7 +3019,7 @@
   },
   "panel": {
     "name": "panel",
-    "capturedAt": "2026-02-11T15:20:47.459Z",
+    "capturedAt": "2026-02-21T15:15:12.570Z",
     "exports": {
       "launchPanel": {
         "name": "launchPanel",
@@ -3048,7 +3048,7 @@
   },
   "audit-helpers": {
     "name": "audit-helpers",
-    "capturedAt": "2026-02-11T15:20:47.459Z",
+    "capturedAt": "2026-02-21T15:15:12.570Z",
     "exports": {
       "auditClaudeFolder": {
         "name": "auditClaudeFolder",
@@ -3174,7 +3174,7 @@
   },
   "create-agent": {
     "name": "create-agent",
-    "capturedAt": "2026-02-11T15:20:47.459Z",
+    "capturedAt": "2026-02-21T15:15:12.570Z",
     "exports": {
       "runCreateAgent": {
         "name": "runCreateAgent",
@@ -3189,7 +3189,7 @@
   },
   "analysis-competitor-analysis": {
     "name": "analysis-competitor-analysis",
-    "capturedAt": "2026-02-11T15:20:47.459Z",
+    "capturedAt": "2026-02-21T15:15:12.571Z",
     "exports": {
       "ANALYSIS_PHASES": {
         "name": "ANALYSIS_PHASES",
@@ -3367,7 +3367,7 @@
   },
   "create-phase-dev-documentation-generator": {
     "name": "create-phase-dev-documentation-generator",
-    "capturedAt": "2026-02-11T15:20:47.462Z",
+    "capturedAt": "2026-02-21T15:15:12.573Z",
     "exports": {
       "createGitCheckpoint": {
         "name": "createGitCheckpoint",
@@ -3441,7 +3441,7 @@
   },
   "vision": {
     "name": "vision",
-    "capturedAt": "2026-02-11T15:20:47.462Z",
+    "capturedAt": "2026-02-21T15:15:12.573Z",
     "exports": {
       "default": {
         "name": "default",
@@ -3464,7 +3464,7 @@
   },
   "agents-generator-content-generators": {
     "name": "agents-generator-content-generators",
-    "capturedAt": "2026-02-11T15:20:47.463Z",
+    "capturedAt": "2026-02-21T15:15:12.573Z",
     "exports": {
       "getAgentContent": {
         "name": "getAgentContent",
@@ -3480,7 +3480,7 @@
   },
   "gtask-init": {
     "name": "gtask-init",
-    "capturedAt": "2026-02-11T15:20:47.466Z",
+    "capturedAt": "2026-02-21T15:15:12.575Z",
     "exports": {
       "default": {
         "name": "default",
@@ -3502,7 +3502,7 @@
   },
   "epic-state-manager": {
     "name": "epic-state-manager",
-    "capturedAt": "2026-02-11T15:20:47.471Z",
+    "capturedAt": "2026-02-21T15:15:12.580Z",
     "exports": {
       "addActiveRoadmap": {
         "name": "addActiveRoadmap",
@@ -3708,7 +3708,7 @@
   },
   "vision-ui-ascii-generator": {
     "name": "vision-ui-ascii-generator",
-    "capturedAt": "2026-02-11T15:20:47.475Z",
+    "capturedAt": "2026-02-21T15:15:12.583Z",
     "exports": {
       "extractComponentList": {
         "name": "extractComponentList",
@@ -3821,7 +3821,7 @@
   },
   "explore-mcp-flows": {
     "name": "explore-mcp-flows",
-    "capturedAt": "2026-02-11T15:20:47.475Z",
+    "capturedAt": "2026-02-21T15:15:12.583Z",
     "exports": {
       "runBrowseFlow": {
         "name": "runBrowseFlow",
@@ -3889,7 +3889,7 @@
   },
   "vision-observer": {
     "name": "vision-observer",
-    "capturedAt": "2026-02-11T15:20:47.476Z",
+    "capturedAt": "2026-02-21T15:15:12.584Z",
     "exports": {
       "calculateAlignment": {
         "name": "calculateAlignment",
@@ -3980,7 +3980,7 @@
   },
   "roadmap-phase-generator": {
     "name": "roadmap-phase-generator",
-    "capturedAt": "2026-02-11T15:20:47.476Z",
+    "capturedAt": "2026-02-21T15:15:12.584Z",
     "exports": {
       "completeTask": {
         "name": "completeTask",
@@ -4074,7 +4074,7 @@
   },
   "templates-issue-body": {
     "name": "templates-issue-body",
-    "capturedAt": "2026-02-11T15:20:47.477Z",
+    "capturedAt": "2026-02-21T15:15:12.584Z",
     "exports": {
       "createFileObject": {
         "name": "createFileObject",
@@ -4372,7 +4372,7 @@
   },
   "utils-smart-merge": {
     "name": "utils-smart-merge",
-    "capturedAt": "2026-02-11T15:20:47.477Z",
+    "capturedAt": "2026-02-21T15:15:12.584Z",
     "exports": {
       "ASSET_PATHS": {
         "name": "ASSET_PATHS",
@@ -4539,7 +4539,7 @@
   },
   "vision-schema": {
     "name": "vision-schema",
-    "capturedAt": "2026-02-11T15:20:47.477Z",
+    "capturedAt": "2026-02-21T15:15:12.584Z",
     "exports": {
       "DriftSeverity": {
         "name": "DriftSeverity",
@@ -4718,7 +4718,7 @@
   },
   "github-issue-hierarchy-manager": {
     "name": "github-issue-hierarchy-manager",
-    "capturedAt": "2026-02-11T15:20:47.478Z",
+    "capturedAt": "2026-02-21T15:15:12.585Z",
     "exports": {
       "createGitHubIssue": {
         "name": "createGitHubIssue",
@@ -4835,7 +4835,7 @@
   },
   "pm-hierarchy-integrations-linear-adapter": {
     "name": "pm-hierarchy-integrations-linear-adapter",
-    "capturedAt": "2026-02-11T15:20:47.478Z",
+    "capturedAt": "2026-02-21T15:15:12.585Z",
     "exports": {
       "LinearAdapter": {
         "name": "LinearAdapter",
@@ -4859,7 +4859,7 @@
   },
   "utils-template-engine": {
     "name": "utils-template-engine",
-    "capturedAt": "2026-02-11T15:20:47.478Z",
+    "capturedAt": "2026-02-21T15:15:12.585Z",
     "exports": {
       "default": {
         "name": "default",
@@ -5036,7 +5036,7 @@
   },
   "init-features": {
     "name": "init-features",
-    "capturedAt": "2026-02-11T15:20:47.478Z",
+    "capturedAt": "2026-02-21T15:15:12.585Z",
     "exports": {
       "AVAILABLE_COMMANDS": {
         "name": "AVAILABLE_COMMANDS",
@@ -5063,7 +5063,7 @@
           "18",
           "19"
         ],
-        "length": 56
+        "length": 62
       },
       "OPTIONAL_FEATURES": {
         "name": "OPTIONAL_FEATURES",
@@ -5121,7 +5121,7 @@
   },
   "vision-analysis-account-detector": {
     "name": "vision-analysis-account-detector",
-    "capturedAt": "2026-02-11T15:20:47.478Z",
+    "capturedAt": "2026-02-21T15:15:12.586Z",
     "exports": {
       "detectAccountRequirements": {
         "name": "detectAccountRequirements",
@@ -5155,7 +5155,7 @@
   },
   "utils-exploration-docs": {
     "name": "utils-exploration-docs",
-    "capturedAt": "2026-02-11T15:20:47.479Z",
+    "capturedAt": "2026-02-21T15:15:12.586Z",
     "exports": {
       "createExplorationDir": {
         "name": "createExplorationDir",
@@ -5306,7 +5306,7 @@
   },
   "init-generators": {
     "name": "init-generators",
-    "capturedAt": "2026-02-11T15:20:47.479Z",
+    "capturedAt": "2026-02-21T15:15:12.586Z",
     "exports": {
       "generateIndexFile": {
         "name": "generateIndexFile",
@@ -5396,7 +5396,7 @@
   },
   "agents-testing-scout": {
     "name": "agents-testing-scout",
-    "capturedAt": "2026-02-11T15:20:47.479Z",
+    "capturedAt": "2026-02-21T15:15:12.587Z",
     "exports": {
       "CONFIG_TEMPLATES": {
         "name": "CONFIG_TEMPLATES",
@@ -5527,7 +5527,7 @@
   },
   "sync": {
     "name": "sync",
-    "capturedAt": "2026-02-11T15:20:47.481Z",
+    "capturedAt": "2026-02-21T15:15:12.589Z",
     "exports": {
       "loadAllTaskStates": {
         "name": "loadAllTaskStates",
@@ -5578,7 +5578,7 @@
   },
   "nvim-setup": {
     "name": "nvim-setup",
-    "capturedAt": "2026-02-11T15:20:47.482Z",
+    "capturedAt": "2026-02-21T15:15:12.589Z",
     "exports": {
       "default": {
         "name": "default",
@@ -5602,7 +5602,7 @@
   },
   "vision-orchestrators-planning": {
     "name": "vision-orchestrators-planning",
-    "capturedAt": "2026-02-11T15:20:47.484Z",
+    "capturedAt": "2026-02-21T15:15:12.591Z",
     "exports": {
       "analyzeRoadmapBreakdown": {
         "name": "analyzeRoadmapBreakdown",
@@ -5629,7 +5629,7 @@
   },
   "pm-hierarchy-integration-wizard": {
     "name": "pm-hierarchy-integration-wizard",
-    "capturedAt": "2026-02-11T15:20:47.485Z",
+    "capturedAt": "2026-02-21T15:15:12.591Z",
     "exports": {
       "promptForIntegrations": {
         "name": "promptForIntegrations",
@@ -5653,7 +5653,7 @@
   },
   "vision-architecture-api-contracts": {
     "name": "vision-architecture-api-contracts",
-    "capturedAt": "2026-02-11T15:20:47.485Z",
+    "capturedAt": "2026-02-21T15:15:12.591Z",
     "exports": {
       "formatOpenAPISpec": {
         "name": "formatOpenAPISpec",
@@ -5696,7 +5696,7 @@
   },
   "config-agent-config": {
     "name": "config-agent-config",
-    "capturedAt": "2026-02-11T15:20:47.485Z",
+    "capturedAt": "2026-02-21T15:15:12.591Z",
     "exports": {
       "createAgentOnlyLauncher": {
         "name": "createAgentOnlyLauncher",
@@ -5744,7 +5744,7 @@
   },
   "create-phase-dev": {
     "name": "create-phase-dev",
-    "capturedAt": "2026-02-11T15:20:47.486Z",
+    "capturedAt": "2026-02-21T15:15:12.591Z",
     "exports": {
       "runCreatePhaseDev": {
         "name": "runCreatePhaseDev",
