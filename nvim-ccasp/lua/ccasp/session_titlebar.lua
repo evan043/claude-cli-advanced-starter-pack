@@ -187,17 +187,31 @@ local function setup_click_handlers()
 
       local newest = files[1]
 
-      -- Send the file path to the terminal buffer
+      -- Send the file path directly to the pty channel.
+      -- chansend() bypasses Neovim's modal state entirely, so calling it while
+      -- Neovim is in normal mode (after the winbar click exited terminal mode)
+      -- works correctly — Claude CLI receives the bytes and inserts them at its
+      -- chatbox cursor, regardless of Neovim's current mode.
+      -- Do NOT call sessions.focus() first: its normal!G scroll + startinsert
+      -- run BEFORE chansend, and re-entering terminal mode can send terminal
+      -- focus events (\x1b[I) that cause Claude CLI to reset cursor position,
+      -- making the paste land in the wrong spot when the chatbox was active.
       if session.bufnr and vim.api.nvim_buf_is_valid(session.bufnr) then
-        -- Focus the session window first
-        local sessions = require("ccasp.sessions")
-        sessions.focus(session.id)
+        local chan = vim.bo[session.bufnr].channel
+        if chan and chan > 0 then
+          vim.fn.chansend(chan, newest)
+          vim.notify("Pasted: " .. vim.fn.fnamemodify(newest, ":t"), vim.log.levels.INFO)
+        end
+        -- Re-enter terminal mode AFTER the paste so the user can resume typing
+        -- immediately without needing to click back into the chatbox.
         vim.schedule(function()
-          -- Ensure we're in terminal mode, then send the path
-          local chan = vim.bo[session.bufnr].channel
-          if chan and chan > 0 then
-            vim.fn.chansend(chan, newest)
-            vim.notify("Pasted: " .. vim.fn.fnamemodify(newest, ":t"), vim.log.levels.INFO)
+          local win = session.winid
+          if win and vim.api.nvim_win_is_valid(win)
+              and vim.api.nvim_get_current_win() == win then
+            local mode = vim.api.nvim_get_mode().mode
+            if mode ~= "t" then
+              vim.cmd("startinsert")
+            end
           end
         end)
       end
