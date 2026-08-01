@@ -63,14 +63,45 @@ export function isCodexUnsupported(content) {
 }
 
 /**
+ * Split leading YAML frontmatter from the body.
+ * Returns { frontmatter, body }; frontmatter is '' when the file has none.
+ */
+function splitFrontmatter(content) {
+  if (!content.startsWith('---\n')) return { frontmatter: '', body: content };
+  const end = content.indexOf('\n---\n', 3);
+  if (end === -1) return { frontmatter: '', body: content };
+  const cut = end + '\n---\n'.length;
+  return { frontmatter: content.slice(0, cut), body: content.slice(cut) };
+}
+
+/**
  * Inject the compat shim into a prompt, but only if it's not already present.
  * Standard path for files without a CODEX-OVERRIDE block.
+ *
+ * The shim goes *after* any YAML frontmatter — prepending it would push the
+ * opening `---` off byte 0 and silently break frontmatter parsing.
  */
 export function injectRuntimeCompatibilityShim(content) {
   if (hasRuntimeCompatibilityShim(content)) {
     return content;
   }
-  return `${getRuntimeCompatibilityShim()}${content}`;
+  const { frontmatter, body } = splitFrontmatter(content);
+  return `${frontmatter}${getRuntimeCompatibilityShim()}${body}`;
+}
+
+/**
+ * Remove a previously-injected compat shim, restoring the original content.
+ * Used to clean Claude-side files that were shimmed by mistake.
+ */
+export function stripRuntimeCompatibilityShim(content) {
+  const start = content.indexOf(COMPAT_START);
+  if (start === -1) return content;
+  const end = content.indexOf(COMPAT_END, start);
+  if (end === -1) return content;
+
+  let cut = end + COMPAT_END.length;
+  if (content[cut] === '\n') cut += 1;
+  return content.slice(0, start) + content.slice(cut);
 }
 
 /**
