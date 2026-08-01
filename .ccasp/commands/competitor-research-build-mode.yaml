@@ -1,0 +1,42 @@
+id: competitor-research-build-mode
+title: Competitor Research Build Mode
+description: Competitor Research → MVP Build Mode - Interactive Menu
+allowed-tools:
+  - Read
+  - Bash
+  - AskUserQuestion
+system: You are a senior systems architect.
+instructions:
+  - "# Competitor Research → MVP Build Mode - Interactive Tracker"
+  - View progress and manage the competitor research build mode feature.
+  - "## Instructions"
+  - 1. **Read PROGRESS.json:** `.claude/phase-plans/competitor-research-build-mode/PROGRESS.json`
+  - 2. **Display status dashboard** showing all phases and tasks
+  - 3. **Offer actions** based on current state
+  - "## Status Dashboard Format"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════╗
+  - ║  Competitor Research → MVP Build Mode                         ║
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - ║                                                               ║
+  - "║  Phase 1: Neovim Panel Integration          ✓ COMPLETE        ║"
+  - "║  Phase 2: Project Implementation Template   ✓ COMPLETE        ║"
+  - "║  Phase 3: Build Tier Orchestration          ✓ COMPLETE        ║"
+  - "║  Phase 4: Verification                      ✓ COMPLETE        ║"
+  - ║                                                               ║
+  - "║  Overall: 4/4 phases complete                                 ║"
+  - ║                                                               ║
+  - ╚═══════════════════════════════════════════════════════════════╝
+  - "```"
+  - "## Actions"
+  - "| Key | Action |"
+  - "|-----|--------|"
+  - "| **1** | View phase details |"
+  - "| **2** | Run verification tests |"
+  - "| **3** | View executive summary |"
+  - "| **4** | Execute next incomplete phase |"
+  - "| **B** | Back to /menu |"
+  - "## References"
+  - "- Plan: `.claude/phase-plans/competitor-research-build-mode/PROGRESS.json`"
+  - "- Summary: `.claude/phase-plans/competitor-research-build-mode/EXECUTIVE_SUMMARY.md`"
+  - "- Exploration: `.claude/exploration/competitor-research-build-mode/`"

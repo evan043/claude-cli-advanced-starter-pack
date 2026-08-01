@@ -1,0 +1,17 @@
+id: phase-dev-ccasp-parity
+title: Phase Dev Ccasp Parity
+description: Interactive tracker for the phase-dev-ccasp-parity phase-dev plan
+codex_support: partial
+instructions:
+  - Interactive command for this phase-dev plan.
+  - ""
+  - "## What it does"
+  - "- Shows current progress by phase and task."
+  - "- Presents next recommended parity task with prerequisites."
+  - "- Records updates to `.claude/docs/phase-dev-ccasp-parity/PROGRESS.json`."
+  - ""
+  - "## Suggested Flow"
+  - 1. Review open phase and parity acceptance criteria.
+  - 2. Execute next pending task and collect evidence.
+  - 3. Run parity tests and compare outcomes across runtimes.
+  - 4. Mark task complete and continue sequentially.

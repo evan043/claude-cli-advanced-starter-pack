@@ -1,0 +1,130 @@
+id: orchestration-guide
+title: Orchestration Guide
+description: Agent orchestration patterns guide
+codex_support: partial
+model: haiku
+system: You are a senior systems architect.
+instructions:
+  - "# Agent Orchestration Guide"
+  - Quick reference for executing phased development plans with hierarchical agent orchestration.
+  - "## Agent Hierarchy"
+  - "```"
+  - L1 Orchestrator (You/Main)
+  - ├── L2 Frontend Specialist
+  - │   ├── L3 Component Search Worker
+  - │   ├── L3 Style Analyzer Worker
+  - │   └── L3 Test Generator Worker
+  - ├── L2 Backend Specialist
+  - │   ├── L3 API Discovery Worker
+  - │   └── L3 Schema Validator Worker
+  - ├── L2 Testing Specialist
+  - │   └── L3 Coverage Analyzer Worker
+  - └── L2 Deployment Specialist
+  - "    └── L3 Config Validator Worker"
+  - "```"
+  - "## Spawning Agents"
+  - "### Spawn L2 Specialist"
+  - "```javascript"
+  - Task({
+  - '  description: "L2 frontend task",'
+  - "  prompt: `You are an L2 Frontend Specialist."
+  - "TASK_ID: {{taskId}}"
+  - "OBJECTIVE: {{objective}}"
+  - "## Context"
+  - "{{relevantContext}}"
+  - "## Instructions"
+  - 1. Complete the assigned task
+  - 2. Spawn L3 workers for atomic subtasks if needed
+  - 3. Report completion in required format
+  - "## Completion Report Format"
+  - "When done, output:"
+  - "TASK_COMPLETE: {{taskId}}"
+  - "ARTIFACTS: {{files created/modified}}"
+  - "SUMMARY: {{one-line description}}`,"
+  - '  subagent_type: "general-purpose",'
+  - '  model: "sonnet"  // L2 uses Sonnet for balanced capability/cost'
+  - "})"
+  - "```"
+  - "### Spawn L3 Worker"
+  - "```javascript"
+  - Task({
+  - '  description: "L3 search worker",'
+  - "  prompt: `L3 WORKER - ATOMIC TASK"
+  - "TASK: Find all React components that use useState hook"
+  - "SCOPE: src/components/"
+  - Return results only. No modifications.`,
+  - '  subagent_type: "Explore",'
+  - '  model: "haiku"  // L3 uses Haiku for cost efficiency'
+  - "})"
+  - "```"
+  - "## Completion Report Formats"
+  - "### Task Complete"
+  - "```"
+  - "TASK_COMPLETE: P1.3"
+  - "ARTIFACTS: src/components/Button.tsx, src/components/Button.test.tsx"
+  - "SUMMARY: Created reusable Button component with tests"
+  - "```"
+  - "### Task Failed"
+  - "```"
+  - "TASK_FAILED: P2.1"
+  - "ERROR: Cannot connect to database - missing credentials"
+  - "```"
+  - "### Task Blocked"
+  - "```"
+  - "TASK_BLOCKED: P3.2"
+  - "BLOCKER: Requires API endpoint from backend team (Issue #123)"
+  - "```"
+  - "## State Files"
+  - "### Orchestrator State"
+  - "Location: `.claude/orchestrator/state.json`"
+  - "```json"
+  - "{"
+  - '  "status": "active",'
+  - '  "currentPhase": "P1",'
+  - '  "activeAgents": [],'
+  - '  "completedTasks": [],'
+  - '  "pendingTasks": [],'
+  - '  "metrics": { ... }'
+  - "}"
+  - "```"
+  - "### Progress Tracking"
+  - "Location: `.claude/docs/<project>/PROGRESS.json`"
+  - Automatically updated by `progress-tracker` hook when agents report completion.
+  - "## Enforcement Hooks"
+  - "| Hook | Event | Purpose |"
+  - "|------|-------|---------|"
+  - "| `hierarchy-validator` | SubagentStart | Enforce L1→L2→L3 hierarchy |"
+  - "| `orchestrator-enforcer` | PreToolUse | Suggest delegation for direct ops |"
+  - "| `progress-tracker` | PostToolUse | Update PROGRESS.json |"
+  - "| `github-progress-sync` | PostToolUse | Sync to GitHub issues |"
+  - "| `agent-error-recovery` | SubagentStop | Handle failures with retry/escalate |"
+  - "## Domain Detection"
+  - "Tasks are automatically routed based on file paths:"
+  - "| Pattern | Domain | Specialist |"
+  - "|---------|--------|------------|"
+  - "| `*.tsx`, `*.jsx`, `/components/` | frontend | l2-frontend |"
+  - "| `/api/`, `/routes/`, `/services/` | backend | l2-backend |"
+  - "| `*.test.*`, `/__tests__/` | testing | l2-testing |"
+  - "| `Dockerfile`, `*.yml`, `/deploy/` | deployment | l2-deployment |"
+  - "## Error Recovery Strategies"
+  - "| Error Type | Strategy | Action |"
+  - "|------------|----------|--------|"
+  - "| Transient (timeout, network) | Retry | Auto-retry up to 3 times |"
+  - "| Recoverable (lint, type error) | Retry | Retry with fixes |"
+  - "| Fatal (permission, not found) | Escalate | Report to user |"
+  - "| Max retries exceeded | Abort | Mark failed, continue |"
+  - "## Audit Logging"
+  - "All agent actions logged to:"
+  - "`.claude/logs/orchestrator-audit.jsonl`"
+  - "View recent logs:"
+  - "```bash"
+  - tail -50 .claude/logs/orchestrator-audit.jsonl | jq .
+  - "```"
+  - "## Quick Commands"
+  - "| Command | Purpose |"
+  - "|---------|---------|"
+  - "| `/phase-track` | View current phase progress |"
+  - "| `/github-update` | Sync with GitHub Project Board |"
+  - "| `/create-phase-dev orchestrated` | Create new orchestrated plan |"
+  - ---
+  - "*Agent Orchestration Guide - CCASP v1.8.x*"

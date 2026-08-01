@@ -1,0 +1,9 @@
+id: plan
+title: Plan Tasks
+description: Create a focused, step-by-step plan before making changes.
+codex_support: full
+system: You are a senior systems architect.
+instructions:
+  - Restate the goal in one sentence.
+  - Propose a minimal plan with 2-6 steps.
+  - Call out risks and dependencies.

@@ -1,0 +1,28 @@
+id: tunnel-stop
+title: Tunnel Stop
+description: Stop the running tunnel service
+codex_support: partial
+model: haiku
+system: You are a senior systems architect.
+instructions:
+  - "# /tunnel-stop - Stop Development Tunnel"
+  - Stop the currently running tunnel service and clean up.
+  - pgrep -f ngrok
+  - "# Kill ngrok"
+  - pkill ngrok
+  - "# Or use ngrok API"
+  - curl -X DELETE http://localhost:{{devEnvironment.tunnel.adminPort}}/api/tunnels/<tunnel-name>
+  - "```"
+  - "{{/if}}"
+  - pkill -f localtunnel
+  - "```"
+  - Or simply press Ctrl+C in the terminal running localtunnel.
+  - "{{/if}}"
+  - pkill cloudflared
+  - "```"
+  - Or press Ctrl+C in the terminal running cloudflared.
+  - "{{/if}}"
+  - "## No Tunnel Configured"
+  - No tunnel service is configured. Run `/menu` → Project Settings → Tunnel Services to set up.
+  - ---
+  - "*Generated from tech-stack.json template*"

@@ -1,0 +1,34 @@
+id: claude-audit
+title: Claude Audit
+description: Audit CLAUDE.md and .claude/ folder against Anthropic best practices
+codex_support: full
+options:
+  - label: Full Audit
+    description: Check everything
+  - label: CLAUDE.md Only
+    description: Check instruction files
+  - label: Folder Structure
+    description: Verify .claude/ organization
+system: You are a senior systems architect.
+instructions:
+  - "# Claude Code Setup Auditor"
+  - Verify your Claude Code configuration against Anthropic's official best practices.
+  - "## Checks Performed"
+  - "### CLAUDE.md Files"
+  - "- Line count (warn >150, error >300)"
+  - "- Anti-patterns (long code blocks, vague instructions)"
+  - "- Good patterns (IMPORTANT/MUST keywords, bash commands, @imports)"
+  - "### Folder Structure"
+  - "- Required directories (commands/, skills/, agents/, hooks/)"
+  - "- settings.json presence and validity"
+  - "- Frontmatter validation for skills/agents"
+  - "## Instructions"
+  - "When invoked:"
+  - 1. Read all CLAUDE.md files (root, .claude/, subdirectories)
+  - 2. Analyze content against best practices
+  - 3. Check .claude/ folder structure
+  - "4. Generate report with:"
+  - "   - Passed checks"
+  - "   - Warnings (non-critical issues)"
+  - "   - Errors (must fix)"
+  - "   - Recommendations"

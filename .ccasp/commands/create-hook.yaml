@@ -1,0 +1,31 @@
+id: create-hook
+title: Create Hook
+description: Create enforcement hooks for Claude Code
+codex_support: full
+options:
+  - label: PreToolUse
+    description: Validate before tool execution
+  - label: PostToolUse
+    description: Process after tool completion
+  - label: UserPromptSubmit
+    description: Intercept user messages
+system: You are a senior systems architect.
+instructions:
+  - "# Claude Code Hook Creator"
+  - Create hooks that enforce patterns, validate inputs, and process outputs.
+  - "## Hook Types"
+  - "- **PreToolUse** - Runs before a tool executes (validation, blocking)"
+  - "- **PostToolUse** - Runs after tool completes (logging, modification)"
+  - "- **UserPromptSubmit** - Intercepts user messages (routing, preprocessing)"
+  - "## Hook Structure"
+  - "Hooks are created in `.claude/hooks/` as JavaScript files:"
+  - "- Export async function matching event type"
+  - "- Receive context with tool name, input, user message"
+  - "- Return continue/block decision"
+  - "## Instructions"
+  - "When invoked:"
+  - 1. Ask for hook purpose and trigger
+  - 2. Select event type
+  - 3. Define target tools (for PreToolUse/PostToolUse)
+  - 4. Generate hook file with proper exports
+  - 5. Add to settings.local.json hooks array

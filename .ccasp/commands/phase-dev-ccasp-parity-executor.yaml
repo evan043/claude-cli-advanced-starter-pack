@@ -1,0 +1,17 @@
+id: phase-dev-ccasp-parity-executor
+title: Phase Dev Ccasp Parity Executor
+description: Execute phases of the phase-dev-ccasp-parity phase-dev plan
+codex_support: partial
+instructions:
+  - Execute the phase-dev plan non-interactively.
+  - ""
+  - "## Inputs"
+  - "- Progress file: `.claude/docs/phase-dev-ccasp-parity/PROGRESS.json`"
+  - "- Exploration docs: `.claude/exploration/phase-dev-ccasp-parity/`"
+  - ""
+  - "## Execution Protocol"
+  - 1. Load PROGRESS.json and select the first phase with pending tasks.
+  - 2. Execute tasks in order while preserving parity contract constraints.
+  - 3. Validate behavior-level parity and record evidence per task.
+  - 4. Update task status, phase status, and completion percentage.
+  - 5. Stop on blockers, record risk, and wait for operator decision.

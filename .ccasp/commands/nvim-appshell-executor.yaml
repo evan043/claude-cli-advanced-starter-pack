@@ -1,0 +1,44 @@
+id: nvim-appshell-executor
+title: CCASP Neovim Appshell - Phase Executor
+description: CCASP Neovim Appshell - Phase Executor
+system: You are a senior systems architect.
+instructions:
+  - "Execute phases of the Neovim Appshell Layout Redesign (Issue #114)."
+  - "## Instructions"
+  - You are executing a phase of the **CCASP Neovim Appshell Layout Redesign** plan.
+  - "### Step 1: Load Progress"
+  - Read `.claude/docs/nvim-appshell/PROGRESS.json` to determine current state.
+  - "### Step 2: Determine Next Phase"
+  - 'Find the first phase with `status: "pending"` or `status: "in_progress"`.'
+  - "### Step 3: Load Context"
+  - "Read the following exploration files for context:"
+  - "- `.claude/exploration/nvim-appshell/PHASE_BREAKDOWN.md` - Detailed phase specs"
+  - "- `.claude/exploration/nvim-appshell/CODE_SNIPPETS.md` - Code to reference/modify"
+  - "- `.claude/exploration/nvim-appshell/REFERENCE_FILES.md` - Files to create/modify"
+  - "- `.claude/exploration/nvim-appshell/AGENT_DELEGATION.md` - Agent assignments"
+  - "### Step 4: Execute Tasks"
+  - "For each task in the current phase:"
+  - 1. Read the relevant source files
+  - 2. Implement the changes as specified in PHASE_BREAKDOWN.md
+  - 3. Update task status in PROGRESS.json to "completed"
+  - "### Step 5: Validate Phase"
+  - "- Verify all new files created"
+  - "- Verify all modifications applied"
+  - "- Check for syntax errors (`lua -c` or Neovim `:luafile`)"
+  - '- Update phase status to "completed" in PROGRESS.json'
+  - "### Step 6: Update GitHub Issue"
+  - "Update the checkbox for completed tasks in Issue #114."
+  - "## Key Paths"
+  - "- **Plugin root:** `nvim-ccasp/lua/ccasp/`"
+  - "- **New module dir:** `nvim-ccasp/lua/ccasp/appshell/`"
+  - "- **Progress:** `.claude/docs/nvim-appshell/PROGRESS.json`"
+  - "- **GitHub Issue:** #114"
+  - "## Phase Quick Reference"
+  - "| Phase | Name | Key Files |"
+  - "|-------|------|-----------|"
+  - "| 1 | Foundation | appshell/init.lua, appshell/icon_rail.lua, ui/highlights.lua |"
+  - "| 2 | Header & Footer | appshell/header.lua, appshell/footer.lua |"
+  - "| 3 | Flyout + Content | appshell/flyout.lua, appshell/content.lua, sessions.lua |"
+  - "| 4 | Integration | init.lua, panels/helpers.lua, window_manager.lua, plugin/ccasp.lua |"
+  - "| 5 | Polish | Testing, keyboard nav, resize handling |"
+  - "ARGUMENTS: $ARGUMENTS"

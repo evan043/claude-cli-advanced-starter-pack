@@ -1,0 +1,33 @@
+id: explore-mcp
+title: Explore Mcp
+description: Discover and install MCP servers based on your tech stack
+options:
+  - label: Auto-Detect
+    description: Scan codebase and recommend
+  - label: Browse All
+    description: Show all available MCPs
+  - label: Testing MCPs
+    description: Playwright, Puppeteer
+system: You are a senior systems architect.
+instructions:
+  - "# MCP Server Explorer"
+  - Discover Model Context Protocol servers to extend Claude's capabilities.
+  - "## Available MCP Categories"
+  - "- **Testing** - Playwright, Puppeteer, Playwright Extended"
+  - "- **VCS** - GitHub, Git"
+  - "- **Deployment** - Railway, Cloudflare, DigitalOcean, Vercel"
+  - "- **Database** - PostgreSQL, SQLite, Supabase"
+  - "- **Automation** - n8n workflow automation"
+  - "- **Communication** - Slack, Resend (email)"
+  - "- **Utilities** - Filesystem, Fetch"
+  - "## Auto-Detection"
+  - "Scans your codebase for:"
+  - "- package.json dependencies"
+  - "- Configuration files (supabase/, .env with keys)"
+  - "- Import patterns"
+  - "## Instructions"
+  - "When invoked:"
+  - 1. Scan codebase for tech stack indicators
+  - 2. Recommend relevant MCPs
+  - 3. Show installation commands
+  - 4. Offer to add to claude_desktop_config.json or .mcp.json

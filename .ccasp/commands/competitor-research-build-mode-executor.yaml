@@ -1,0 +1,51 @@
+id: competitor-research-build-mode-executor
+title: Competitor Research Build Mode Executor
+description: Execute phases of the Competitor Research → MVP Build Mode plan
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Task
+  - AskUserQuestion
+system: You are a senior systems architect.
+instructions:
+  - "# Competitor Research → MVP Build Mode - Phase Executor"
+  - Execute individual phases of the competitor-research-build-mode plan.
+  - "## Instructions"
+  - 1. **Read current state:** `.claude/phase-plans/competitor-research-build-mode/PROGRESS.json`
+  - 2. **Find next incomplete phase** — execute its tasks in order
+  - 3. **After each task:** Update PROGRESS.json status to "complete"
+  - 4. **After each phase:** Run verification tests
+  - 5. **Report results** back to the user
+  - "## Phase Details"
+  - "### Phase 1: Neovim Panel Integration"
+  - "- Add `competitor_research = false` to storage.lua defaults"
+  - '- Add "MARKET RESEARCH" section to ui.lua'
+  - "- Update test assertions for 14 features"
+  - "### Phase 2: Project Implementation Template"
+  - "- Add Step 0.5 schema/mapping/display for competitor_research"
+  - "- Write full Step 1.8 (1.8a-1.8i) workflow"
+  - "- Add Step 8 summary and build-tier tips"
+  - "### Phase 3: Build Tier Awareness in Orchestration"
+  - "- Add build tier check to phase-dev-plan.template.md"
+  - "- Add build tier check to create-roadmap.template.md"
+  - "### Phase 4: Verification"
+  - "- Run project_config_test.lua (expect 17 passed)"
+  - "- Run project_config_bridge_test.lua (expect 29 passed)"
+  - "- Run Node.js syntax checks"
+  - "## Verification Commands"
+  - "```bash"
+  - "# Config test"
+  - nvim --headless --clean -c "lua vim.opt.rtp:prepend('nvim-ccasp')" -c "luafile nvim-ccasp/tests/project_config_test.lua" 2>&1
+  - "# Bridge test"
+  - nvim --headless --clean -c "lua vim.opt.rtp:prepend('nvim-ccasp')" -c "luafile nvim-ccasp/tests/project_config_bridge_test.lua" 2>&1
+  - "# Node syntax"
+  - node --check src/commands/detect-tech-stack.js && node --check src/commands/tech-stack/patterns.js
+  - "```"
+  - "## References"
+  - "- Exploration: `.claude/exploration/competitor-research-build-mode/`"
+  - "- Plan: `.claude/phase-plans/competitor-research-build-mode/PROGRESS.json`"
+  - "- Summary: `.claude/phase-plans/competitor-research-build-mode/EXECUTIVE_SUMMARY.md`"

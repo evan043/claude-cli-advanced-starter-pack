@@ -1,0 +1,41 @@
+id: commercial-compliance-framework
+title: Commercial Compliance Framework — Interactive Menu
+description: Commercial Compliance Framework — Interactive Menu
+system: You are a senior systems architect.
+instructions:
+  - View status and manage the Commercial Compliance Framework integration plan.
+  - ---
+  - "## Plan Overview"
+  - "- **Name**: Commercial Compliance Framework — Full Integration"
+  - "- **Slug**: `commercial-compliance-framework`"
+  - "- **Scale**: Large (L)"
+  - "- **GitHub Issue**: #134"
+  - "## Quick Actions"
+  - "Display current status and offer actions:"
+  - 1. Read `.claude/docs/commercial-compliance-framework/PROGRESS.json`
+  - 2. Calculate phase completion
+  - "3. Display status dashboard:"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════╗
+  - ║  COMMERCIAL COMPLIANCE FRAMEWORK                              ║
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - ║                                                              ║
+  - "║  Overall: [████████████████████░] 95%                        ║"
+  - "║  Phases: 6/7 complete                                        ║"
+  - "║  GitHub: #134                                                ║"
+  - ║                                                              ║
+  - "║  Phase 1: Templates .............. ✅ COMPLETE               ║"
+  - "║  Phase 2: Schema & Code ......... ✅ COMPLETE               ║"
+  - "║  Phase 3: Project Impl Template .. ✅ COMPLETE               ║"
+  - "║  Phase 4: Create Roadmap Template  ✅ COMPLETE               ║"
+  - "║  Phase 5: Phase Dev Template ..... ✅ COMPLETE               ║"
+  - "║  Phase 6: Roadmap Track Template . ✅ COMPLETE               ║"
+  - "║  Phase 7: Verify & Commit ....... ⏳ PENDING                ║"
+  - ║                                                              ║
+  - ╚═══════════════════════════════════════════════════════════════╝
+  - "```"
+  - "4. Offer actions:"
+  - "   - **Execute next phase** → Run `/commercial-compliance-framework-executor`"
+  - "   - **View exploration** → Show exploration summary"
+  - "   - **View executive summary** → Show EXECUTIVE_SUMMARY.md"
+  - "   - **Open GitHub issue** → `gh issue view 134 --web`"

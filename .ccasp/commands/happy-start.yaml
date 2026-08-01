@@ -1,0 +1,50 @@
+id: happy-start
+title: Happy Start
+description: Start a Happy Mode session for mobile app integration
+codex_support: unsupported
+model: sonnet
+system: You are a senior systems architect.
+instructions:
+  - "# /happy-start - Launch Happy CLI Session"
+  - Launches a new PowerShell terminal with Happy CLI wrapping Claude Code for mobile app control.
+  - "## What This Does"
+  - 1. Opens a **new PowerShell window** in the current project directory
+  - 2. Runs `npx happy-coder` which wraps Claude Code
+  - 3. Your paired Happy mobile app automatically sees the new session
+  - 4. Control this Claude session from your phone
+  - "## Prerequisites"
+  - "- `happy-coder` npm package installed globally: `npm install -g happy-coder`"
+  - "- Claude Code CLI authenticated: `claude auth`"
+  - "- Happy mobile app paired (run `happy auth` once to pair)"
+  - "## Instructions for Claude"
+  - "**When this command is invoked, IMMEDIATELY execute the following Bash command:**"
+  - "```bash"
+  - wt.exe -d "F:\1 - Benefits-Outreach-360 (Web)\tools\claude-cli-advanced-starter-pack" powershell -NoExit -ExecutionPolicy Bypass -File "F:\1 - Benefits-Outreach-360 (Web)\tools\claude-cli-advanced-starter-pack/bin/happy-start.ps1"
+  - "```"
+  - "This uses the `happy-start.ps1` PowerShell script which:"
+  - 1. Clears the `HAPPY_SERVER_URL` environment variable (prevents 401 auth errors)
+  - 2. Launches the `happy` CLI with the full path
+  - "Note: Uses Windows Terminal (`wt.exe`) with PowerShell to launch a completely independent terminal window. The PowerShell script approach avoids command parsing issues with inline commands."
+  - "After executing, respond with:"
+  - "```"
+  - Happy Session Started
+  - ─────────────────────
+  - A new PowerShell window has opened with Claude Code wrapped by Happy.
+  - Your Happy mobile app should now see this session.
+  - You can control Claude from your phone.
+  - This terminal will close normally. The Happy session runs in the new window.
+  - "```"
+  - "## Happy CLI Flags"
+  - "| Flag | Description |"
+  - "|------|-------------|"
+  - "| `npx happy-coder` | Start Claude Code wrapped by Happy |"
+  - "| `npx happy-coder -m opus` | Use Opus model |"
+  - "| `npx happy-coder -p auto` | Auto-approve permissions |"
+  - "| `npx happy-coder auth` | Pair with mobile app (one-time setup) |"
+  - "## Project Configuration"
+  - "| Setting | Value |"
+  - "|---------|-------|"
+  - "| Dashboard URL | {{happyMode.dashboardUrl}} |"
+  - "| Default Verbosity | condensed |"
+  - ---
+  - "*Requires: happy-coder npm package*"

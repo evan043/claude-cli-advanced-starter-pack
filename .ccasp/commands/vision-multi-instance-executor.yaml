@@ -1,0 +1,80 @@
+id: vision-multi-instance-executor
+title: Vision Multi-Instance & Decision Engine - Phase Executor
+description: Vision Multi-Instance & Decision Engine - Phase Executor
+system: You are a senior systems architect.
+instructions:
+  - "Execute phases of the Vision Multi-Instance & Decision Engine plan (GitHub Issue #115)."
+  - ---
+  - "## Context Loading"
+  - "Before executing any phase, load the plan context:"
+  - 1. **Read PROGRESS.json:** `.claude/docs/vision-multi-instance/PROGRESS.json`
+  - 2. **Read exploration files:** `.claude/exploration/vision-multi-instance/`
+  - '3. **Identify current phase:** Find the first phase with `status: "not_started"` or `status: "in_progress"`'
+  - "## Execution Protocol"
+  - "### Phase Selection"
+  - "Use AskUserQuestion to confirm which phase to execute:"
+  - "```"
+  - Which phase should I execute?
+  - 1. Vision Registry & Multi-Instance Foundation (5 tasks)
+  - 2. Decision Engine (4 tasks)
+  - 3. Multi-Vision CLI & UX (3 tasks)
+  - 4. Template & Slash Command Updates (3 tasks)
+  - 5. Testing & Backward Compatibility (4 tasks)
+  - "```"
+  - "### Per-Phase Execution"
+  - "For the selected phase:"
+  - 1. **Read the phase tasks** from PROGRESS.json
+  - 2. **Read reference files** from `.claude/exploration/vision-multi-instance/REFERENCE_FILES.md`
+  - 3. **Read code snippets** from `.claude/exploration/vision-multi-instance/CODE_SNIPPETS.md`
+  - 4. **Read agent delegation** from `.claude/exploration/vision-multi-instance/AGENT_DELEGATION.md`
+  - 5. **Deploy appropriate agents** based on AGENT_DELEGATION.md assignments
+  - 6. **Execute each task** in order, marking completed in PROGRESS.json after each
+  - 7. **Run `npm test`** (syntax validation) after code changes
+  - 8. **Update PROGRESS.json** completion percentages after each task
+  - "### Task Completion Protocol"
+  - "After completing each task:"
+  - "```javascript"
+  - // Update task in PROGRESS.json
+  - task.completed = true;
+  - task.status = "completed";
+  - task.completed_at = new Date().toISOString();
+  - // Recalculate phase completion
+  - phase.completion_percentage = Math.round((completedTasks / totalTasks) * 100);
+  - // Recalculate overall completion
+  - progress.completion_percentage = Math.round(totalPhaseCompletion / totalPhases);
+  - "```"
+  - "### Phase-Specific Instructions"
+  - "#### Phase 1: Vision Registry & Multi-Instance Foundation"
+  - "- Start with `registry.js` (task 1) - this is the foundation"
+  - "- Then upgrade locking (task 2) - needed by registry"
+  - "- Then slug uniqueness (task 3) - uses registry"
+  - "- Then wire into store (task 4) - integrates everything"
+  - "- Finally update exports (task 5)"
+  - "- **Key pattern:** Use `proper-lockfile` npm package or implement atomic temp+rename"
+  - "#### Phase 2: Decision Engine"
+  - "- Start with `decision-engine.js` (task 1) - core logic, pure functions"
+  - "- Then enhance parser (task 2) - provides richer input"
+  - "- Then update executor (task 3) - consumes decision"
+  - "- Finally add DECISION stage (task 4) - lifecycle integration"
+  - "- **Key pattern:** Weighted scoring matrix, return confidence + reasoning"
+  - "#### Phase 3: Multi-Vision CLI & UX"
+  - "- Depends on Phase 1 (registry) and Phase 2 (decision engine)"
+  - "- Update init first (task 1) - most user-facing"
+  - "- Then menu (task 2) - discovery surface"
+  - "- Then operations (task 3) - management utilities"
+  - "#### Phase 4: Templates"
+  - "- Depends on Phases 1-3 for new APIs"
+  - "- Update existing templates then create new one"
+  - "#### Phase 5: Testing"
+  - "- Run after all code changes"
+  - "- Focus on backward compatibility first"
+  - "## Arguments"
+  - "- `/vision-multi-instance-executor` - Interactive phase selection"
+  - "- `/vision-multi-instance-executor {phase_number}` - Execute specific phase"
+  - "- `/vision-multi-instance-executor next` - Execute next incomplete phase"
+  - "## Validation"
+  - "After each phase, verify:"
+  - "- [ ] All tasks in phase marked completed"
+  - "- [ ] `npm test` passes"
+  - "- [ ] PROGRESS.json updated with correct percentages"
+  - "- [ ] No regressions in existing vision commands"

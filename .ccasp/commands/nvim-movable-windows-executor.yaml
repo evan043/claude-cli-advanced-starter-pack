@@ -1,0 +1,143 @@
+id: nvim-movable-windows-executor
+title: Neovim Movable Windows - Phase Executor
+description: Neovim Movable Windows - Phase Executor
+system: You are a senior systems architect.
+instructions:
+  - Execute phases of the Neovim Movable Windows development plan.
+  - ---
+  - "## Usage"
+  - "```"
+  - /nvim-movable-windows-executor [phase] [task]
+  - "```"
+  - "**Arguments:**"
+  - '- `phase` - Phase number (1-4) or "all"'
+  - '- `task` - Specific task ID (e.g., "1.1") or omit for entire phase'
+  - "## Quick Reference"
+  - "| Phase | Name | Tasks | Status |"
+  - "|-------|------|-------|--------|"
+  - "| 1 | Keyboard Move/Resize | 8 | Pending |"
+  - "| 2 | Mouse Drag Support | 7 | Pending |"
+  - "| 3 | Taskbar Component | 10 | Pending |"
+  - "| 4 | Integration & Polish | 7 | Pending |"
+  - ---
+  - "## Execution Protocol"
+  - "### Before Starting Any Phase"
+  - 1. **Load Progress State:**
+  - "   ```"
+  - "   Read: .claude/docs/nvim-movable-windows/PROGRESS.json"
+  - "   ```"
+  - 2. **Check Phase Dependencies:**
+  - "   - Phase 2 requires Phase 1 complete"
+  - "   - Phase 3 requires Phase 1 complete"
+  - "   - Phase 4 requires Phases 2 and 3 complete"
+  - 3. **Load Reference Materials:**
+  - "   - `.claude/exploration/nvim-movable-windows/CODE_SNIPPETS.md`"
+  - "   - `.claude/exploration/nvim-movable-windows/REFERENCE_FILES.md`"
+  - "### Phase Execution"
+  - "For each task in the phase:"
+  - 1. **Mark task `in_progress`** in PROGRESS.json
+  - 2. **Execute the task** following specifications
+  - 3. **Verify success criteria** are met
+  - 4. **Mark task `completed`** in PROGRESS.json
+  - "5. **Update GitHub issue #77** checkboxes"
+  - "### After Completing Phase"
+  - 1. Update phase status to `completed` in PROGRESS.json
+  - 2. Update summary counts
+  - 3. Run any phase-specific tests
+  - 4. Commit changes with descriptive message
+  - ---
+  - "## Phase 1: Keyboard Move/Resize"
+  - "**Objective:** Add keyboard-based window movement and resizing to all floating panels"
+  - "### Task 1.1: Create window_manager.lua"
+  - "Create `nvim-ccasp/lua/ccasp/window_manager.lua`:"
+  - "```lua"
+  - local M = {}
+  - M.config = {
+  - "  move_step = 5,"
+  - "  resize_step = 2,"
+  - "  min_width = 20,"
+  - "  min_height = 5,"
+  - "}"
+  - function M.move_window(winid, delta_row, delta_col)
+  - "  -- Implementation from CODE_SNIPPETS.md"
+  - end
+  - function M.resize_window(winid, delta_width, delta_height)
+  - "  -- Implementation with constraints"
+  - end
+  - return M
+  - "```"
+  - "### Tasks 1.4-1.8: Add Keymaps to Panels"
+  - "Add to each panel's `setup_keymaps()` function:"
+  - "```lua"
+  - local wm = require("ccasp.window_manager")
+  - -- Movement
+  - vim.keymap.set("n", "<C-Up>", function() wm.move_window(M.winid, -5, 0) end, opts)
+  - vim.keymap.set("n", "<C-Down>", function() wm.move_window(M.winid, 5, 0) end, opts)
+  - vim.keymap.set("n", "<C-Left>", function() wm.move_window(M.winid, 0, -5) end, opts)
+  - vim.keymap.set("n", "<C-Right>", function() wm.move_window(M.winid, 0, 5) end, opts)
+  - -- Resize
+  - vim.keymap.set("n", "<C-S-Up>", function() wm.resize_window(M.winid, 0, -2) end, opts)
+  - vim.keymap.set("n", "<C-S-Down>", function() wm.resize_window(M.winid, 0, 2) end, opts)
+  - "```"
+  - ---
+  - "## Phase 2: Mouse Drag Support"
+  - "**Objective:** Enable mouse-based drag-and-drop repositioning"
+  - "### Task 2.1: Create drag.lua"
+  - Create `nvim-ccasp/lua/ccasp/drag.lua` following patterns from CODE_SNIPPETS.md
+  - "### Tasks 2.2-2.4: Implement Drag System"
+  - "- Detect clicks in title bar (rows 0-1)"
+  - "- Track mouse position during drag"
+  - "- Update window position in real-time"
+  - "- Add border color change during drag"
+  - ---
+  - "## Phase 3: Taskbar Component"
+  - "**Objective:** Implement minimize/restore with taskbar display"
+  - "### Task 3.1: Create taskbar.lua"
+  - "State structure:"
+  - "```lua"
+  - M.taskbar = {
+  - "  minimized = {},  -- { id = { bufnr, config, name, icon } }"
+  - "  order = {},      -- Ordered list of IDs"
+  - "}"
+  - "```"
+  - "### Tasks 3.2-3.5: Minimize/Restore/Statusline"
+  - Follow CODE_SNIPPETS.md for implementation patterns.
+  - "### Tasks 3.6-3.7: Keymaps"
+  - "- `_` to minimize current panel"
+  - "- `<leader>c1-9` to restore by index"
+  - ---
+  - "## Phase 4: Integration & Polish"
+  - "**Objective:** Complete integration, configuration, and documentation"
+  - "### Task 4.1: Update init.lua"
+  - "```lua"
+  - M.window_manager = require("ccasp.window_manager")
+  - M.taskbar = require("ccasp.taskbar")
+  - M.drag = require("ccasp.drag")
+  - "```"
+  - "### Task 4.2: Configuration Options"
+  - "Add to default config:"
+  - "```lua"
+  - window_manager = {
+  - "  enabled = true,"
+  - "  drag_enabled = true,"
+  - "  taskbar = {"
+  - "    enabled = true,"
+  - "    max_items = 9,"
+  - "  },"
+  - "  move_step = 5,"
+  - "  resize_step = 2,"
+  - "}"
+  - "```"
+  - ---
+  - "## Files"
+  - "| File | Purpose |"
+  - "|------|---------|"
+  - "| `.claude/docs/nvim-movable-windows/PROGRESS.json` | State tracking |"
+  - "| `.claude/exploration/nvim-movable-windows/` | Research documentation |"
+  - "| GitHub Issue #77 | External tracking |"
+  - "## Agent Assignments"
+  - "| Agent | Phases |"
+  - "|-------|--------|"
+  - "| l2-frontend-specialist | 1, 2, 3, 4 |"
+  - "| l2-testing-specialist | 2, 4 |"
+  - "| l3-worker | 4 (docs only) |"

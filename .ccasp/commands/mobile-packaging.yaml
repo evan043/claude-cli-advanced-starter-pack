@@ -1,0 +1,46 @@
+id: mobile-packaging
+title: Mobile Packaging
+description: Mobile App Packaging Feature — Interactive Menu
+allowed-tools:
+  - Read
+  - Bash
+  - Task
+  - AskUserQuestion
+model: sonnet
+system: You are a senior systems architect.
+instructions:
+  - "# Mobile App Packaging Feature — Interactive Tracker"
+  - Track and execute the Mobile App Packaging feature for CCASP.
+  - "## On Invocation"
+  - 1. **Read current state:**
+  - "   ```"
+  - "   Read .claude/docs/mobile-packaging/PROGRESS.json"
+  - "   ```"
+  - 2. **Display status dashboard:**
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════╗
+  - ║  Mobile App Packaging Feature                                ║
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - ║                                                               ║
+  - "║  Status: {status}                                             ║"
+  - ║                                                               ║
+  - "║  Phase 1: Test File Alignment                                 ║"
+  - "║    Task 1.1: Update project_config_test.lua      [{status}]   ║"
+  - "║    Task 1.2: Update project_config_bridge_test   [{status}]   ║"
+  - "║    Task 1.3: Run verification tests              [{status}]   ║"
+  - ║                                                               ║
+  - ╚═══════════════════════════════════════════════════════════════╝
+  - "```"
+  - 3. **Ask user what to do:**
+  - "```"
+  - 'header: "Action"'
+  - 'question: "What would you like to do?"'
+  - "options:"
+  - '  - "Execute next phase — run the executor to complete pending tasks"'
+  - '  - "View exploration — show exploration summary and findings"'
+  - '  - "View executive summary — read the plan overview"'
+  - '  - "Back to /menu"'
+  - "```"
+  - 4. **If Execute:** Invoke `/mobile-packaging-executor`
+  - 5. **If View exploration:** Read and display `.claude/exploration/mobile-packaging/EXPLORATION_SUMMARY.md`
+  - 6. **If View executive summary:** Read and display `.claude/docs/mobile-packaging/EXECUTIVE_SUMMARY.md`

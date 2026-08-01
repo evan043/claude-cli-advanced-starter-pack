@@ -1,0 +1,96 @@
+id: ai-constitution-framework-executor
+title: AI Constitution Framework Phase Executor
+description: AI Constitution Framework Phase Executor
+system: You are a senior systems architect.
+instructions:
+  - Execute phases of the AI Constitution Framework implementation.
+  - ---
+  - "## Usage"
+  - "```"
+  - /ai-constitution-framework-executor [phase_number]
+  - "```"
+  - "**Arguments:**"
+  - "- `phase_number` (optional): 1-5, defaults to next incomplete phase"
+  - ---
+  - "## Execution Protocol"
+  - "### Before Starting Any Phase"
+  - 1. **Read current progress:**
+  - "   ```"
+  - "   Read .claude/docs/ai-constitution-framework/PROGRESS.json"
+  - "   ```"
+  - 2. **Verify prerequisites:**
+  - "   - Previous phases must be complete (except Phase 1)"
+  - "   - Check dependencies in task definitions"
+  - 3. **Create git checkpoint:**
+  - "   ```bash"
+  - "   git stash  # If needed"
+  - '   git log -1 --format="%H" > .claude/cache/phase-checkpoint.txt'
+  - "   ```"
+  - "### Phase Execution"
+  - "For each task in the phase:"
+  - 1. **Mark task in_progress** in PROGRESS.json
+  - 2. **Read reference files** from exploration docs
+  - 3. **Implement the task** following acceptance criteria
+  - 4. **Validate** against criteria
+  - 5. **Mark task completed** in PROGRESS.json
+  - 6. **Update phase completion_percentage**
+  - "### After Phase Completion"
+  - 1. **Run validation gate checks**
+  - 2. **Update PROGRESS.json** with phase status
+  - 3. **Commit changes:**
+  - "   ```bash"
+  - "   git add -A"
+  - '   git commit -m "feat(constitution): complete Phase N - Title"'
+  - "   ```"
+  - ---
+  - "## Phase Details"
+  - "### Phase 1: Schema Definition"
+  - "**Tasks:** P1-T1, P1-T2, P1-T3"
+  - "**Agent:** l2-backend-specialist"
+  - "**Files to Create:**"
+  - "- `templates/constitution.schema.json`"
+  - "- `templates/docs/AI_CONSTITUTION.template.yaml`"
+  - "- `src/utils/constitution-validator.js`"
+  - "### Phase 2: Hook Implementation"
+  - "**Tasks:** P2-T1, P2-T2, P2-T3, P2-T4"
+  - "**Agent:** l2-backend-specialist"
+  - "**Files to Create:**"
+  - "- `templates/hooks/constitution-enforcer.template.js`"
+  - "- `tests/hooks/constitution-enforcer.test.js`"
+  - "### Phase 3: Neovim Integration"
+  - "**Tasks:** P3-T1, P3-T2, P3-T3, P3-T4"
+  - "**Agent:** l2-frontend-specialist"
+  - "**Files to Create:**"
+  - "- `templates/nvim/lua/ccasp/ui/constitution-editor.lua`"
+  - "**Files to Modify:**"
+  - "- `templates/nvim/lua/ccasp/ui/sidebar.lua`"
+  - "### Phase 4: CLI Generator"
+  - "**Tasks:** P4-T1, P4-T2, P4-T3"
+  - "**Agent:** l2-backend-specialist"
+  - "**Files to Create:**"
+  - "- `src/commands/constitution-init.js`"
+  - "**Files to Modify:**"
+  - "- `src/cli/menu.js`"
+  - "- `src/commands/init.js`"
+  - "### Phase 5: Documentation"
+  - "**Tasks:** P5-T1, P5-T2, P5-T3"
+  - "**Agent:** general-purpose"
+  - "**Files to Modify:**"
+  - "- `templates/docs/AI_ARCHITECTURE_CONSTITUTION.template.md`"
+  - "- `CLAUDE.md`"
+  - "- `README.md`"
+  - ---
+  - "## Reference Files"
+  - "| File | Purpose |"
+  - "|------|---------|"
+  - "| `.claude/docs/ai-constitution-framework/PROGRESS.json` | Progress tracking |"
+  - "| `.claude/exploration/ai-constitution-framework/CODE_SNIPPETS.md` | Code patterns |"
+  - "| `.claude/exploration/ai-constitution-framework/REFERENCE_FILES.md` | File locations |"
+  - "| `.claude/exploration/ai-constitution-framework/AGENT_DELEGATION.md` | Agent assignments |"
+  - ---
+  - "## Context Safety"
+  - "- **Max context per phase:** See AGENT_DELEGATION.md for limits"
+  - "- **Checkpoint at 70%:** Pause and offer /compact"
+  - "- **AOP Protocol:** Write details to files, return summaries only"
+  - ---
+  - "ARGUMENTS: $ARGUMENTS"

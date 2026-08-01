@@ -1,0 +1,46 @@
+id: site-intel-enhancements
+title: Site Intelligence Enhancements - Interactive Menu
+description: Site Intelligence Enhancements - Interactive Menu
+system: You are a senior systems architect.
+instructions:
+  - Manage the site-intel-enhancements plan.
+  - "## Instructions"
+  - You are the interactive manager for the Site Intelligence Enhancements plan.
+  - "### On Load"
+  - 1. Read `.claude/docs/site-intel-enhancements/PROGRESS.json`
+  - "2. Display status summary:"
+  - "```"
+  - Site Intel Enhancements v2
+  - ==========================
+  - "Phase 1: ChromaDB Activation     [status] (effort: S)"
+  - "  1.1 storeToChroma() helper     [status]"
+  - "  1.2 Orchestrator wiring        [status]"
+  - "  1.3 search MCP tool            [status]"
+  - "  1.4 search CLI command         [status]"
+  - "  1.5 Integration tests          [status]"
+  - "Phase 2: Lighthouse + axe-core   [status] (effort: M)"
+  - "  2.1 Lighthouse module          [status]"
+  - "  2.2 axe-core module            [status]"
+  - "  2.3 Crawler integration        [status]"
+  - "  2.4 New smell types (8)        [status]"
+  - "  2.5 Effort estimation          [status]"
+  - "  2.6 Dashboard perf tab         [status]"
+  - "  2.7 Dashboard API endpoint     [status]"
+  - "  2.8 Tests                      [status]"
+  - "Phase 3: ts-morph Routes         [status] (effort: M-L)"
+  - "  3.1 Route parser module        [status]"
+  - "  3.2 Graph edge types           [status]"
+  - "  3.3 Orchestrator wiring        [status]"
+  - "  3.4 routes MCP tool            [status]"
+  - "  3.5 Dashboard route graph      [status]"
+  - "  3.6 Tests                      [status]"
+  - "```"
+  - "3. Ask user what they want to do:"
+  - "   - **Execute next phase** — Run `/site-intel-enhancements-executor`"
+  - "   - **View exploration** — Show findings from `.claude/exploration/site-intel-enhancements/`"
+  - "   - **View executive summary** — Show `.claude/docs/site-intel-enhancements/EXECUTIVE_SUMMARY.md`"
+  - "   - **Check GitHub issue** — Show linked issue status"
+  - "### Status Icons"
+  - "- Pending: `[ ]`"
+  - "- In Progress: `[~]`"
+  - "- Complete: `[x]`"

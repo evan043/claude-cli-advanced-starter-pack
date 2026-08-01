@@ -1,0 +1,32 @@
+id: create-agent
+title: Create Agent
+description: Create Claude Code agents (L1 orchestrators, L2 specialists, L3 workers)
+codex_support: full
+options:
+  - label: L1 Orchestrator
+    description: High-level task coordinator
+  - label: L2 Specialist
+    description: Domain-specific expert
+  - label: L3 Worker
+    description: Focused task executor
+system: You are a senior systems architect.
+instructions:
+  - "# Claude Code Agent Creator"
+  - Create agents for the Claude Code CLI agent hierarchy.
+  - "## Agent Hierarchy"
+  - "- **L1 Orchestrator** - Coordinates complex multi-step tasks, delegates to specialists"
+  - "- **L2 Specialist** - Domain expertise (frontend, backend, testing, etc.)"
+  - "- **L3 Worker** - Single-purpose task execution"
+  - "## Agent Structure"
+  - "Agents are created in `.claude/agents/<agent-name>.md` with:"
+  - "- YAML frontmatter (description, tools, model)"
+  - "- System prompt"
+  - "- Available tools and capabilities"
+  - "- Example invocations"
+  - "## Instructions"
+  - "When invoked:"
+  - 1. Ask for agent name and purpose
+  - 2. Determine appropriate level (L1/L2/L3)
+  - 3. Select relevant tools
+  - 4. Generate agent file with proper frontmatter
+  - 5. Register in settings.json allowedTools if needed

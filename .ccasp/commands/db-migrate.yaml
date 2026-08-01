@@ -1,0 +1,613 @@
+id: db-migrate
+title: Db Migrate
+description: Database migration management and schema versioning
+codex_support: partial
+allowed-tools: Bash, Read, Write, Grep, Glob
+category: database
+type: project
+complexity: medium
+system: You are a senior systems architect.
+instructions:
+  - "# /db-migrate"
+  - Manage database migrations, schema changes, and seed data.
+  - "## Usage"
+  - "```"
+  - /db-migrate
+  - /db-migrate create --name add_users_table
+  - /db-migrate up
+  - /db-migrate down
+  - /db-migrate status
+  - /db-migrate seed
+  - "```"
+  - "## What It Does"
+  - 1. **Detect ORM/Migration Tool** - Identify Prisma, Knex, Alembic, etc.
+  - 2. **Create Migration** - Generate new migration file
+  - 3. **Run Migrations** - Apply pending migrations
+  - 4. **Rollback** - Revert last migration
+  - 5. **Migration Status** - Check migration state
+  - 6. **Seed Data** - Populate database with test data
+  - ---
+  - "## Step 1: Detect Migration Tool"
+  - No database configuration detected.
+  - ---
+  - "## Step 2: Setup Migration Tool"
+  - "### Prisma"
+  - "Already configured if using Prisma. Check `prisma/schema.prisma`:"
+  - "```prisma"
+  - generator client {
+  - '  provider = "prisma-client-js"'
+  - "}"
+  - datasource db {
+  - '  provider = "{{backend.database}}"'
+  - '  url      = env("DATABASE_URL")'
+  - "}"
+  - "```"
+  - "### TypeORM"
+  - "```bash"
+  - npm install typeorm reflect-metadata
+  - npm install --save-dev @types/node ts-node
+  - "```"
+  - "Create `ormconfig.json`:"
+  - "```json"
+  - "{"
+  - '  "type": "{{backend.database}}",'
+  - '  "host": "localhost",'
+  - '  "port": 3306,'
+  - '  "username": "user",'
+  - '  "password": "password",'
+  - '  "database": "{{projectName}}",'
+  - '  "entities": ["src/entities/**/*.ts"],'
+  - '  "migrations": ["src/migrations/**/*.ts"],'
+  - '  "cli": {'
+  - '    "migrationsDir": "src/migrations"'
+  - "  },"
+  - '  "synchronize": false'
+  - "}"
+  - "```"
+  - "### Sequelize"
+  - "```bash"
+  - npm install sequelize sequelize-cli
+  - "npm install pg pg-hstore  # For PostgreSQL"
+  - "```"
+  - "Initialize:"
+  - "```bash"
+  - npx sequelize-cli init
+  - "```"
+  - "Configure `config/config.json`:"
+  - "```json"
+  - "{"
+  - '  "development": {'
+  - '    "username": "user",'
+  - '    "password": "password",'
+  - '    "database": "{{projectName}}_dev",'
+  - '    "host": "127.0.0.1",'
+  - '    "dialect": "{{backend.database}}"'
+  - "  },"
+  - '  "production": {'
+  - '    "use_env_variable": "DATABASE_URL",'
+  - '    "dialect": "{{backend.database}}"'
+  - "  }"
+  - "}"
+  - "```"
+  - "### Knex.js"
+  - "```bash"
+  - npm install knex
+  - "npm install pg  # For PostgreSQL"
+  - "```"
+  - "Create `knexfile.js`:"
+  - "```javascript"
+  - module.exports = {
+  - "  development: {"
+  - "    client: '{{backend.database}}',"
+  - "    connection: {"
+  - "      host: '127.0.0.1',"
+  - "      port: 3306,"
+  - "      user: 'user',"
+  - "      password: 'password',"
+  - "      database: '{{projectName}}_dev'"
+  - "    },"
+  - "    migrations: {"
+  - "      directory: './migrations'"
+  - "    },"
+  - "    seeds: {"
+  - "      directory: './seeds'"
+  - "    }"
+  - "  },"
+  - "  production: {"
+  - "    client: '{{backend.database}}',"
+  - "    connection: process.env.DATABASE_URL,"
+  - "    migrations: {"
+  - "      directory: './migrations'"
+  - "    }"
+  - "  }"
+  - "};"
+  - "```"
+  - "### Alembic (Python/SQLAlchemy)"
+  - "```bash"
+  - pip install alembic
+  - alembic init alembic
+  - "```"
+  - "Configure `alembic.ini`:"
+  - "```ini"
+  - sqlalchemy.url = {{backend.database}}://user:password@localhost/{{projectName}}
+  - "```"
+  - "Update `alembic/env.py`:"
+  - "```python"
+  - "from backend.models import Base  # Your SQLAlchemy models"
+  - target_metadata = Base.metadata
+  - "```"
+  - "### migrate-mongo (MongoDB)"
+  - "```bash"
+  - npm install migrate-mongo
+  - npx migrate-mongo init
+  - "```"
+  - "Configure `migrate-mongo-config.js`:"
+  - "```javascript"
+  - module.exports = {
+  - "  mongodb: {"
+  - '    url: process.env.MONGODB_URL || "mongodb://localhost:27017",'
+  - '    databaseName: "{{projectName}}",'
+  - "    options: {"
+  - "      useNewUrlParser: true,"
+  - "      useUnifiedTopology: true,"
+  - "    }"
+  - "  },"
+  - '  migrationsDir: "migrations",'
+  - '  changelogCollectionName: "changelog",'
+  - '  migrationFileExtension: ".js"'
+  - "};"
+  - "```"
+  - ---
+  - "## Step 3: Create Migration"
+  - "### Prisma"
+  - "```bash"
+  - "# Create migration from schema changes"
+  - npx prisma migrate dev --name add_users_table
+  - "# The migration file is automatically generated"
+  - "# Location: prisma/migrations/[timestamp]_add_users_table/migration.sql"
+  - "```"
+  - "### TypeORM"
+  - "```bash"
+  - "# Generate migration from entity changes"
+  - npx typeorm migration:generate -n AddUsersTable
+  - "# Or create empty migration"
+  - npx typeorm migration:create -n AddUsersTable
+  - "```"
+  - "Edit `src/migrations/[timestamp]-AddUsersTable.ts`:"
+  - "```typescript"
+  - import { MigrationInterface, QueryRunner, Table } from "typeorm";
+  - export class AddUsersTable1234567890 implements MigrationInterface {
+  - "  public async up(queryRunner: QueryRunner): Promise<void> {"
+  - "    await queryRunner.createTable("
+  - "      new Table({"
+  - '        name: "users",'
+  - "        columns: ["
+  - "          {"
+  - '            name: "id",'
+  - '            type: "uuid",'
+  - "            isPrimary: true,"
+  - '            generationStrategy: "uuid",'
+  - '            default: "uuid_generate_v4()",'
+  - "          },"
+  - "          {"
+  - '            name: "email",'
+  - '            type: "varchar",'
+  - "            isUnique: true,"
+  - "          },"
+  - "          {"
+  - '            name: "name",'
+  - '            type: "varchar",'
+  - "          },"
+  - "          {"
+  - '            name: "created_at",'
+  - '            type: "timestamp",'
+  - '            default: "now()",'
+  - "          },"
+  - "        ],"
+  - "      }),"
+  - "      true"
+  - "    );"
+  - "  }"
+  - "  public async down(queryRunner: QueryRunner): Promise<void> {"
+  - '    await queryRunner.dropTable("users");'
+  - "  }"
+  - "}"
+  - "```"
+  - "### Sequelize"
+  - "```bash"
+  - "# Create migration"
+  - npx sequelize-cli migration:generate --name add-users-table
+  - "```"
+  - "Edit `migrations/[timestamp]-add-users-table.js`:"
+  - "```javascript"
+  - module.exports = {
+  - "  up: async (queryInterface, Sequelize) => {"
+  - "    await queryInterface.createTable('users', {"
+  - "      id: {"
+  - "        type: Sequelize.UUID,"
+  - "        defaultValue: Sequelize.UUIDV4,"
+  - "        primaryKey: true,"
+  - "      },"
+  - "      email: {"
+  - "        type: Sequelize.STRING,"
+  - "        allowNull: false,"
+  - "        unique: true,"
+  - "      },"
+  - "      name: {"
+  - "        type: Sequelize.STRING,"
+  - "        allowNull: false,"
+  - "      },"
+  - "      createdAt: {"
+  - "        type: Sequelize.DATE,"
+  - "        allowNull: false,"
+  - "      },"
+  - "      updatedAt: {"
+  - "        type: Sequelize.DATE,"
+  - "        allowNull: false,"
+  - "      },"
+  - "    });"
+  - "  },"
+  - "  down: async (queryInterface, Sequelize) => {"
+  - "    await queryInterface.dropTable('users');"
+  - "  },"
+  - "};"
+  - "```"
+  - "### Knex.js"
+  - "```bash"
+  - "# Create migration"
+  - npx knex migrate:make add_users_table
+  - "```"
+  - "Edit `migrations/[timestamp]_add_users_table.js`:"
+  - "```javascript"
+  - exports.up = function(knex) {
+  - "  return knex.schema.createTable('users', function(table) {"
+  - "    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));"
+  - "    table.string('email').notNullable().unique();"
+  - "    table.string('name').notNullable();"
+  - "    table.timestamps(true, true);"
+  - "  });"
+  - "};"
+  - exports.down = function(knex) {
+  - "  return knex.schema.dropTable('users');"
+  - "};"
+  - "```"
+  - "### Alembic (Python)"
+  - "```bash"
+  - "# Create migration"
+  - alembic revision -m "add_users_table"
+  - "```"
+  - "Edit `alembic/versions/[revision]_add_users_table.py`:"
+  - "```python"
+  - from alembic import op
+  - import sqlalchemy as sa
+  - from sqlalchemy.dialects.postgresql import UUID
+  - import uuid
+  - "def upgrade():"
+  - "    op.create_table("
+  - "        'users',"
+  - "        sa.Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),"
+  - "        sa.Column('email', sa.String(), nullable=False, unique=True),"
+  - "        sa.Column('name', sa.String(), nullable=False),"
+  - "        sa.Column('created_at', sa.DateTime(), server_default=sa.func.now()),"
+  - "    )"
+  - "def downgrade():"
+  - "    op.drop_table('users')"
+  - "```"
+  - "### migrate-mongo (MongoDB)"
+  - "```bash"
+  - "# Create migration"
+  - npx migrate-mongo create add_users_collection
+  - "```"
+  - "Edit `migrations/[timestamp]-add_users_collection.js`:"
+  - "```javascript"
+  - module.exports = {
+  - "  async up(db, client) {"
+  - "    await db.createCollection('users');"
+  - "    await db.collection('users').createIndex({ email: 1 }, { unique: true });"
+  - "  },"
+  - "  async down(db, client) {"
+  - "    await db.collection('users').drop();"
+  - "  }"
+  - "};"
+  - "```"
+  - ---
+  - "## Step 4: Run Migrations"
+  - "### Prisma"
+  - "```bash"
+  - "# Development (interactive)"
+  - npx prisma migrate dev
+  - "# Production"
+  - npx prisma migrate deploy
+  - "# Reset database (WARNING: deletes all data)"
+  - npx prisma migrate reset
+  - "```"
+  - "### TypeORM"
+  - "```bash"
+  - "# Run pending migrations"
+  - npx typeorm migration:run
+  - "# Revert last migration"
+  - npx typeorm migration:revert
+  - "# Show migration status"
+  - npx typeorm migration:show
+  - "```"
+  - "### Sequelize"
+  - "```bash"
+  - "# Run all pending migrations"
+  - npx sequelize-cli db:migrate
+  - "# Undo last migration"
+  - npx sequelize-cli db:migrate:undo
+  - "# Undo all migrations"
+  - npx sequelize-cli db:migrate:undo:all
+  - "# Check status"
+  - npx sequelize-cli db:migrate:status
+  - "```"
+  - "### Knex.js"
+  - "```bash"
+  - "# Run all pending migrations"
+  - npx knex migrate:latest
+  - "# Rollback last batch"
+  - npx knex migrate:rollback
+  - "# Rollback all"
+  - npx knex migrate:rollback --all
+  - "# Check migration status"
+  - npx knex migrate:status
+  - "```"
+  - "### Alembic"
+  - "```bash"
+  - "# Run all pending migrations"
+  - alembic upgrade head
+  - "# Rollback one migration"
+  - alembic downgrade -1
+  - "# Rollback to specific version"
+  - alembic downgrade [revision]
+  - "# Check current version"
+  - alembic current
+  - "# Show migration history"
+  - alembic history
+  - "```"
+  - "### migrate-mongo"
+  - "```bash"
+  - "# Run all pending migrations"
+  - npx migrate-mongo up
+  - "# Rollback last migration"
+  - npx migrate-mongo down
+  - "# Check status"
+  - npx migrate-mongo status
+  - "```"
+  - ---
+  - "## Step 5: Migration Status"
+  - "Check which migrations have been applied:"
+  - "### Prisma"
+  - "```bash"
+  - npx prisma migrate status
+  - "```"
+  - "Output:"
+  - "```"
+  - Database schema is up to date!
+  - "Following migrations have been applied:"
+  - 20240115_add_users_table
+  - 20240116_add_posts_table
+  - "```"
+  - "### TypeORM"
+  - "```bash"
+  - npx typeorm migration:show
+  - "```"
+  - "### Sequelize"
+  - "```bash"
+  - npx sequelize-cli db:migrate:status
+  - "```"
+  - "### Knex"
+  - "```bash"
+  - npx knex migrate:list
+  - "```"
+  - "### Alembic"
+  - "```bash"
+  - alembic current
+  - alembic history --verbose
+  - "```"
+  - ---
+  - "## Step 6: Backup Before Migration"
+  - "**CRITICAL:** Always backup production database before migration."
+  - "### PostgreSQL"
+  - "```bash"
+  - "# Backup"
+  - pg_dump -U user -d {{projectName}} -F c -f backup_$(date +%Y%m%d_%H%M%S).dump
+  - "# Restore"
+  - pg_restore -U user -d {{projectName}} backup_20240115_103000.dump
+  - "```"
+  - "### MySQL"
+  - "```bash"
+  - "# Backup"
+  - mysqldump -u user -p {{projectName}} > backup_$(date +%Y%m%d_%H%M%S).sql
+  - "# Restore"
+  - mysql -u user -p {{projectName}} < backup_20240115_103000.sql
+  - "```"
+  - "### MongoDB"
+  - "```bash"
+  - "# Backup"
+  - mongodump --db={{projectName}} --out=backup_$(date +%Y%m%d_%H%M%S)
+  - "# Restore"
+  - mongorestore --db={{projectName}} backup_20240115_103000/{{projectName}}
+  - "```"
+  - ---
+  - "## Step 7: Seed Data"
+  - "### Prisma"
+  - "Create `prisma/seed.ts`:"
+  - "```typescript"
+  - import { PrismaClient } from '@prisma/client';
+  - const prisma = new PrismaClient();
+  - async function main() {
+  - "  const alice = await prisma.user.upsert({"
+  - "    where: { email: 'alice@example.com' },"
+  - "    update: {},"
+  - "    create: {"
+  - "      email: 'alice@example.com',"
+  - "      name: 'Alice',"
+  - "    },"
+  - "  });"
+  - "  console.log({ alice });"
+  - "}"
+  - main()
+  - "  .catch((e) => {"
+  - "    console.error(e);"
+  - "    process.exit(1);"
+  - "  })"
+  - "  .finally(async () => {"
+  - "    await prisma.$disconnect();"
+  - "  });"
+  - "```"
+  - "Add to `package.json`:"
+  - "```json"
+  - "{"
+  - '  "prisma": {'
+  - '    "seed": "ts-node prisma/seed.ts"'
+  - "  }"
+  - "}"
+  - "```"
+  - "Run:"
+  - "```bash"
+  - npx prisma db seed
+  - "```"
+  - "### Knex.js"
+  - "```bash"
+  - "# Create seed file"
+  - npx knex seed:make 001_users
+  - "```"
+  - "Edit `seeds/001_users.js`:"
+  - "```javascript"
+  - exports.seed = async function(knex) {
+  - "  await knex('users').del();"
+  - "  await knex('users').insert(["
+  - "    { email: 'alice@example.com', name: 'Alice' },"
+  - "    { email: 'bob@example.com', name: 'Bob' },"
+  - "  ]);"
+  - "};"
+  - "```"
+  - "Run:"
+  - "```bash"
+  - npx knex seed:run
+  - "```"
+  - "### Sequelize"
+  - "```bash"
+  - "# Create seeder"
+  - npx sequelize-cli seed:generate --name demo-users
+  - "```"
+  - "Edit `seeders/[timestamp]-demo-users.js`:"
+  - "```javascript"
+  - module.exports = {
+  - "  up: async (queryInterface, Sequelize) => {"
+  - "    await queryInterface.bulkInsert('users', ["
+  - "      {"
+  - "        email: 'alice@example.com',"
+  - "        name: 'Alice',"
+  - "        createdAt: new Date(),"
+  - "        updatedAt: new Date(),"
+  - "      },"
+  - "    ]);"
+  - "  },"
+  - "  down: async (queryInterface, Sequelize) => {"
+  - "    await queryInterface.bulkDelete('users', null, {});"
+  - "  },"
+  - "};"
+  - "```"
+  - "Run:"
+  - "```bash"
+  - npx sequelize-cli db:seed:all
+  - "```"
+  - ---
+  - "## Production Migration Workflow"
+  - "### Pre-Migration Checklist"
+  - "- [ ] **Backup database**"
+  - "- [ ] **Test migration in staging**"
+  - "- [ ] **Schedule maintenance window** (if downtime needed)"
+  - "- [ ] **Notify team/users**"
+  - "- [ ] **Prepare rollback plan**"
+  - "### Safe Migration Strategy"
+  - 1. **Run migration in transaction** (if supported)
+  - 2. **Monitor application health** after migration
+  - 3. **Be ready to rollback** if issues arise
+  - 4. **Verify data integrity** post-migration
+  - "### Zero-Downtime Migrations"
+  - "For large tables or production systems:"
+  - 1. **Add new column (nullable)**
+  - 2. **Deploy code that writes to both old and new columns**
+  - 3. **Backfill data**
+  - 4. **Switch reads to new column**
+  - 5. **Remove old column in next release**
+  - "Example:"
+  - "```sql"
+  - "-- Step 1: Add new column"
+  - ALTER TABLE users ADD COLUMN email_new VARCHAR(255);
+  - "-- Step 2: Backfill data (in batches)"
+  - UPDATE users SET email_new = email WHERE email_new IS NULL LIMIT 1000;
+  - "-- Step 3: Make not null (after backfill complete)"
+  - ALTER TABLE users ALTER COLUMN email_new SET NOT NULL;
+  - "-- Step 4: Drop old column (in next release)"
+  - ALTER TABLE users DROP COLUMN email;
+  - ALTER TABLE users RENAME COLUMN email_new TO email;
+  - "```"
+  - ---
+  - "## Configuration"
+  - "### Environment Variables"
+  - "```bash"
+  - "# Development"
+  - DATABASE_URL="postgresql://user:password@localhost:5432/{{projectName}}_dev"
+  - "# Production"
+  - DATABASE_URL="postgresql://user:password@prod-host:5432/{{projectName}}"
+  - "# Connection pool settings"
+  - DB_POOL_MIN=2
+  - DB_POOL_MAX=10
+  - "```"
+  - "### package.json Scripts"
+  - "```json"
+  - "{"
+  - '  "scripts": {'
+  - '    "migrate": "npx prisma migrate dev",'
+  - '    "migrate:prod": "npx prisma migrate deploy",'
+  - '    "migrate:status": "npx prisma migrate status",'
+  - '    "migrate:create": "npx prisma migrate dev --create-only",'
+  - '    "db:seed": "npx prisma db seed",'
+  - '    "db:reset": "npx prisma migrate reset"'
+  - "  }"
+  - "}"
+  - "```"
+  - ---
+  - "## Common Migration Patterns"
+  - "### Add Column"
+  - "```javascript"
+  - // Knex
+  - table.string('phone').nullable();
+  - // Alembic
+  - op.add_column('users', sa.Column('phone', sa.String()))
+  - "```"
+  - "### Rename Column"
+  - "```javascript"
+  - // Knex
+  - table.renameColumn('name', 'full_name');
+  - // Alembic
+  - op.alter_column('users', 'name', new_column_name='full_name')
+  - "```"
+  - "### Add Index"
+  - "```javascript"
+  - // Knex
+  - table.index('email');
+  - // Alembic
+  - op.create_index('idx_email', 'users', ['email'])
+  - "```"
+  - "### Add Foreign Key"
+  - "```javascript"
+  - // Knex
+  - table.uuid('user_id').references('id').inTable('users').onDelete('CASCADE');
+  - // Alembic
+  - op.create_foreign_key(
+  - "  'fk_posts_user_id', 'posts', 'users',"
+  - "  ['user_id'], ['id'], ondelete='CASCADE'"
+  - )
+  - "```"
+  - ---
+  - "## Related Commands"
+  - "- `/security-scan` - Check for SQL injection vulnerabilities"
+  - "- `/monitoring-setup` - Add database monitoring"
+  - "- `/api-docs` - Document database schema in API docs"
+  - ---
+  - "*Database migration management powered by CCASP*"

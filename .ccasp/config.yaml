@@ -1,0 +1,5 @@
+version: 1
+default_runtime: claude
+dual_runtime: false
+hooks_enabled: true
+governance_mode: standard

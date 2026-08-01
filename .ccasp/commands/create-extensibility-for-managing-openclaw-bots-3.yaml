@@ -1,0 +1,18 @@
+id: create-extensibility-for-managing-openclaw-bots-3
+title: Create Extensibility For Managing Openclaw Bots 3
+description: Interactive tracker for the create-extensibility-for-managing-openclaw-bots-3 phase-dev plan
+codex_support: partial
+instructions:
+  - Interactive command for this phase-dev plan.
+  - ""
+  - "## What it does"
+  - "- Displays current phase/task progress."
+  - "- Offers next task execution actions."
+  - "- Applies updates to:"
+  - "  - `.claude/docs/create-extensibility-for-managing-openclaw-bots-3/PROGRESS.json`"
+  - ""
+  - "## Suggested Flow"
+  - 1. Review current phase state.
+  - 2. Execute next pending task.
+  - 3. Validate with tests.
+  - 4. Mark task complete and continue.

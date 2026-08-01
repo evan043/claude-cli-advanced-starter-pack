@@ -1,0 +1,128 @@
+id: issue-templates-sync-executor
+title: issue-templates-sync Phase Executor
+description: issue-templates-sync Phase Executor
+system: You are a senior systems architect.
+instructions:
+  - Execute phases of the Enhanced Issue Templates with Hook-Based Sync plan.
+  - ---
+  - "## Context"
+  - "**Plan:** Enhanced Issue Templates with Hook-Based Sync"
+  - "**Plan ID:** `issue-templates-sync`"
+  - "**Progress File:** `.claude/docs/issue-templates-sync/PROGRESS.json`"
+  - "**Exploration:** `.claude/exploration/issue-templates-sync/`"
+  - ---
+  - "## Execution Protocol"
+  - "### 1. Load Current State"
+  - "Read PROGRESS.json to determine:"
+  - "- Current phase and task"
+  - "- Completion status"
+  - "- Any blockers"
+  - "```bash"
+  - cat .claude/docs/issue-templates-sync/PROGRESS.json
+  - "```"
+  - "### 2. Phase Execution"
+  - "Execute phases sequentially. Within each phase, maximize parallelism:"
+  - "#### Phase 1: Issue Template System"
+  - "**Agent:** l2-backend-specialist"
+  - "**Parallel Tasks (1.1, 1.2, 1.3):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create src/templates/issue-types.js..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create src/templates/issue-metadata.js..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create src/templates/generated-files-section.js..." })'
+  - "```"
+  - "**Sequential Task (1.4 - depends on 1.1-1.3):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Extend src/templates/issue-body.js..." })'
+  - "```"
+  - "#### Phase 2: Hook Infrastructure"
+  - "**Agent:** l2-backend-specialist"
+  - "**Parallel Tasks (2.1, 2.2):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create templates/hooks/progress-sync.template.js..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create .claude/config/progress-sync-config.json..." })'
+  - "```"
+  - "**Sequential Tasks (2.3, 2.4):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Install progress-sync.js hook..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Update src/agents/templates.js..." })'
+  - "```"
+  - "#### Phase 3: L3 Sync Worker"
+  - "**Agent:** l2-backend-specialist"
+  - "**Sequential Tasks (3.1 → 3.2 → 3.3):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Create templates/agents/github-issue-sync-worker.template.md..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Deploy .claude/agents/github-issue-sync-worker.md..." })'
+  - 'Task({ subagent_type: "l2-backend-specialist", prompt: "Connect hook to L3 worker spawn logic..." })'
+  - "```"
+  - "#### Phase 4: Slash Command Integration"
+  - "**Agent:** l2-frontend-specialist"
+  - "**Parallel Tasks (4.1, 4.2, 4.3, 4.4):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update create-task-list.template.md..." })'
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update phase-dev-plan template..." })'
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update create-roadmap.template.md..." })'
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update create-github-epic.template.md..." })'
+  - "```"
+  - "**Sequential Tasks (4.5, 4.6):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update src/commands/create.js..." })'
+  - 'Task({ subagent_type: "l2-frontend-specialist", prompt: "Update src/commands/roadmap.js..." })'
+  - "```"
+  - "#### Phase 5: Testing & Documentation"
+  - "**Agent:** l2-testing-specialist"
+  - "**Parallel Tasks (5.1, 5.2, 5.3):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-testing-specialist", prompt: "Add tests to tests/issue-body.test.js..." })'
+  - 'Task({ subagent_type: "l2-testing-specialist", prompt: "Add tests to tests/hooks.test.js..." })'
+  - 'Task({ subagent_type: "l2-testing-specialist", prompt: "Create tests/agents.test.js..." })'
+  - "```"
+  - "**Sequential Task (5.4):**"
+  - "```"
+  - 'Task({ subagent_type: "l2-testing-specialist", prompt: "Run end-to-end verification..." })'
+  - "```"
+  - "### 3. Progress Updates"
+  - "After each task completion, update PROGRESS.json:"
+  - '- Set task status to "completed"'
+  - "- Add completed_at timestamp"
+  - "- Add summary of what was done"
+  - "- Recalculate phase and plan completion percentages"
+  - "### 4. Completion Signals"
+  - "Use standard completion signals:"
+  - "```"
+  - "TASK_COMPLETE: {taskId}"
+  - "ARTIFACTS: {files created/modified}"
+  - "SUMMARY: {brief description}"
+  - "```"
+  - "For blockers:"
+  - "```"
+  - "TASK_BLOCKED: {taskId}"
+  - "BLOCKER: {description of blocker}"
+  - "```"
+  - "### 5. GitHub Sync"
+  - "Once a GitHub issue is created for this plan:"
+  - 1. Store issue_number in PROGRESS.json
+  - 2. Hook will auto-trigger on PROGRESS.json updates
+  - 3. L3 worker will sync progress to GitHub issue
+  - ---
+  - "## Reference Files"
+  - "For implementation details, see:"
+  - "| Document | Path |"
+  - "|----------|------|"
+  - "| Code Snippets | `.claude/exploration/issue-templates-sync/CODE_SNIPPETS.md` |"
+  - "| Reference Files | `.claude/exploration/issue-templates-sync/REFERENCE_FILES.md` |"
+  - "| Agent Delegation | `.claude/exploration/issue-templates-sync/AGENT_DELEGATION.md` |"
+  - "| Phase Breakdown | `.claude/exploration/issue-templates-sync/PHASE_BREAKDOWN.md` |"
+  - ---
+  - "## Execution Command"
+  - "To execute a specific phase:"
+  - "```"
+  - /issue-templates-sync phase P1
+  - "```"
+  - "To execute next pending task:"
+  - "```"
+  - /issue-templates-sync next
+  - "```"
+  - "To view current status:"
+  - "```"
+  - /issue-templates-sync status
+  - "```"

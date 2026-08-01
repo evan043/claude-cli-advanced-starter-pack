@@ -1,0 +1,134 @@
+id: issue-templates-sync
+title: /issue-templates-sync
+description: /issue-templates-sync
+system: You are a senior systems architect.
+instructions:
+  - Interactive command for the Enhanced Issue Templates with Hook-Based Sync plan.
+  - ---
+  - "## Plan Overview"
+  - "**Plan ID:** `issue-templates-sync`"
+  - "**Status:** Ready for Execution"
+  - "This plan enhances CCASP with:"
+  - 1. Type-specific issue templates (Feature, Refactor, Bug, Testing)
+  - 2. Machine-parseable CCASP-META for agent updates
+  - 3. Generated Files traceability in all issues
+  - 4. Hook-based auto-sync when PROGRESS.json changes
+  - ---
+  - "## Commands"
+  - "### View Status"
+  - "```"
+  - /issue-templates-sync status
+  - "```"
+  - "Show current progress:"
+  - "- Overall completion %"
+  - "- Current phase"
+  - "- Tasks completed/remaining"
+  - "- Any blockers"
+  - "### Execute Next Task"
+  - "```"
+  - /issue-templates-sync next
+  - "```"
+  - Execute the next pending task automatically.
+  - "### Execute Specific Phase"
+  - "```"
+  - /issue-templates-sync phase P1
+  - "```"
+  - Execute all tasks in a specific phase (P1-P5).
+  - "### View Plan Details"
+  - "```"
+  - /issue-templates-sync details
+  - "```"
+  - Show full plan with all phases and tasks.
+  - "### Create GitHub Issue"
+  - "```"
+  - /issue-templates-sync issue
+  - "```"
+  - Create a GitHub issue to track this plan (if not already created).
+  - ---
+  - "## Execution Flow"
+  - "When invoked without arguments, present interactive menu:"
+  - "### Step 1: Check Current Status"
+  - "Read `.claude/docs/issue-templates-sync/PROGRESS.json` and display:"
+  - "```"
+  - 📊 issue-templates-sync Progress
+  - "Overall: ████████░░░░░░░░ 45% (9/19 tasks)"
+  - "Phase 1: Issue Template System ✅ Complete (4/4)"
+  - "Phase 2: Hook Infrastructure   ✅ Complete (4/4)"
+  - "Phase 3: L3 Sync Worker        🟡 In Progress (1/3)"
+  - "Phase 4: Slash Command Integration ⏳ Pending (0/6)"
+  - "Phase 5: Testing               ⏳ Pending (0/4)"
+  - "Current Task: P3.2 - Create installed L3 worker"
+  - "```"
+  - "### Step 2: Present Options"
+  - "Use AskUserQuestion to offer choices:"
+  - "```"
+  - What would you like to do?
+  - 1. Execute next task (P3.2)
+  - 2. Execute full phase (P3)
+  - 3. View phase details
+  - 4. Create/view GitHub issue
+  - 5. Exit
+  - "```"
+  - "### Step 3: Execute Based on Selection"
+  - "#### Option 1: Execute Next Task"
+  - 1. Load task details from PROGRESS.json
+  - 2. Read reference files from exploration docs
+  - 3. Deploy appropriate agent (l2-backend-specialist for P1-P3)
+  - 4. Update PROGRESS.json on completion
+  - 5. Return to menu
+  - "#### Option 2: Execute Full Phase"
+  - 1. Identify all pending tasks in phase
+  - 2. Deploy agents in parallel where possible
+  - 3. Track completion of each task
+  - 4. Update PROGRESS.json after each task
+  - 5. Return to menu when phase complete
+  - "#### Option 3: View Phase Details"
+  - 1. Read PHASE_BREAKDOWN.md for selected phase
+  - 2. Display tasks, acceptance criteria, file references
+  - 3. Return to menu
+  - "#### Option 4: GitHub Issue"
+  - "If issue doesn't exist:"
+  - 1. Generate issue body using new type templates
+  - 2. Include CCASP-META
+  - 3. Include Generated Files section
+  - 4. Create via `gh issue create`
+  - 5. Store issue_number in PROGRESS.json
+  - "If issue exists:"
+  - 1. Show issue URL
+  - 2. Offer to sync current progress
+  - "#### Option 5: Exit"
+  - Save any pending state and exit.
+  - ---
+  - "## Generated Files"
+  - "| File | Type | Description |"
+  - "|------|------|-------------|"
+  - "| `.claude/exploration/issue-templates-sync/EXPLORATION_SUMMARY.md` | MD | Overview + statistics |"
+  - "| `.claude/exploration/issue-templates-sync/CODE_SNIPPETS.md` | MD | Code patterns to follow |"
+  - "| `.claude/exploration/issue-templates-sync/REFERENCE_FILES.md` | MD | Files to modify/reference |"
+  - "| `.claude/exploration/issue-templates-sync/AGENT_DELEGATION.md` | MD | Agent assignments |"
+  - "| `.claude/exploration/issue-templates-sync/PHASE_BREAKDOWN.md` | MD | Detailed task specs |"
+  - "| `.claude/exploration/issue-templates-sync/findings.json` | JSON | Machine-readable data |"
+  - "| `.claude/docs/issue-templates-sync/PROGRESS.json` | JSON | Progress tracking |"
+  - "| `.claude/docs/issue-templates-sync/EXECUTIVE_SUMMARY.md` | MD | Executive overview |"
+  - ---
+  - "## Phases Summary"
+  - "| Phase | Name | Tasks | Agent |"
+  - "|-------|------|-------|-------|"
+  - "| P1 | Issue Template System | 4 | l2-backend-specialist |"
+  - "| P2 | Hook Infrastructure | 4 | l2-backend-specialist |"
+  - "| P3 | L3 Sync Worker | 3 | l2-backend-specialist |"
+  - "| P4 | Slash Command Integration | 6 | l2-frontend-specialist |"
+  - "| P5 | Testing & Documentation | 4 | l2-testing-specialist |"
+  - ---
+  - "## Quick Start"
+  - "To begin execution immediately:"
+  - "```"
+  - /issue-templates-sync next
+  - "```"
+  - "This will:"
+  - 1. Load current state
+  - 2. Identify next pending task
+  - 3. Deploy appropriate agent
+  - 4. Execute task
+  - 5. Update progress
+  - 6. Report completion

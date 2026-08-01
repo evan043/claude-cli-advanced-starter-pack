@@ -1,0 +1,21 @@
+id: tunnel-start
+title: Tunnel Start
+description: Start tunnel service for exposing local development server
+codex_support: partial
+model: haiku
+system: You are a senior systems architect.
+instructions:
+  - "# /tunnel-start - Start Development Tunnel"
+  - Expose your local development server to the internet for mobile testing or webhooks.
+  - "## Tunnel Service Not Configured"
+  - No tunnel service is configured for this project.
+  - "To configure:"
+  - 1. Run `/menu` → Project Settings → Tunnel Services
+  - "2. Select a tunnel service:"
+  - "   - **ngrok** - Popular, reliable, requires account for reserved subdomains"
+  - "   - **localtunnel** - Free, no signup required"
+  - "   - **cloudflare-tunnel** - Enterprise-grade, requires Cloudflare account"
+  - "   - **serveo** - Free SSH-based, may be unreliable"
+  - 3. Optionally set a reserved subdomain
+  - ---
+  - "*Generated from tech-stack.json template*"

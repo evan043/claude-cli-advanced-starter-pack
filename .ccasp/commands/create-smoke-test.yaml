@@ -1,0 +1,149 @@
+id: create-smoke-test
+title: Create Smoke Test
+description: Auto-generate Playwright smoke tests for critical user flows
+codex_support: full
+system: You are a senior systems architect.
+instructions:
+  - "# Create Smoke Test"
+  - Generate Playwright E2E tests automatically by analyzing your application's routes and components.
+  - "## Usage"
+  - "```"
+  - /create-smoke-test
+  - /create-smoke-test --page login
+  - /create-smoke-test --flow checkout
+  - "```"
+  - "## What It Does"
+  - 1. **Analyze Routes** - Discover pages from router configuration
+  - 2. **Identify Flows** - Map critical user journeys
+  - 3. **Generate Tests** - Create Playwright test files
+  - 4. **Add Selectors** - Include data-testid recommendations
+  - "## Smoke Test Categories"
+  - "### Authentication"
+  - "- Login flow"
+  - "- Logout flow"
+  - "- Password reset"
+  - "- Session persistence"
+  - "### Navigation"
+  - "- Home page loads"
+  - "- All routes accessible"
+  - "- Navigation links work"
+  - "- 404 handling"
+  - "### Critical Paths"
+  - "- User registration"
+  - "- Core feature usage"
+  - "- Payment flow (if applicable)"
+  - "- Data submission forms"
+  - "## Implementation"
+  - "### Step 1: Discover Routes"
+  - "**React Router:**"
+  - "```typescript"
+  - // Analyze src/routes.tsx or src/App.tsx
+  - // Extract route paths and components
+  - "```"
+  - "**Next.js:**"
+  - "```bash"
+  - "# List pages directory"
+  - ls -la pages/ app/
+  - "```"
+  - "### Step 2: Generate Test File"
+  - "```typescript"
+  - // tests/smoke/navigation.spec.ts
+  - import { test, expect } from '@playwright/test';
+  - test.describe('Navigation Smoke Tests', () => {
+  - "  test('home page loads', async ({ page }) => {"
+  - "    await page.goto('/');"
+  - "    await expect(page).toHaveTitle(/Your App/);"
+  - "    await expect(page.locator('main')).toBeVisible();"
+  - "  });"
+  - "  test('login page accessible', async ({ page }) => {"
+  - "    await page.goto('/login');"
+  - "    await expect(page.locator('[data-testid=\"login-form\"]')).toBeVisible();"
+  - "  });"
+  - "  // Additional generated tests..."
+  - "});"
+  - "```"
+  - "### Step 3: Add Test Helpers"
+  - "```typescript"
+  - // tests/helpers/auth.ts
+  - export async function loginAs(page, user) {
+  - "  await page.goto('/login');"
+  - "  await page.fill('[data-testid=\"email\"]', user.email);"
+  - "  await page.fill('[data-testid=\"password\"]', user.password);"
+  - "  await page.click('[data-testid=\"submit\"]');"
+  - "  await page.waitForURL('/dashboard');"
+  - "}"
+  - "```"
+  - "## Output Structure"
+  - "```"
+  - tests/
+  - ├── smoke/
+  - "│   ├── auth.spec.ts          # Authentication flows"
+  - "│   ├── navigation.spec.ts    # Page accessibility"
+  - "│   └── critical-paths.spec.ts # Core user journeys"
+  - ├── helpers/
+  - "│   ├── auth.ts              # Auth utilities"
+  - "│   ├── fixtures.ts          # Test data"
+  - "│   └── selectors.ts         # Shared selectors"
+  - "└── playwright.config.ts     # Test configuration"
+  - "```"
+  - "## Generated Test Example"
+  - "```typescript"
+  - import { test, expect } from '@playwright/test';
+  - import { loginAs } from '../helpers/auth';
+  - import { testUser } from '../helpers/fixtures';
+  - test.describe('Authentication Smoke Tests', () => {
+  - "  test('user can log in with valid credentials', async ({ page }) => {"
+  - "    await page.goto('/login');"
+  - "    // Fill login form"
+  - "    await page.fill('[data-testid=\"email-input\"]', testUser.email);"
+  - "    await page.fill('[data-testid=\"password-input\"]', testUser.password);"
+  - "    // Submit and verify"
+  - "    await page.click('[data-testid=\"login-button\"]');"
+  - "    await expect(page).toHaveURL('/dashboard');"
+  - "    await expect(page.locator('[data-testid=\"user-menu\"]')).toBeVisible();"
+  - "  });"
+  - "  test('user sees error for invalid credentials', async ({ page }) => {"
+  - "    await page.goto('/login');"
+  - "    await page.fill('[data-testid=\"email-input\"]', 'invalid@test.com');"
+  - "    await page.fill('[data-testid=\"password-input\"]', 'wrongpassword');"
+  - "    await page.click('[data-testid=\"login-button\"]');"
+  - "    await expect(page.locator('[data-testid=\"error-message\"]')).toBeVisible();"
+  - "  });"
+  - "});"
+  - "```"
+  - "## Selector Recommendations"
+  - "For reliable tests, add these data-testid attributes to your components:"
+  - "```html"
+  - <!-- Forms -->
+  - <form data-testid="login-form">
+  - '  <input data-testid="email-input" />'
+  - '  <input data-testid="password-input" />'
+  - '  <button data-testid="login-button">Login</button>'
+  - </form>
+  - <!-- Navigation -->
+  - <nav data-testid="main-nav">
+  - '  <a data-testid="nav-home">Home</a>'
+  - '  <a data-testid="nav-dashboard">Dashboard</a>'
+  - </nav>
+  - <!-- Content -->
+  - <main data-testid="page-content">
+  - '  <h1 data-testid="page-title">Welcome</h1>'
+  - </main>
+  - "```"
+  - "## Configuration"
+  - "Add to `playwright.config.ts`:"
+  - "```typescript"
+  - export default {
+  - "  testDir: './tests',"
+  - "  projects: ["
+  - "    {"
+  - "      name: 'smoke',"
+  - "      testMatch: /smoke\\/.+\\.spec\\.ts/,"
+  - "      use: { baseURL: 'http://localhost:3000' },"
+  - "    },"
+  - "  ],"
+  - "};"
+  - "```"
+  - "## Related Commands"
+  - "- `/e2e-test` - Run E2E tests"
+  - "- `/refactor-check` - Pre-commit validation"

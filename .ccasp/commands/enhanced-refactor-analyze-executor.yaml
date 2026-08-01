@@ -1,0 +1,128 @@
+id: enhanced-refactor-analyze-executor
+title: Enhanced Refactor Analyze Executor
+description: Execute phases of the Enhanced Refactor-Analyze System roadmap
+argument-hint:
+  - phase-number or 'status' or 'next'
+system: You are a senior systems architect.
+instructions:
+  - "# Enhanced Refactor-Analyze Executor"
+  - Execute the Enhanced Refactor-Analyze System roadmap phases with L2 specialist agents.
+  - "## Quick Start"
+  - "```bash"
+  - "/enhanced-refactor-analyze-executor status   # View current progress"
+  - "/enhanced-refactor-analyze-executor next     # Execute next pending phase"
+  - "/enhanced-refactor-analyze-executor 1        # Execute Phase 1 specifically"
+  - "```"
+  - "## Instructions for Claude"
+  - "### Step 1: Load Roadmap State"
+  - "Read the roadmap file:"
+  - "```"
+  - .claude/roadmaps/enhanced-refactor-analyze/ROADMAP.json
+  - "```"
+  - "### Step 2: Determine Action"
+  - "Based on argument:"
+  - "- `status` → Display progress dashboard"
+  - "- `next` → Find and execute first pending phase"
+  - "- `{number}` → Execute that specific phase"
+  - "### Step 3: For Status Display"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════════════════╗
+  - ║  Enhanced Refactor-Analyze System - Progress Dashboard                     ║
+  - ╠═══════════════════════════════════════════════════════════════════════════╣
+  - ║                                                                           ║
+  - "║  Overall Progress: {completion_percentage}%                               ║"
+  - "║  Status: {status}                                                         ║"
+  - ║                                                                           ║
+  - ╠═══════════════════════════════════════════════════════════════════════════╣
+  - ║  Phases                                                                    ║
+  - ╠═══════════════════════════════════════════════════════════════════════════╣
+  - ║                                                                           ║
+  - "║  [✓] Phase 1: Script Infrastructure                    100%               ║"
+  - "║  [→] Phase 2: Project Management                        50%               ║"
+  - "║  [ ] Phase 3: Route-Based Analysis                       0%               ║"
+  - "║  [ ] Phase 4: Enhanced Analyze Command                   0%               ║"
+  - "║  [ ] Phase 5: Tech-Stack RAG Agents                      0%               ║"
+  - "║  [ ] Phase 6: File Organization                          0%               ║"
+  - "║  [ ] Phase 7: Dependency Scripts                         0%               ║"
+  - "║  [ ] Phase 8: Testing & Documentation                    0%               ║"
+  - ║                                                                           ║
+  - ╚═══════════════════════════════════════════════════════════════════════════╝
+  - "```"
+  - "### Step 4: For Phase Execution"
+  - 1. **Check Dependencies** - Verify all dependency phases are complete
+  - 2. **Load Phase Details** from ROADMAP.json
+  - "3. **Load Exploration Files** for context:"
+  - "   - `.claude/exploration/enhanced-refactor-analyze/CODE_SNIPPETS.md`"
+  - "   - `.claude/exploration/enhanced-refactor-analyze/REFERENCE_FILES.md`"
+  - "   - `.claude/exploration/enhanced-refactor-analyze/AGENT_DELEGATION.md`"
+  - 4. **Deploy L2 Specialist Agent** for each task
+  - "### Agent Deployment Protocol"
+  - "For each task in the phase:"
+  - "```javascript"
+  - // Use Task tool with appropriate agent
+  - Task({
+  - '  subagent_type: task.agent, // "l2-backend-specialist", "l2-frontend-specialist", etc.'
+  - "  prompt: `"
+  - "    Execute task ${task.id}: ${task.description}"
+  - "    Files to create/modify: ${task.files.join(', ')}"
+  - "    Acceptance Criteria:"
+  - "    ${task.acceptance_criteria.map(c => `- ${c}`).join('\\n')}"
+  - "    Reference the exploration files at:"
+  - "    - .claude/exploration/enhanced-refactor-analyze/CODE_SNIPPETS.md"
+  - "    - .claude/exploration/enhanced-refactor-analyze/REFERENCE_FILES.md"
+  - "    Use the code patterns from CODE_SNIPPETS.md as implementation guidance."
+  - "  `,"
+  - "  description: `Task ${task.id}: ${task.description.substring(0, 40)}...`"
+  - "})"
+  - "```"
+  - "### Step 5: Update Progress"
+  - "After each task completes:"
+  - 1. Mark task as completed in ROADMAP.json
+  - 2. Calculate phase completion percentage
+  - 3. If phase complete, mark phase as completed
+  - 4. Recalculate overall roadmap completion
+  - "### Step 6: Report Completion"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════════════════╗
+  - "║  Phase {id} Complete: {name}                                               ║"
+  - ╠═══════════════════════════════════════════════════════════════════════════╣
+  - ║                                                                           ║
+  - "║  Tasks Completed: {completed}/{total}                                     ║"
+  - "║  Files Created/Modified:                                                  ║"
+  - ║  • {file1}                                                                ║
+  - ║  • {file2}                                                                ║
+  - ║                                                                           ║
+  - "║  Success Criteria Met:                                                    ║"
+  - ║  ✓ {criterion1}                                                           ║
+  - ║  ✓ {criterion2}                                                           ║
+  - ║                                                                           ║
+  - "║  Next Phase: {next_phase_name}                                            ║"
+  - "║  Run: /enhanced-refactor-analyze-executor {next_phase_id}                 ║"
+  - ║                                                                           ║
+  - ╚═══════════════════════════════════════════════════════════════════════════╝
+  - "```"
+  - "## Parallel Execution Opportunities"
+  - "The following task groups can be executed in parallel:"
+  - "### Phase 1 (All tasks parallel):"
+  - "- Task 1.1, 1.2, 1.3 - Independent script creation"
+  - "### Phase 5 (After 5.1):"
+  - "- Task 5.2, 5.3, 5.4 - Independent agent creation"
+  - "### Phase 7 (All tasks parallel):"
+  - "- Task 7.1, 7.2, 7.3 - Independent script creation"
+  - "## Phase Dependencies"
+  - "```"
+  - Phase 1 ─┬──────────────────────────────────→ Phase 3 ─┐
+  - "         │                                             │"
+  - "         └────────────────────────────────────────────→├─→ Phase 4"
+  - "                                                       │"
+  - Phase 2 ──────────────────────────────────────────────→┘
+  - Phase 1 ─────────────────────────────────→ Phase 5
+  - Phase 1 ─────────────────────────────────→ Phase 7 ─→ Phase 6
+  - All Phases ───────────────────────────────────────────→ Phase 8
+  - "```"
+  - "## Related Commands"
+  - "- `/roadmap-status enhanced-refactor-analyze` - View status"
+  - "- `/roadmap-track enhanced-refactor-analyze` - Track execution"
+  - "- `/phase-track enhanced-refactor-analyze 1` - Track specific phase"
+  - ---
+  - "*Enhanced Refactor-Analyze System - CCASP Roadmap Executor*"
