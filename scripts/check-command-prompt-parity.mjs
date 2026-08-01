@@ -15,6 +15,7 @@
  * Flags:
  *   --sync          Sync missing Codex prompts from Claude commands (filename parity only)
  *   --content-only  Run content validation only (skip filename diff)
+ *   --verbose-advisories  List advisory findings per file instead of summarising
  */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -26,6 +27,7 @@ const commandsDir = path.join(cwd, '.claude', 'commands');
 const promptsDir = path.join(cwd, '.codex', 'prompts');
 const shouldSync = process.argv.includes('--sync');
 const contentOnly = process.argv.includes('--content-only');
+const verboseAdvisories = process.argv.includes('--verbose-advisories');
 
 // ─── Content validation rules ───────────────────────────────────────────────
 
@@ -49,6 +51,8 @@ function validatePromptContent(filePath) {
     return { ok: false, failures: ['Cannot read file'] };
   }
 
+  const warnings = [];
+
   // Rule 1: Non-empty
   if (content.trim().length < 100) {
     failures.push('File is too short (< 100 chars) — likely empty or truncated');
@@ -66,23 +70,29 @@ function validatePromptContent(filePath) {
     );
   }
 
-  // Rule 3: Raw mcp__ calls without override/unsupported marker
+  // Rules 3 and 4 describe Claude-only calls. The compat shim already tells
+  // Codex how to adapt both, so when it is present these are advisory: an
+  // explicit override is clearer but not required, and demanding one for every
+  // mention would mean rewriting whole prompts to replace a single line.
+  // Without the shim there is nothing adapting them, so they are real failures.
+  const covered = hasCompatShim || hasOverride || hasUnsupportedMarker;
+
   if (MCP_CALL_REGEX.test(content) && !hasOverride && !hasUnsupportedMarker) {
-    failures.push(
+    (covered ? warnings : failures).push(
       'Contains raw mcp__* call without CODEX-OVERRIDE block or unsupported marker — ' +
-      'add a <!-- CODEX-OVERRIDE:START --> block with Codex-compatible instructions'
+      'the compat shim maps MCP calls to Codex equivalents; add a ' +
+      '<!-- CODEX-OVERRIDE:START --> block if this command needs different steps'
     );
   }
 
-  // Rule 4: Raw AskUserQuestion without override/unsupported marker
   if (ASK_USER_REGEX.test(content) && !hasOverride && !hasUnsupportedMarker) {
-    failures.push(
+    (covered ? warnings : failures).push(
       'Contains AskUserQuestion without CODEX-OVERRIDE block or unsupported marker — ' +
       'the compat shim handles this, but consider adding an explicit override for clarity'
     );
   }
 
-  return { ok: failures.length === 0, failures };
+  return { ok: failures.length === 0, failures, warnings };
 }
 
 // ─── Filename parity ─────────────────────────────────────────────────────────
@@ -111,14 +121,18 @@ function diffParity() {
 
 function runContentValidation(prompts) {
   const failures = [];
+  const warnings = [];
   for (const file of prompts) {
     const fullPath = path.join(promptsDir, file);
     const result = validatePromptContent(fullPath);
     if (!result.ok) {
       failures.push({ file, issues: result.failures });
     }
+    if (result.warnings && result.warnings.length > 0) {
+      warnings.push({ file, issues: result.warnings });
+    }
   }
-  return failures;
+  return { failures, warnings };
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
@@ -157,7 +171,7 @@ if (!contentOnly) {
 const allPrompts = listMarkdownNames(promptsDir);
 if (allPrompts.length > 0) {
   console.log(`\nContent validation: checking ${allPrompts.length} Codex prompts...`);
-  const contentFailures = runContentValidation(allPrompts);
+  const { failures: contentFailures, warnings: contentWarnings } = runContentValidation(allPrompts);
 
   if (contentFailures.length === 0) {
     console.log('Content validation OK: all Codex prompts pass quality checks.');
@@ -173,6 +187,33 @@ if (allPrompts.length > 0) {
       '\nContent failures require manual fixes — see issue descriptions above.'
     );
     exitCode = 1;
+  }
+
+  // Advisory only: summarised rather than listed per file, so real failures
+  // above stay visible instead of being buried under a wall of suggestions.
+  if (contentWarnings.length > 0) {
+    const byIssue = new Map();
+    for (const { issues } of contentWarnings) {
+      for (const issue of issues) {
+        const key = issue.split('—')[0].trim();
+        byIssue.set(key, (byIssue.get(key) || 0) + 1);
+      }
+    }
+    console.log(`\nAdvisories (${contentWarnings.length} files, not failures):`);
+    for (const [issue, count] of byIssue) {
+      console.log(`  ! ${count} × ${issue}`);
+    }
+    console.log('  These are covered by the compat shim; add CODEX-OVERRIDE blocks only where a command genuinely needs different steps in Codex.');
+    console.log('  Run with --verbose-advisories to list them per file.');
+  }
+
+  if (contentWarnings.length > 0 && verboseAdvisories) {
+    for (const { file, issues } of contentWarnings) {
+      console.log(`\n  ${file}:`);
+      for (const issue of issues) {
+        console.log(`    ! ${issue}`);
+      }
+    }
   }
 } else {
   console.log('\nContent validation skipped: no Codex prompts found.');
