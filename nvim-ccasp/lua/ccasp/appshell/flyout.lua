@@ -248,7 +248,7 @@ local section_renderers = {
     table.insert(lines, "  " .. string.rep("─", 30))
 
     -- New Session action
-    table.insert(lines, "  " .. icons.maximize .. " New Claude Session")
+    table.insert(lines, "  " .. icons.maximize .. " New Session")
     item_lines[#lines] = { action = "new_session" }
 
     -- Recent repos (indented under New Session for quick-launch)
@@ -806,21 +806,27 @@ function M.execute_action(item)
       -- Closing it would leave the wide left spacer visible as a blank area.
       -- The user can keep interacting with the flyout; Tab goes to the new session.
       vim.schedule(function()
-        sessions.spawn()
-        -- Re-render and re-focus flyout after spawn settles
-        vim.defer_fn(function()
-          if state.win and vim.api.nvim_win_is_valid(state.win) then
-            render()
-            vim.api.nvim_set_current_win(state.win)
-          end
-        end, 1000)
+        require("ccasp.runtime_picker").open({
+          prompt = "New session type",
+          on_select = function(runtime_name)
+            sessions.spawn(nil, runtime_name)
+            -- Re-render and re-focus flyout after spawn settles
+            vim.defer_fn(function()
+              if state.win and vim.api.nvim_win_is_valid(state.win) then
+                render()
+                vim.api.nvim_set_current_win(state.win)
+              end
+            end, 1000)
+          end,
+        })
       end)
     end,
     new_session_at_repo = function()
-      -- Launch a new session at the selected repo path
+      -- Launch a new session at the selected repo path, asking which agent
+      local repo_path = item.path
       M.close()
       vim.schedule(function()
-        require("ccasp.repo_launcher").open_repo(item.path)
+        require("ccasp.repo_launcher").open_repo_pick(repo_path)
       end)
     end,
     new_repo_session = function()
@@ -844,7 +850,7 @@ function M.execute_action(item)
             if m == "t" or m == "i" then
               vim.cmd("stopinsert")
             end
-            require("ccasp.repo_launcher").open_repo(path)
+            require("ccasp.repo_launcher").open_repo_pick(path)
           end)
         end)
       end)
@@ -951,7 +957,7 @@ function M.execute_action(item)
     -- Repo launcher
     open_repo = function()
       close_and_run_modal(function()
-        require("ccasp.repo_launcher").open_repo(item.path)
+        require("ccasp.repo_launcher").open_repo_pick(item.path)
       end)
     end,
     open_path_dialog = function()

@@ -1,8 +1,18 @@
 -- CCASP Multi-Session Terminal Manager
--- Manages multiple Claude CLI sessions with quadrant stacking layout
+-- Manages multiple agent CLI sessions with quadrant stacking layout
 -- Layout progression: 1 → 1x2 → 2x2 → 2x3 → 2x4 (max 8 sessions)
+--
+-- Sessions may drive different runtimes (Claude Code or Codex); each session
+-- stores both its command string and the resolved runtime name.
 
 local M = {}
+
+local runtime = require("ccasp.runtime")
+
+-- Command string for new sessions when the caller has no preference.
+local function default_command()
+  return runtime.command(runtime.default())
+end
 
 -- Titlebar module (lazy-loaded to avoid circular dependency)
 local titlebar = nil
@@ -464,10 +474,11 @@ function M.rebuild()
   vim.defer_fn(function() state.resizing = false end, 300)
 end
 
--- Launch CLI in terminal buffer (defaults to "claude", pass command to override).
+-- Launch CLI in terminal buffer (defaults to the configured runtime's command,
+-- pass command to override).
 -- Reads session.command at fire time so template apply can override before the defer fires.
 local function launch_claude_cli(id, bufnr, name, command)
-  command = command or "claude"
+  command = command or default_command()
   -- Template apply manages its own CLI launches; skip when suppressed.
   if _suppress_cli_launch then return end
   vim.defer_fn(function()
@@ -500,10 +511,11 @@ local function launch_claude_cli(id, bufnr, name, command)
   end, 500)
 end
 
--- Create a new Claude CLI session.
+-- Create a new agent CLI session.
 -- Optional: pass a target_win to place the terminal in an existing window
 -- instead of creating a split (used by layer switch for empty layers).
-function M.spawn(target_win)
+-- runtime_name picks which CLI to launch; defaults to the configured runtime.
+function M.spawn(target_win, runtime_name)
   cleanup_invalid()
 
   local count = M.count()
@@ -550,7 +562,9 @@ function M.spawn(target_win)
   apply_terminal_win_opts(winid)
 
   local spawn_path = spawn_dir
-  state.sessions[id] = { id = id, name = name, bufnr = bufnr, winid = winid, claude_running = false, path = spawn_path, command = "claude" }
+  local spawn_runtime = runtime.normalize(runtime_name)
+  local spawn_command = spawn_runtime and runtime.command(spawn_runtime) or default_command()
+  state.sessions[id] = { id = id, name = name, bufnr = bufnr, winid = winid, claude_running = false, path = spawn_path, command = spawn_command, runtime = runtime.from_command(spawn_command) }
   table.insert(state.session_order, id)
   state.active_session = id -- newly created session is always active
   state.activity[id] = "idle"
@@ -596,10 +610,13 @@ function M.spawn(target_win)
 end
 
 -- Create a new CLI session at a specific directory path.
--- opts.command: CLI command to launch (default "claude")
+-- opts.command: CLI command to launch (default: configured runtime's command)
+-- opts.runtime: runtime name ("claude"|"codex"); resolves opts.command when given
 function M.spawn_at_path(path, opts)
   opts = opts or {}
-  local cli_command = opts.command or "claude"
+  local cli_command = opts.command
+    or (opts.runtime and runtime.command(opts.runtime))
+    or default_command()
   local ccasp = require("ccasp")
 
   -- Ensure we're in normal mode before creating splits
@@ -644,7 +661,7 @@ function M.spawn_at_path(path, opts)
   -- Apply terminal window options (winhighlight set later by titlebar.update)
   apply_terminal_win_opts(winid)
 
-  state.sessions[id] = { id = id, name = name, bufnr = bufnr, winid = winid, claude_running = false, path = lcd_path, command = cli_command }
+  state.sessions[id] = { id = id, name = name, bufnr = bufnr, winid = winid, claude_running = false, path = lcd_path, command = cli_command, runtime = runtime.from_command(cli_command) }
   table.insert(state.session_order, id)
   state.active_session = id -- newly created session is always active
   state.activity[id] = "idle"
@@ -933,7 +950,25 @@ end
 function M.set_command(id, command)
   if state.sessions[id] then
     state.sessions[id].command = command
+    -- Keep the runtime tag in sync so the command palette follows the binary.
+    state.sessions[id].runtime = runtime.from_command(command)
   end
+end
+
+-- Switch a session to a named runtime. Only affects the next launch; an
+-- already-running CLI keeps going until the session is restarted.
+function M.set_runtime(id, name)
+  local key = runtime.normalize(name)
+  if not key or not state.sessions[id] then return false end
+  M.set_command(id, runtime.command(key))
+  return true
+end
+
+-- Runtime driving a session, falling back to the configured default.
+function M.get_runtime(id)
+  local session = state.sessions[id or state.active_session]
+  if not session then return runtime.default() end
+  return session.runtime or runtime.from_command(session.command) or runtime.default()
 end
 
 -- Suppress/allow CLI auto-launch (used during template apply to prevent
@@ -1027,13 +1062,16 @@ end
 -- Register an existing session (called from sidebar)
 function M.register_primary(bufnr, winid)
   local id = generate_id()
+  local primary_command = default_command()
+  local primary_runtime = runtime.from_command(primary_command)
   state.sessions[id] = {
     id = id,
-    name = "Claude 1",
+    name = runtime.label(primary_runtime) .. " 1",
     bufnr = bufnr,
     winid = winid,
     claude_running = false,
-    command = "claude",
+    command = primary_command,
+    runtime = primary_runtime,
   }
   table.insert(state.session_order, id)
   state.primary_session = id

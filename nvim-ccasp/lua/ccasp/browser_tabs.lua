@@ -607,9 +607,13 @@ function M.create_terminal_for_tab(tab_id, cwd)
   local term_buf = vim.api.nvim_create_buf(false, true)
   vim.bo[term_buf].bufhidden = "hide"
 
+  -- Unlike sessions.lua this execs the CLI directly rather than typing it into
+  -- a shell, so the runtime has to be resolved up front.
+  local runtime = require("ccasp.runtime")
+
   -- Start terminal job
   vim.api.nvim_buf_call(term_buf, function()
-    vim.fn.termopen("claude", {
+    vim.fn.termopen(runtime.command(runtime.default()), {
       cwd = cwd,
       on_exit = function(_, exit_code)
         tab.job_id = nil

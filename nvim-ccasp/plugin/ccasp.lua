@@ -51,6 +51,32 @@ vim.api.nvim_create_user_command("CcaspHealth", function()
   vim.cmd("checkhealth ccasp")
 end, { desc = "Check CCASP health" })
 
+vim.api.nvim_create_user_command("CcaspRuntime", function(opts)
+  require("ccasp.runtime_ui").pick(opts.args)
+end, {
+  nargs = "?",
+  complete = function()
+    return require("ccasp.runtime").order
+  end,
+  desc = "Show or switch the agent CLI runtime (Claude/Codex)",
+})
+
+-- Happy wraps either runtime for mobile control: `happy` / `happy codex`.
+vim.api.nvim_create_user_command("CcaspHappy", function(opts)
+  local launcher = require("ccasp.repo_launcher")
+  if opts.args ~= "" then
+    launcher.open_repo_happy(vim.fn.getcwd(), opts.args)
+  else
+    launcher.open_happy_picker()
+  end
+end, {
+  nargs = "?",
+  complete = function()
+    return require("ccasp.runtime").order
+  end,
+  desc = "Launch a Happy session in cwd (claude|codex), or open the repo picker",
+})
+
 -- Window Manager commands (NEW in v1.2.0)
 vim.api.nvim_create_user_command("CcaspTaskbar", function()
   require("ccasp.taskbar").show_picker()

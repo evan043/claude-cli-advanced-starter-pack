@@ -308,7 +308,7 @@ function M.open_path_dialog()
       if mode == "t" or mode == "i" then
         vim.cmd("stopinsert")
       end
-      require("ccasp.repo_launcher").open_repo(path)
+      require("ccasp.repo_launcher").open_repo_pick(path)
     end)
   end, opts)
 
@@ -360,7 +360,7 @@ function M.open_path_dialog()
       if mode == "t" or mode == "i" then
         vim.cmd("stopinsert")
       end
-      require("ccasp.repo_launcher").open_repo(path)
+      require("ccasp.repo_launcher").open_repo_pick(path)
     end)
   end, opts)
 end
@@ -440,7 +440,7 @@ function M.open_browser()
     if repo then
       close_browser()
       vim.schedule(function()
-        require("ccasp.repo_launcher").open_repo(repo.path)
+        require("ccasp.repo_launcher").open_repo_pick(repo.path)
       end)
     end
   end, opts)
@@ -459,7 +459,7 @@ function M.open_browser()
       if repo then
         close_browser()
         vim.schedule(function()
-          require("ccasp.repo_launcher").open_repo(repo.path)
+          require("ccasp.repo_launcher").open_repo_pick(repo.path)
         end)
       end
     end
@@ -725,7 +725,7 @@ function M.open_happy_browser()
       if repo then
         close_happy_browser()
         vim.schedule(function()
-          require("ccasp.repo_launcher").open_repo_happy(repo.path)
+          require("ccasp.repo_launcher").open_repo_happy_pick(repo.path)
         end)
       end
     end

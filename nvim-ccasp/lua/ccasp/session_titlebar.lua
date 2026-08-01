@@ -219,8 +219,23 @@ local function setup_click_handlers()
   end
 end
 
+-- Badge showing which agent CLI a session drives, so mixed-runtime layers are
+-- readable at a glance. Happy-wrapped sessions are marked too.
+local function runtime_badge(session)
+  if not session then return "" end
+  local ok, runtime = pcall(require, "ccasp.runtime")
+  if not ok then return "" end
+
+  local name = session.runtime or runtime.from_command(session.command)
+  if not name then return "" end
+
+  local spec = runtime.spec(name)
+  local wrapper = runtime.is_happy_command(session.command) and "@" or ""
+  return string.format("[%s%s] ", wrapper, spec.short or spec.label)
+end
+
 -- Build winbar string for a session
-local function build_winbar(session_id, name, is_primary, claude_running, is_active, activity)
+local function build_winbar(session_id, name, is_primary, claude_running, is_active, activity, badge)
   local color_idx = get_color_idx(session_id)
   local hl
   if is_active then
@@ -240,7 +255,7 @@ local function build_winbar(session_id, name, is_primary, claude_running, is_act
   -- Uses Material Design Nerd Font icons for cross-platform rendering
   -- Color matches title text (hl) instead of separate btn_hl
   local winbar = string.format(
-    "%%#%s# %s %s%s%s %%=%%#%s#"
+    "%%#%s# %s %s%s%s%s %%=%%#%s#"
     .. " %%@v:lua.CcaspTitlebar_screenshot@  %s  %%X"
     .. "│%%@v:lua.CcaspTitlebar_screenshot_browse@  %s  %%X"
     .. "│%%@v:lua.CcaspTitlebar_cycle@  %s  %%X"
@@ -251,7 +266,7 @@ local function build_winbar(session_id, name, is_primary, claude_running, is_act
     .. "│%%@v:lua.CcaspTitlebar_minimize@  %s  %%X"
     .. "│%%@v:lua.CcaspTitlebar_close@  %s  %%X"
     .. " %%#%s# ",
-    hl, status, name, primary_marker, active_marker,
+    hl, status, badge or "", name, primary_marker, active_marker,
     hl,
     nf.win_screenshot, nf.win_screenshot_browse, nf.win_cycle, nf.win_rename, nf.palette, nf.win_save_note, nf.win_todo, nf.win_minimize, nf.win_close,
     hl
@@ -307,7 +322,8 @@ function M.update(session_id)
     is_primary,
     session.claude_running,
     is_active,
-    activity
+    activity,
+    runtime_badge(session)
   )
 
   -- Set winbar for this window

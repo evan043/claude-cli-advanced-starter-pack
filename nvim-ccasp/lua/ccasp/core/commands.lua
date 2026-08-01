@@ -1,5 +1,6 @@
 -- CCASP Commands Module
--- Scans and manages .claude/commands/ directory
+-- Scans and manages the active runtime's prompt directory
+-- (.claude/commands for Claude, .codex/prompts for Codex)
 
 local M = {}
 
@@ -150,6 +151,8 @@ end
 -- Each terminal session may be in a different project directory, so we derive
 -- the commands dir from the focused session's window-local cwd.
 local function get_commands_dir()
+  local runtime = require("ccasp.runtime")
+
   -- Try active session's window-local directory first
   local sessions_ok, sessions = pcall(require, "ccasp.sessions")
   if sessions_ok then
@@ -159,7 +162,12 @@ local function get_commands_dir()
       if ok and cwd and cwd ~= "" then
         local root = detect_root_from(cwd)
         if root then
-          local dir = (root .. "/.claude/commands"):gsub("\\", "/")
+          -- Follow the runtime this session actually drives, so a Codex session
+          -- lists .codex/prompts rather than .claude/commands.
+          local session_runtime = active.runtime
+            or runtime.from_command(active.command)
+            or runtime.default(root)
+          local dir = runtime.prompts_dir(root, session_runtime)
           if vim.fn.isdirectory(dir) == 1 then
             return dir
           end
@@ -171,18 +179,53 @@ local function get_commands_dir()
   -- Fallback to global project root (detected at setup time)
   local ccasp = require("ccasp")
   local root = ccasp.config.project_root or vim.fn.getcwd()
-  return (root .. "/" .. ccasp.config.ccasp_root .. "/commands"):gsub("\\", "/")
+  return runtime.prompts_dir(root, ccasp.config.runtime or runtime.default(root))
 end
 
 -- Extract frontmatter bounds from content
+-- Generated command files carry a runtime-compatibility preamble ahead of the
+-- real content. It is delimited by HTML comments but its body is plain markdown
+-- (including its own `# Codex Runtime Compatibility` heading), so the whole
+-- block has to go before frontmatter or the command's own heading can be read.
+local GENERATED_BLOCKS = {
+  "<!%-%- CCASP%-CODEX%-COMPAT:START %-%->.-<!%-%- CCASP%-CODEX%-COMPAT:END %-%->",
+  "<!%-%- CODEX%-OVERRIDE:START %-%->.-<!%-%- CODEX%-OVERRIDE:END %-%->",
+}
+
+local function strip_leading_comments(content)
+  local body = content
+  for _, pattern in ipairs(GENERATED_BLOCKS) do
+    body = body:gsub(pattern, "")
+  end
+
+  body = body:gsub("^%s+", "")
+  while body:sub(1, 4) == "<!--" do
+    local close = body:find("%-%->")
+    if not close then break end
+    body = body:sub(close + 3):gsub("^%s+", "")
+  end
+  return body
+end
+
 local function extract_frontmatter_content(content)
-  local fm_start = content:find("^%-%-%-\n")
+  local body = strip_leading_comments(content)
+
+  local fm_start = body:find("^%-%-%-\n")
   if not fm_start then return nil end
 
-  local fm_end = content:find("\n%-%-%-\n", 4)
+  local fm_end = body:find("\n%-%-%-\n", 4)
   if not fm_end then return nil end
 
-  return content:sub(4, fm_end - 1)
+  return body:sub(4, fm_end - 1)
+end
+
+-- First markdown heading, used when a file has no usable frontmatter.
+local function first_heading(content)
+  for line in strip_leading_comments(content):gmatch("[^\n]+") do
+    local heading = line:match("^#%s+(.+)$")
+    if heading then return (heading:gsub("%s+$", "")) end
+  end
+  return nil
 end
 
 -- Parse description from frontmatter
@@ -243,8 +286,64 @@ local function init_sections()
   return sections
 end
 
+-- .ccasp/commands/<id>.yaml is the source of truth for the Codex support tier;
+-- the rendered markdown does not currently carry it. Cached per project root.
+local meta_cache = {}
+
+local function load_command_meta(root)
+  if meta_cache[root] then return meta_cache[root] end
+
+  local meta = {}
+  local dir = (root .. "/.ccasp/commands"):gsub("\\", "/")
+  if vim.fn.isdirectory(dir) == 1 then
+    local ok, entries = pcall(vim.fn.readdir, dir)
+    if ok then
+      for _, entry in ipairs(entries) do
+        local id = entry:match("^(.+)%.ya?ml$")
+        if id then
+          local record = {}
+          local read_ok, lines = pcall(vim.fn.readfile, dir .. "/" .. entry)
+          if read_ok then
+            local in_instructions = false
+            for idx, line in ipairs(lines) do
+              if line:match("^instructions:") then
+                in_instructions = true
+              elseif not in_instructions then
+                local key, value = line:match("^([%w_]+):%s*(.+)$")
+                if key then
+                  record[key] = value:gsub('^"', ""):gsub('"$', ""):gsub("%s+$", "")
+                end
+              elseif not record.embedded_description then
+                -- The legacy converter folded each command's original
+                -- frontmatter into the instruction list. Recover the real
+                -- description from there, re-joining YAML line wrapping.
+                local embedded = line:match('^%s*%-?%s*"?description:%s*(.+)$')
+                if embedded then
+                  local text = embedded
+                  local next_idx = idx + 1
+                  while not text:match('"$') and lines[next_idx] do
+                    local cont = lines[next_idx]:match("^%s+(.+)$")
+                    if not cont or cont:match("^%-") then break end
+                    text = text .. " " .. cont
+                    next_idx = next_idx + 1
+                  end
+                  record.embedded_description = text:gsub('"$', ""):gsub("%s+$", "")
+                end
+              end
+            end
+          end
+          meta[id] = record
+        end
+      end
+    end
+  end
+
+  meta_cache[root] = meta
+  return meta
+end
+
 -- Read command file and create entry
-local function load_command_file(file)
+local function load_command_file(file, meta)
   local filename = vim.fn.fnamemodify(file, ":t:r")
   if filename:sub(1, 2) == "__" then return nil end
 
@@ -255,12 +354,31 @@ local function load_command_file(file)
   f:close()
 
   local frontmatter = parse_frontmatter(content)
+  local record = (meta and meta[filename]) or {}
+
+  -- The generator stamps a placeholder description on converted commands, so
+  -- prefer the description recovered from the original frontmatter over it.
+  local description = frontmatter.description
+  if (not description or description == "")
+      and record.description
+      and not record.description:match("^Converted from legacy") then
+    description = record.description
+  end
+  if not description or description == "" then
+    description = record.embedded_description
+  end
+  if not description or description == "" then
+    description = first_heading(content) or record.title or ""
+  end
+
   return {
     name = filename,
     path = file,
-    description = frontmatter.description or "",
+    description = description,
     options = frontmatter.options or {},
     section = get_section(filename),
+    -- Matches the generator default in ccasp_cli/commands.py.
+    codex_support = record.codex_support or "partial",
   }
 end
 
@@ -293,10 +411,16 @@ function M.load_all()
     return commands_cache
   end
 
+  -- Tier metadata is keyed off the project root, not the prompts dir, so both
+  -- runtimes read the same .ccasp/commands/*.yaml source of truth.
+  local ccasp_ok, ccasp = pcall(require, "ccasp")
+  local meta_root = (ccasp_ok and ccasp.config and ccasp.config.project_root) or vim.fn.getcwd()
+  local meta = load_command_meta(meta_root)
+
   for _, entry in ipairs(entries) do
     if entry:match("%.md$") then
       local file = dir .. "/" .. entry
-      local cmd = load_command_file(file)
+      local cmd = load_command_file(file, meta)
       if cmd then
         commands_cache[cmd.name] = cmd
         if sections_cache[cmd.section] then
@@ -405,6 +529,7 @@ function M.reload()
   commands_cache = nil
   sections_cache = nil
   last_commands_dir = nil
+  meta_cache = {}
   return M.load_all()
 end
 
