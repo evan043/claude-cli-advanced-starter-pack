@@ -1,6 +1,7 @@
 id: nvim-appshell-executor
 title: CCASP Neovim Appshell - Phase Executor
 description: CCASP Neovim Appshell - Phase Executor
+codex_support: unsupported
 system: You are a senior systems architect.
 instructions:
   - "Execute phases of the Neovim Appshell Layout Redesign (Issue #114)."

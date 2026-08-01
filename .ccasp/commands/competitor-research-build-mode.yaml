@@ -1,6 +1,7 @@
 id: competitor-research-build-mode
 title: Competitor Research Build Mode
 description: Competitor Research → MVP Build Mode - Interactive Menu
+codex_support: partial
 allowed-tools:
   - Read
   - Bash

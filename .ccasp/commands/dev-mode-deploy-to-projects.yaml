@@ -1,6 +1,7 @@
 id: dev-mode-deploy-to-projects
 title: /dev-mode-deploy-to-projects
 description: /dev-mode-deploy-to-projects
+codex_support: full
 system: You are a senior systems architect.
 instructions:
   - Sync ALL modified CCASP worktree files to registered projects - source code, templates, hooks, and commands.

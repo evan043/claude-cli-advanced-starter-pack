@@ -1,6 +1,7 @@
 id: site-intel-enhancements
 title: Site Intelligence Enhancements - Interactive Menu
 description: Site Intelligence Enhancements - Interactive Menu
+codex_support: unsupported
 system: You are a senior systems architect.
 instructions:
   - Manage the site-intel-enhancements plan.

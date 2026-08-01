@@ -1,6 +1,7 @@
 id: compliance-check
 title: Compliance Check
 description: Run commercial compliance check on a vision or competitor URL
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - "# Commercial Compliance Check"

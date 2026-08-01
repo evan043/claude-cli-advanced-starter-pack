@@ -1,6 +1,7 @@
 id: vision-init-mockup-preview-executor
 title: Vision Init Mockup Preview - Phase Executor
 description: Vision Init Mockup Preview - Phase Executor
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - Execute phases of the Vision Init HTML Mockup Preview plan.

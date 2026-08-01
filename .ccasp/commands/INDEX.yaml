@@ -1,6 +1,7 @@
 id: INDEX
 title: claude-cli-advanced-starter-pack - Slash Commands
 description: claude-cli-advanced-starter-pack - Slash Commands
+codex_support: full
 system: You are a senior systems architect.
 instructions:
   - "> Installed by Claude CLI Advanced Starter Pack v2.11.4 on 2026-02-12"

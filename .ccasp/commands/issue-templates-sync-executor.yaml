@@ -1,6 +1,7 @@
 id: issue-templates-sync-executor
 title: issue-templates-sync Phase Executor
 description: issue-templates-sync Phase Executor
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - Execute phases of the Enhanced Issue Templates with Hook-Based Sync plan.

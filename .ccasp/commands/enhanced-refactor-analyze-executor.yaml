@@ -1,6 +1,7 @@
 id: enhanced-refactor-analyze-executor
 title: Enhanced Refactor Analyze Executor
 description: Execute phases of the Enhanced Refactor-Analyze System roadmap
+codex_support: partial
 argument-hint:
   - phase-number or 'status' or 'next'
 system: You are a senior systems architect.

@@ -1,6 +1,7 @@
 id: mobile-packaging-executor
 title: Mobile Packaging Executor
 description: Execute phases of the Mobile App Packaging feature plan
+codex_support: partial
 allowed-tools:
   - Read
   - Edit

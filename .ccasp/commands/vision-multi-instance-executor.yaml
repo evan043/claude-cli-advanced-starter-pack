@@ -1,6 +1,7 @@
 id: vision-multi-instance-executor
 title: Vision Multi-Instance & Decision Engine - Phase Executor
 description: Vision Multi-Instance & Decision Engine - Phase Executor
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - "Execute phases of the Vision Multi-Instance & Decision Engine plan (GitHub Issue #115)."

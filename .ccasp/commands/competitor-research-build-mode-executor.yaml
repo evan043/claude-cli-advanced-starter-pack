@@ -1,6 +1,7 @@
 id: competitor-research-build-mode-executor
 title: Competitor Research Build Mode Executor
 description: Execute phases of the Competitor Research → MVP Build Mode plan
+codex_support: partial
 allowed-tools:
   - Read
   - Write

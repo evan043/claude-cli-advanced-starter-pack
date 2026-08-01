@@ -1,6 +1,7 @@
 id: commercial-compliance-framework-executor
 title: Commercial Compliance Framework — Phase Executor
 description: Commercial Compliance Framework — Phase Executor
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - Execute phases of the Commercial Compliance Framework integration plan.

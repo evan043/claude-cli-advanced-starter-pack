@@ -1,6 +1,7 @@
 id: dev-mode-merge
 title: Dev Mode Merge
 description: Merge worktree branch to main with customization import and auto-exit
+codex_support: full
 model: sonnet
 system: You are a senior systems architect.
 instructions:

@@ -1,6 +1,7 @@
 id: site-intel-enhancements-executor
 title: Site Intelligence Enhancements - Phase Executor
 description: Site Intelligence Enhancements - Phase Executor
+codex_support: unsupported
 system: You are a senior systems architect.
 instructions:
   - Execute phases of the site-intel-enhancements plan.

@@ -1,6 +1,7 @@
 id: explore-mcp
 title: Explore Mcp
 description: Discover and install MCP servers based on your tech stack
+codex_support: partial
 options:
   - label: Auto-Detect
     description: Scan codebase and recommend

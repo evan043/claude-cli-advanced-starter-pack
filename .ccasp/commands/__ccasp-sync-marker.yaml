@@ -1,6 +1,7 @@
 id: __ccasp-sync-marker
 title: "  Ccasp Sync Marker"
 description: CCASP sync marker - triggers full 11-category sync
+codex_support: full
 allowed-tools: []
 model: sonnet
 system: You are a senior systems architect.

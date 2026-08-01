@@ -1,6 +1,7 @@
 id: mobile-packaging
 title: Mobile Packaging
 description: Mobile App Packaging Feature — Interactive Menu
+codex_support: partial
 allowed-tools:
   - Read
   - Bash

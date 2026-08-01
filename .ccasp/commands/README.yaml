@@ -1,6 +1,7 @@
 id: README
 title: claude-cli-advanced-starter-pack - Slash Commands
 description: claude-cli-advanced-starter-pack - Slash Commands
+codex_support: full
 system: You are a senior systems architect.
 instructions:
   - This folder contains Claude Code CLI slash commands installed by Claude CLI Advanced Starter Pack.

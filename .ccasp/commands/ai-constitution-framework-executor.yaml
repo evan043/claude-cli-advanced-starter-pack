@@ -1,6 +1,7 @@
 id: ai-constitution-framework-executor
 title: AI Constitution Framework Phase Executor
 description: AI Constitution Framework Phase Executor
+codex_support: partial
 system: You are a senior systems architect.
 instructions:
   - Execute phases of the AI Constitution Framework implementation.

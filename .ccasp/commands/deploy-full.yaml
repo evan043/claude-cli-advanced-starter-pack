@@ -1,6 +1,7 @@
 id: deploy-full
 title: Deploy Full
 description: Parallel full-stack deployment (backend + frontend)
+codex_support: full
 model: haiku
 system: You are a senior systems architect.
 instructions:
