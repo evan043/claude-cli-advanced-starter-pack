@@ -802,21 +802,16 @@ function M.execute_action(item)
 
     -- Terminal sessions
     new_session = function()
-      -- Don't close flyout — it's a float that doesn't interfere with splits.
-      -- Closing it would leave the wide left spacer visible as a blank area.
-      -- The user can keep interacting with the flyout; Tab goes to the new session.
-      vim.schedule(function()
+      -- Route through close_and_run_modal like every other modal here: it
+      -- closes the flyout and leaves terminal mode before running fn. Keeping
+      -- the flyout open meant its sandboxed buffer (c/x are no-ops there)
+      -- silently swallowed the picker's shortcut keys whenever focus did not
+      -- land cleanly on the picker.
+      close_and_run_modal(function()
         require("ccasp.runtime_picker").open({
           prompt = "New session type",
           on_select = function(runtime_name)
             sessions.spawn(nil, runtime_name)
-            -- Re-render and re-focus flyout after spawn settles
-            vim.defer_fn(function()
-              if state.win and vim.api.nvim_win_is_valid(state.win) then
-                render()
-                vim.api.nvim_set_current_win(state.win)
-              end
-            end, 1000)
           end,
         })
       end)

@@ -1,6 +1,10 @@
 -- Session-type picker
 -- Small floating window that asks which agent CLI a new session should drive.
--- Supports single-key shortcuts, arrow/jk navigation, and <CR> to confirm.
+-- Single-key shortcuts, Tab to toggle, arrow/jk navigation, <CR> to confirm.
+--
+-- Built with panels.helpers like the other menus in this plugin. sandbox_buffer
+-- neutralises destructive normal-mode keys (it maps c/d/x/... to no-ops), so the
+-- picker's own shortcuts have to be mapped AFTER it or they would be swallowed.
 
 local helpers = require("ccasp.panels.helpers")
 local runtime = require("ccasp.runtime")
@@ -13,7 +17,6 @@ local state = {
   choices = {},
   cursor = 1,
   on_select = nil,
-  title = nil,
 }
 
 local function is_open()
@@ -24,9 +27,6 @@ function M.close()
   if is_open() then
     pcall(vim.api.nvim_win_close, state.winid, true)
   end
-  if state.bufnr and vim.api.nvim_buf_is_valid(state.bufnr) then
-    pcall(vim.api.nvim_buf_delete, state.bufnr, { force = true })
-  end
   state.winid, state.bufnr, state.on_select = nil, nil, nil
 end
 
@@ -35,21 +35,15 @@ local function render()
 
   local lines = {}
   for i, choice in ipairs(state.choices) do
-    local marker = (i == state.cursor) and "▶" or " "
-    lines[i] = string.format(" %s  [%s]  %-8s %s", marker, choice.key, choice.label, choice.hint or "")
+    lines[i] = string.format(" %s  [%s]  %-8s %s",
+      (i == state.cursor) and "▶" or " ",
+      choice.key, choice.label, choice.hint or "")
   end
-  lines[#lines + 1] = ""
-  lines[#lines + 1] = " ↑↓/jk move · ⏎ select · esc cancel"
+  helpers.set_buffer_content(state.bufnr, lines)
 
-  vim.bo[state.bufnr].modifiable = true
-  vim.api.nvim_buf_set_lines(state.bufnr, 0, -1, false, lines)
-  vim.bo[state.bufnr].modifiable = false
-
-  -- Highlight the selected row
   local ns = vim.api.nvim_create_namespace("ccasp_runtime_picker")
   vim.api.nvim_buf_clear_namespace(state.bufnr, ns, 0, -1)
-  vim.api.nvim_buf_add_highlight(state.bufnr, ns, "CursorLine", state.cursor - 1, 0, -1)
-  vim.api.nvim_buf_add_highlight(state.bufnr, ns, "Comment", #lines - 1, 0, -1)
+  helpers.add_highlight(state.bufnr, ns, "CursorLine", state.cursor - 1, 0, -1)
 
   if is_open() then
     pcall(vim.api.nvim_win_set_cursor, state.winid, { state.cursor, 0 })
@@ -65,10 +59,10 @@ local function confirm(index)
   end
 end
 
--- opts.prompt      title text (default "Session type")
--- opts.on_select   fn(runtime_name)
--- opts.happy       label choices with the Happy command instead of the bare CLI
--- opts.names       explicit runtime list (defaults to installed runtimes)
+-- opts.prompt     title text (default "Session type")
+-- opts.on_select  fn(runtime_name)
+-- opts.happy      label choices with the Happy command instead of the bare CLI
+-- opts.names      explicit runtime list (defaults to installed runtimes)
 function M.open(opts)
   opts = opts or {}
 
@@ -101,6 +95,7 @@ function M.open(opts)
   end
 
   state.choices = {}
+  state.cursor = 1
   local active = runtime.default()
   for i, name in ipairs(names) do
     local spec = runtime.spec(name)
@@ -114,28 +109,29 @@ function M.open(opts)
   end
 
   state.on_select = opts.on_select
-  state.title = opts.prompt or "Session type"
 
-  local width = 42
-  local height = #state.choices + 2
+  local width = 44
+  local height = #state.choices
   local pos = helpers.calculate_position({ width = width, height = height })
 
-  state.bufnr = vim.api.nvim_create_buf(false, true)
-  vim.bo[state.bufnr].bufhidden = "wipe"
+  state.bufnr = helpers.create_buffer("ccasp://runtime-picker")
   vim.bo[state.bufnr].filetype = "ccasp-runtime-picker"
-
-  state.winid = vim.api.nvim_open_win(state.bufnr, true, {
-    relative = "editor",
-    row = pos.row,
-    col = pos.col,
+  state.winid = helpers.create_window(state.bufnr, {
     width = width,
     height = height,
-    style = "minimal",
+    row = pos.row,
+    col = pos.col,
     border = "rounded",
-    title = " " .. state.title .. " ",
+    title = " " .. (opts.prompt or "Session type") .. " ",
     title_pos = "center",
+    footer = " c/x or 1/2 pick  Tab toggle  Enter confirm  Esc cancel ",
+    footer_pos = "center",
   })
   vim.wo[state.winid].cursorline = false
+
+  -- Neutralise destructive keys first; our shortcuts are mapped after so they
+  -- take precedence over the no-ops sandbox_buffer installs for c/x.
+  helpers.sandbox_buffer(state.bufnr)
 
   local map_opts = { buffer = state.bufnr, nowait = true, silent = true }
   local function move(delta)
@@ -143,21 +139,29 @@ function M.open(opts)
     render()
   end
 
-  vim.keymap.set("n", "j", function() move(1) end, map_opts)
-  vim.keymap.set("n", "<Down>", function() move(1) end, map_opts)
-  vim.keymap.set("n", "k", function() move(-1) end, map_opts)
-  vim.keymap.set("n", "<Up>", function() move(-1) end, map_opts)
+  for _, key in ipairs({ "j", "<Down>" }) do
+    vim.keymap.set("n", key, function() move(1) end, map_opts)
+  end
+  for _, key in ipairs({ "k", "<Up>" }) do
+    vim.keymap.set("n", key, function() move(-1) end, map_opts)
+  end
+  -- Tab cycles, which is the natural gesture for a two-item choice.
+  for _, key in ipairs({ "<Tab>", "<S-Tab>" }) do
+    vim.keymap.set("n", key, function() move(1) end, map_opts)
+  end
+
   vim.keymap.set("n", "<CR>", function() confirm() end, map_opts)
+  vim.keymap.set("n", "<Space>", function() confirm() end, map_opts)
   vim.keymap.set("n", "<Esc>", M.close, map_opts)
   vim.keymap.set("n", "q", M.close, map_opts)
 
-  -- Single-key shortcuts, plus 1..n by position
+  -- Per-choice shortcuts, plus 1..n by position.
   for i, choice in ipairs(state.choices) do
     vim.keymap.set("n", choice.key, function() confirm(i) end, map_opts)
+    vim.keymap.set("n", choice.key:upper(), function() confirm(i) end, map_opts)
     vim.keymap.set("n", tostring(i), function() confirm(i) end, map_opts)
   end
 
-  -- Clicking a row selects it
   vim.keymap.set("n", "<LeftMouse>", function()
     local mouse = vim.fn.getmousepos()
     if mouse and mouse.line and state.choices[mouse.line] then
@@ -166,6 +170,16 @@ function M.open(opts)
   end, map_opts)
 
   render()
+
+  -- The flyout is sandboxed too; if anything steals focus back, its no-op maps
+  -- would swallow these keys silently. Assert focus once the window settles.
+  vim.schedule(function()
+    if is_open() and vim.api.nvim_get_current_win() ~= state.winid then
+      pcall(vim.api.nvim_set_current_win, state.winid)
+    end
+  end)
+
+  return state.winid
 end
 
 return M

@@ -99,6 +99,51 @@ test("picker short-circuits when only one runtime is offered", function()
   assert_eq("codex", chosen, "single choice auto-selects without a window")
 end)
 
+-- helpers.sandbox_buffer maps c/d/x/... to no-ops so destructive normal-mode
+-- keys cannot fire in a menu. The picker's shortcuts are c and x, so they must
+-- be mapped after sandboxing or they are silently swallowed.
+test("picker shortcuts survive buffer sandboxing", function()
+  local picker = require("ccasp.runtime_picker")
+  picker.open({ names = { "claude", "codex" }, on_select = function() end })
+  vim.wait(250)
+
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_win_get_buf(win)
+  assert_eq("ccasp-runtime-picker", vim.bo[buf].filetype, "picker window is focused")
+
+  local mapped = {}
+  for _, m in ipairs(vim.api.nvim_buf_get_keymap(buf, "n")) do mapped[m.lhs] = true end
+  assert_true(mapped["d"], "buffer is sandboxed")
+  assert_true(mapped["c"], "'c' mapped despite sandbox")
+  assert_true(mapped["x"], "'x' mapped despite sandbox")
+  assert_true(mapped["<Tab>"], "'<Tab>' toggles")
+  assert_true(mapped["<Down>"] and mapped["<Up>"], "arrow navigation mapped")
+
+  picker.close()
+end)
+
+test("picker shortcut keys actually select", function()
+  local picker = require("ccasp.runtime_picker")
+  local function press(key)
+    local chosen = nil
+    picker.open({ names = { "claude", "codex" }, on_select = function(n) chosen = n end })
+    -- Opening can defer a tick when the current window is a terminal, so wait
+    -- for the picker to actually be focused rather than a fixed delay.
+    local ready = vim.wait(1500, function()
+      local b = vim.api.nvim_win_get_buf(vim.api.nvim_get_current_win())
+      return vim.bo[b].filetype == "ccasp-runtime-picker"
+    end)
+    if not ready then return "picker-never-focused" end
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), "x", false)
+    vim.wait(600, function() return chosen ~= nil end)
+    return chosen
+  end
+  assert_eq("codex", press("x"), "x selects Codex")
+  assert_eq("claude", press("c"), "c selects Claude")
+  assert_eq("codex", press("<Tab><CR>"), "Tab then Enter selects Codex")
+  assert_eq("codex", press("<Down><CR>"), "Down then Enter selects Codex")
+end)
+
 print("")
 print("-- mixed-runtime sessions in one layer --")
 
