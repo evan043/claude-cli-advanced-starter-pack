@@ -22,10 +22,11 @@ function collectMarkdown(dir, out = []) {
   return out;
 }
 
+// Codex targets only. The compat shim tells Codex how to adapt Claude-only
+// tool calls, so writing it into the Claude-side templates and runtime output
+// prepends instructions meant for the other runtime to every Claude command.
 const defaultDirs = [
-  'templates/commands',
-  '.claude/commands',
-  '.ccasp/runtime/claude/commands',
+  '.codex/prompts',
   '.ccasp/runtime/codex/prompts'
 ];
 

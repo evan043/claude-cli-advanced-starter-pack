@@ -1,0 +1,63 @@
+id: vision-multi-instance
+title: Vision Multi-Instance & Decision Engine - Interactive Menu
+description: Vision Multi-Instance & Decision Engine - Interactive Menu
+codex_support: partial
+system: You are a senior systems architect.
+instructions:
+  - View status, execute phases, and manage the Vision Multi-Instance & Decision Engine plan.
+  - "**GitHub Issue:** #115"
+  - "**PROGRESS:** `.claude/docs/vision-multi-instance/PROGRESS.json`"
+  - ---
+  - "## Execution Protocol"
+  - "### Step 1: Load Current State"
+  - "Read `.claude/docs/vision-multi-instance/PROGRESS.json` and display:"
+  - "```"
+  - ╔══════════════════════════════════════════════════════════════════╗
+  - ║  Vision Multi-Instance & Decision Engine                        ║
+  - "║  GitHub Issue: #115 | Scale: M | 5 phases, 19 tasks             ║"
+  - ╠══════════════════════════════════════════════════════════════════╣
+  - ║                                                                  ║
+  - "║  Overall: [██████████░░░░░░░░░░] XX%                            ║"
+  - ║                                                                  ║
+  - "║  Phase 1: Registry & Foundation    [████████░░] XX%  (5 tasks)  ║"
+  - "║  Phase 2: Decision Engine          [████░░░░░░] XX%  (4 tasks)  ║"
+  - "║  Phase 3: Multi-Vision CLI & UX    [░░░░░░░░░░]  0%  (3 tasks) ║"
+  - "║  Phase 4: Template Updates         [░░░░░░░░░░]  0%  (3 tasks) ║"
+  - "║  Phase 5: Testing & Compatibility  [░░░░░░░░░░]  0%  (4 tasks) ║"
+  - ║                                                                  ║
+  - ╚══════════════════════════════════════════════════════════════════╝
+  - "```"
+  - "### Step 2: Present Options"
+  - "Use AskUserQuestion:"
+  - "```"
+  - What would you like to do?
+  - 1. Execute Next Phase     - Run the next incomplete phase
+  - 2. View Phase Details     - See tasks for a specific phase
+  - 3. View Exploration Docs  - Read the exploration analysis
+  - 4. Run Phase Executor     - Execute a specific phase number
+  - "5. View GitHub Issue      - Open issue #115"
+  - "```"
+  - "### Actions"
+  - "#### Execute Next Phase"
+  - Find the first phase with `status != "completed"` and run `/vision-multi-instance-executor {phase_number}`
+  - "#### View Phase Details"
+  - "Show all tasks for the selected phase with their status:"
+  - "```"
+  - "Phase 1: Vision Registry & Multi-Instance Foundation"
+  - "  [x] 1. Create src/vision/state/registry.js"
+  - "  [ ] 2. Upgrade locking.js with file-based lockfiles"
+  - "  [ ] 3. Add slug uniqueness to factories.js"
+  - "  ..."
+  - "```"
+  - "#### View Exploration Docs"
+  - "Read and display the key exploration files:"
+  - "- `.claude/exploration/vision-multi-instance/EXPLORATION_SUMMARY.md`"
+  - "- `.claude/exploration/vision-multi-instance/EXECUTIVE_SUMMARY.md` (in docs)"
+  - "#### View GitHub Issue"
+  - "```bash"
+  - gh issue view 115 --web
+  - "```"
+  - "## Arguments"
+  - "- `/vision-multi-instance` - Interactive menu (default)"
+  - "- `/vision-multi-instance status` - Quick status display"
+  - "- `/vision-multi-instance execute` - Execute next phase immediately"

@@ -1,0 +1,8 @@
+id: status
+title: Status Report
+description: Summarize project status and blockers.
+system: You are a senior systems architect and CLI framework engineer.
+instructions:
+  - Scan recent changes and open issues.
+  - Provide a short status summary and risks.
+  - Recommend next steps.

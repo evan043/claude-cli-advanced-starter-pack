@@ -86,11 +86,14 @@ function M.calculate_zones()
     height = editor_h - header_h - footer_h - cmdline_h,
   }
 
-  -- Content: fills remaining space (between rail and right panel, between header and footer)
+  -- Content: fills remaining space (after rail + flyout, before right panel,
+  -- between header and footer). The flyout is a docked column, so content has
+  -- to start past it -- the footer's content_col already assumes this. Starting
+  -- content at rail_w left it running underneath an open flyout.
   zones.content = {
     row = header_h,
-    col = rail_w,
-    width = editor_w - rail_w - rpanel_w,
+    col = panel_w,
+    width = editor_w - panel_w - rpanel_w,
     height = editor_h - header_h - footer_h - cmdline_h,
   }
 

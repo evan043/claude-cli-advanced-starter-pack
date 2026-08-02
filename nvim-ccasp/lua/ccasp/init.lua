@@ -287,6 +287,21 @@ function M.setup(opts)
   -- Detect and store project root (used by commands scanner, config paths, etc.)
   M.config.project_root = detect_project_root()
 
+  -- Resolve which agent CLI this project drives. The built-in defaults name
+  -- Claude; when the user has not pinned a command explicitly we follow the
+  -- project's configured runtime, so a Codex project launches Codex.
+  local runtime = require("ccasp.runtime")
+  runtime.reset()
+  M.config.runtime = runtime.default(M.config.project_root)
+  local resolved_cli = runtime.command(M.config.runtime)
+
+  if not (opts and opts.terminal and opts.terminal.shell) then
+    M.config.terminal.shell = resolved_cli
+  end
+  if not (opts and opts.claude and opts.claude.command) then
+    M.config.claude.command = resolved_cli
+  end
+
   -- Protected module loader: logs warning on failure instead of crashing
   local function safe_require(mod)
     local ok, result = pcall(require, mod)
@@ -752,7 +767,12 @@ local function setup_modern_keymaps()
     browser = function() require("ccasp.browser").open_dashboard() end,
     project_config = function() require("ccasp.project_config").toggle() end,
     -- Session management
-    spawn_session = function() M.sessions.spawn() end,
+    spawn_session = function()
+      require("ccasp.runtime_picker").open({
+        prompt = "New session type",
+        on_select = function(name) M.sessions.spawn(nil, name) end,
+      })
+    end,
     session_picker = function() M.sessions.show_picker() end,
     session_next = function() M.sessions.focus_next() end,
     session_prev = function() M.sessions.focus_prev() end,
@@ -779,7 +799,7 @@ local function setup_modern_keymaps()
   -- Ctrl+Shift+N: New session
   -- Ctrl+Tab / Ctrl+Shift+Tab: Cycle through sessions (works in terminal mode too!)
   -- Backtick (`): Quick toggle to next session (easy single key)
-  vim.keymap.set("n", "<C-S-n>", actions.spawn_session, { desc = "CCASP: New Claude Session" })
+  vim.keymap.set("n", "<C-S-n>", actions.spawn_session, { desc = "CCASP: New Session" })
   vim.keymap.set("n", prefix .. "S", actions.session_picker, { desc = "CCASP: Session Picker" })
   vim.keymap.set("n", "<C-Tab>", actions.session_next, { desc = "CCASP: Next Session" })
   vim.keymap.set("n", "<C-S-Tab>", actions.session_prev, { desc = "CCASP: Previous Session" })
@@ -949,19 +969,36 @@ function M.health()
   local health = vim.health or require("health")
   health.start("CCASP.nvim")
 
-  -- Check executables
-  if not check_executable(health, "Claude CLI", "claude") then
-    health.error("Claude CLI not found", { "Install Claude CLI: npm install -g @anthropic-ai/claude-code" })
+  -- Check executables. Both runtimes are probed; at least one must be present.
+  local runtime = require("ccasp.runtime")
+  local install_hint = {
+    claude = "Install Claude CLI: npm install -g @anthropic-ai/claude-code",
+    codex = "Install Codex CLI: npm install -g @openai/codex",
+  }
+  local available = runtime.available()
+  for _, name in ipairs(runtime.order) do
+    local spec = runtime.specs[name]
+    if runtime.is_available(name) then
+      health.ok(spec.label .. " CLI found")
+    elseif #available == 0 then
+      health.error(spec.label .. " CLI not found", { install_hint[name] })
+    else
+      health.info(spec.label .. " CLI not installed", { install_hint[name] })
+    end
+  end
+  if #available > 0 then
+    health.ok("Default runtime: " .. runtime.label(runtime.default()))
   end
 
   if not check_executable(health, "CCASP CLI", "ccasp") then
     health.warn("CCASP CLI not found", { "Install: npm install -g claude-cli-advanced-starter-pack" })
   end
 
-  -- Check directories
-  local claude_dir = (M.config.project_root or vim.fn.getcwd()) .. "/.claude"
-  if not check_directory(health, ".claude directory", claude_dir) then
-    health.warn(".claude directory not found", { "Run: ccasp init" })
+  -- Check directories for the active runtime
+  local health_root = M.config.project_root or vim.fn.getcwd()
+  local runtime_dirname = runtime.spec(runtime.default(health_root)).root
+  if not check_directory(health, runtime_dirname .. " directory", health_root .. "/" .. runtime_dirname) then
+    health.warn(runtime_dirname .. " directory not found", { "Run: ccasp init" })
   end
 
   -- Check required dependencies

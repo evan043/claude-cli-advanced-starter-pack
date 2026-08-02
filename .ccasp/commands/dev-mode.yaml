@@ -1,0 +1,427 @@
+id: dev-mode
+title: Dev Mode
+description: Developer Mode - Set up CCASP development environment with git worktrees
+codex_support: full
+model: sonnet
+system: You are a senior systems architect.
+instructions:
+  - "# CCASP Developer Mode"
+  - Interactive setup and management for CCASP contributors who have cloned/forked the repository from GitHub.
+  - "## Prerequisites"
+  - "This command is for developers who:"
+  - "- Have cloned or forked CCASP from GitHub (NOT installed via npm)"
+  - "- Want to test changes locally before publishing"
+  - "- Need to work on features in isolated worktrees"
+  - "## Instructions for Claude"
+  - "### Step 0: Detect Current State"
+  - "Run these checks in parallel:"
+  - "```bash"
+  - "# Check if we're in the CCASP repo"
+  - "test -f package.json && grep -q '\"name\": \"claude-cli-advanced-starter-pack\"' package.json && echo \"IN_CCASP_REPO\""
+  - "# Check if we're in a worktree"
+  - git rev-parse --git-dir 2>/dev/null | grep -q worktrees && echo "IN_WORKTREE"
+  - "# Check current branch"
+  - git rev-parse --abbrev-ref HEAD
+  - "# Check for .dev-worktree-config.json"
+  - test -f .dev-worktree-config.json && cat .dev-worktree-config.json
+  - "# Check global dev mode state"
+  - cat ~/.claude/ccasp-dev-state.json 2>/dev/null || echo "{}"
+  - "# Check if npm linked"
+  - npm list -g claude-cli-advanced-starter-pack 2>/dev/null | grep -q '->' && echo "NPM_LINKED"
+  - "```"
+  - "### Step 1: Display Developer Mode Menu"
+  - "Based on detected state, show appropriate menu:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ CCASP Developer Mode               │
+  - │ v{{version}} {{status}}            │
+  - └────────────────────────────────────┘
+  - "Current State:"
+  - '  Repo: {{IN_CCASP_REPO or "Not in CCASP repo"}}'
+  - '  Worktree: {{branch or "main repo"}}'
+  - '  npm Link: {{NPM_LINKED or "npm version"}}'
+  - "  Dev Mode: {{active/inactive}}"
+  - ──────────────────────────────────────
+  - "Options:"
+  - ──────────────────────────────────────
+  - "[1] Create New Worktree"
+  - "    Isolated branch for development"
+  - "[2] Deploy Current Worktree"
+  - "    Link globally + update projects"
+  - "[3] List Worktrees"
+  - "    Show all active worktrees"
+  - "[4] Cleanup Worktree"
+  - "    Remove + restore npm version"
+  - "[5] Troubleshoot"
+  - "    Fix common issues"
+  - "[6] Switch to Worktree"
+  - "    Change active worktree"
+  - "[7] Connected Projects"
+  - "    View/manage projects using dev version"
+  - "[8] Merge to Main"
+  - "    Merge worktree branch → main"
+  - "[B] Back to menu"
+  - "```"
+  - "### Step 2: Handle User Selection"
+  - "#### Option 1: Create New Worktree"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Create Development Worktree        │
+  - └────────────────────────────────────┘
+  - "Enter worktree name:"
+  - (e.g., feature-xyz, bugfix-123)
+  - "> _"
+  - "```"
+  - "After getting name, run:"
+  - "```bash"
+  - "# Run from CCASP repo root (not a worktree)"
+  - ccasp dev-deploy --create <name>
+  - "```"
+  - "**CRITICAL**: After worktree is created, run the hook fix:"
+  - "```bash"
+  - "# Navigate to new worktree"
+  - cd "../<name>"
+  - "# Verify hooks have .cjs extension (fix if needed)"
+  - if [ -f ".ccasp-dev/hooks/ccasp-update-check.js" ]; then
+  - "  mv .ccasp-dev/hooks/ccasp-update-check.js .ccasp-dev/hooks/ccasp-update-check.cjs"
+  - fi
+  - if [ -f ".ccasp-dev/hooks/ccasp-auto-build.js" ]; then
+  - "  mv .ccasp-dev/hooks/ccasp-auto-build.js .ccasp-dev/hooks/ccasp-auto-build.cjs"
+  - fi
+  - "# Update settings.json to use .cjs extensions"
+  - "# Read .claude/settings.json"
+  - "# Replace any .ccasp-dev/hooks/*.js with .ccasp-dev/hooks/*.cjs"
+  - "```"
+  - "Display success message:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Worktree Created                   │
+  - └────────────────────────────────────┘
+  - "Name: <name>"
+  - "Path: <path>"
+  - "Branch: <name>"
+  - "Next steps:"
+  - 1. cd "<path>"
+  - 2. Make your changes
+  - 3. /dev-mode → Deploy Worktree
+  - Hooks configured with .cjs extension
+  - to avoid ES Module conflicts.
+  - "```"
+  - "#### Option 2: Deploy Current Worktree"
+  - "**CRITICAL: Sync worktree with master BEFORE deploying**"
+  - "Before running `ccasp dev-deploy`, always check if the worktree is behind master and sync if needed:"
+  - "```bash"
+  - "# Step 1: Check worktree vs master versions"
+  - cd "{{worktree_path}}"
+  - WORKTREE_VERSION=$(grep '"version"' package.json | head -1)
+  - WORKTREE_COMMIT=$(git rev-parse --short HEAD)
+  - cd "{{main_repo_path}}"
+  - MASTER_VERSION=$(grep '"version"' package.json | head -1)
+  - MASTER_COMMIT=$(git rev-parse --short HEAD)
+  - 'echo "Worktree: $WORKTREE_VERSION ($WORKTREE_COMMIT)"'
+  - 'echo "Master:   $MASTER_VERSION ($MASTER_COMMIT)"'
+  - "```"
+  - "If versions differ, display:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ ⚠️  Worktree Behind Master         │
+  - └────────────────────────────────────┘
+  - "Worktree: v2.2.5 (commit abc1234)"
+  - "Master:   v2.2.7 (commit def5678)"
+  - The worktree is behind master and missing
+  - recent changes/fixes.
+  - "[S] Sync worktree with master (recommended)"
+  - "[D] Deploy anyway (not recommended)"
+  - "[C] Cancel"
+  - "```"
+  - "**If user selects [S] Sync:**"
+  - "```bash"
+  - cd "{{worktree_path}}"
+  - "# Stash any local changes"
+  - git stash
+  - "# Fetch and merge master"
+  - git fetch origin
+  - git merge origin/master --no-edit
+  - "# Copy any non-committed dev commands from master"
+  - "# (these are in .claude/commands/ but not in git)"
+  - cp "{{main_repo_path}}/.claude/commands/dev-mode.md" ".claude/commands/dev-mode.md" 2>/dev/null || true
+  - cp "{{main_repo_path}}/.claude/commands/dev-mode-merge.md" ".claude/commands/dev-mode-merge.md" 2>/dev/null || true
+  - echo "✓ Worktree synced with master"
+  - "```"
+  - "**Then proceed with deploy:**"
+  - "```bash"
+  - ccasp dev-deploy
+  - "```"
+  - Or if not in a worktree, prompt for selection from `.dev-worktree-config.json`.
+  - "#### Option 3: List Worktrees"
+  - "```bash"
+  - ccasp dev-deploy --list
+  - "```"
+  - "#### Option 4: Cleanup Worktree"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Cleanup Worktree                   │
+  - └────────────────────────────────────┘
+  - "This will:"
+  - • Unlink global package
+  - • Remove worktree directory
+  - • Delete remote branch (if private)
+  - • Restore npm version
+  - "Select worktree to cleanup:"
+  - "[1] ccasp-dev (ACTIVE)"
+  - "[2] feature-xyz"
+  - "[C] Cancel"
+  - "```"
+  - "After selection:"
+  - "```bash"
+  - ccasp dev-deploy --cleanup <name>
+  - "```"
+  - "#### Option 5: Troubleshoot"
+  - "Run diagnostics:"
+  - "```bash"
+  - "# Check for CommonJS/ESM conflicts"
+  - echo "Checking hook extensions..."
+  - ls -la .ccasp-dev/hooks/ 2>/dev/null || echo "No .ccasp-dev/hooks/"
+  - ls -la .claude/hooks/*.js 2>/dev/null || echo "No .js hooks"
+  - ls -la .claude/hooks/*.cjs 2>/dev/null || echo "No .cjs hooks"
+  - "# Check package.json type"
+  - grep '"type"' package.json
+  - "# Check settings.json hook paths"
+  - grep -o 'node [^"]*' .claude/settings.json
+  - "# Test hook execution"
+  - node .ccasp-dev/hooks/ccasp-update-check.cjs 2>&1 | head -5
+  - "```"
+  - "Display troubleshooting menu:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Troubleshoot                       │
+  - └────────────────────────────────────┘
+  - "Detected Issues:"
+  - "{{list any issues found}}"
+  - ──────────────────────────────────────
+  - "Quick Fixes:"
+  - ──────────────────────────────────────
+  - "[1] Fix Hook Extensions"
+  - "    Rename .js → .cjs for CommonJS"
+  - "[2] Sync Settings"
+  - "    Update settings.json paths"
+  - "[3] Reset Dev State"
+  - "    Clear ~/.claude/ccasp-dev-state.json"
+  - "[4] Reinstall npm Link"
+  - "    Unlink + relink global package"
+  - "[5] Full Reset"
+  - "    Cleanup + fresh worktree"
+  - "[B] Back"
+  - "```"
+  - "##### Fix 1: Fix Hook Extensions"
+  - "```bash"
+  - cd "{{worktree_path}}"
+  - "# Rename CommonJS hooks to .cjs"
+  - for f in .ccasp-dev/hooks/*.js; do
+  - '  if [ -f "$f" ]; then'
+  - '    newname="${f%.js}.cjs"'
+  - '    mv "$f" "$newname"'
+  - '    echo "Renamed: $f → $newname"'
+  - "  fi"
+  - done
+  - "# Update settings.json"
+  - "# Use Edit tool to replace all occurrences of:"
+  - "#   .ccasp-dev/hooks/*.js  →  .ccasp-dev/hooks/*.cjs"
+  - "```"
+  - "##### Fix 2: Sync Settings"
+  - Read `.claude/settings.json` and update any hook commands that reference `.js` files to use `.cjs`.
+  - "##### Fix 3: Reset Dev State"
+  - "```bash"
+  - rm -f ~/.claude/ccasp-dev-state.json
+  - echo "Dev state cleared. Run /dev-mode → Deploy to re-initialize."
+  - "```"
+  - "##### Fix 4: Reinstall npm Link"
+  - "```bash"
+  - npm unlink -g claude-cli-advanced-starter-pack
+  - cd "{{worktree_path}}"
+  - npm link
+  - "```"
+  - "#### Option 6: Switch Worktree"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Switch Active Worktree             │
+  - └────────────────────────────────────┘
+  - "Available worktrees:"
+  - "[1] ccasp-dev (ACTIVE)"
+  - "    F:\\...\\ccasp-dev"
+  - "[2] feature-xyz"
+  - "    F:\\...\\feature-xyz"
+  - "Select worktree:"
+  - "```"
+  - Update `.dev-worktree-config.json` with new `activeWorktree` value.
+  - "#### Option 7: Connected Projects"
+  - "Display projects that are connected to the dev version:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Connected Projects                 │
+  - "│ Dev Mode: ACTIVE                   │"
+  - └────────────────────────────────────┘
+  - "Worktree: {{worktreeName}}"
+  - "Linked: {{linkedAt formatted}}"
+  - "Version: {{version}}-dev"
+  - ──────────────────────────────────────
+  - "Projects Using Dev Version ({{count}}):"
+  - ──────────────────────────────────────
+  - "[1] {{project.name}}"
+  - "    {{project.path}}"
+  - "    Backup: ✓ ({{fileCount}} files)"
+  - "    Last init: {{lastInitAt}}"
+  - "[2] {{project2.name}}"
+  - "    {{project2.path}}"
+  - "    Backup: ✓ ({{fileCount}} files)"
+  - "    Last init: {{lastInitAt}}"
+  - "[S] {{sourceName}} (THIS REPO)"
+  - "    {{sourcePath}}"
+  - "    Backup: N/A (source)"
+  - ──────────────────────────────────────
+  - "Actions:"
+  - ──────────────────────────────────────
+  - "[R] Refresh project list"
+  - "[U] Update all projects (re-run init)"
+  - "[S] Restore single project"
+  - "[A] Restore all projects"
+  - "[D] Activate Dev Mode (sync + deploy worktree)"
+  - "[B] Back to dev mode menu"
+  - "```"
+  - "**Data sources to read:**"
+  - "```bash"
+  - "# Read dev state (worktree info, backed-up projects)"
+  - cat ~/.claude/ccasp-dev-state.json
+  - "# Read registry (all registered projects with metadata)"
+  - cat ~/.claude/ccasp-registry.json
+  - "# Check backup status (list backup folders)"
+  - ls ~/.claude/ccasp-project-backups/
+  - "```"
+  - "**Display Logic:**"
+  - 1. Parse `ccasp-dev-state.json` for `worktreePath`, `linkedAt`, `version`, `projects` array
+  - 2. Parse `ccasp-registry.json` for full project list with `lastInitAt`
+  - 3. Cross-reference to show which projects have backups
+  - 4. Format `linkedAt` as human-readable date (e.g., "2026-02-02 @ 5:17 PM")
+  - '5. Mark the source repo (current worktree) with "(THIS REPO)" and "Backup: N/A"'
+  - "**Action Handlers:**"
+  - "| Key | Action | Implementation |"
+  - "|-----|--------|----------------|"
+  - "| R | Refresh | Re-read state files, redisplay menu |"
+  - "| U | Update all | Loop through registry projects, run `ccasp init --dev` in each |"
+  - "| S | Restore single | Show numbered project list, prompt for selection, run restore |"
+  - "| A | Restore all | Loop through backed-up projects in dev-state, restore each |"
+  - "| D | Activate Dev Mode | Sync worktree with master, then deploy (see below) |"
+  - "| B | Back | Return to main dev mode menu |"
+  - "**Update All Projects (U):**"
+  - "```bash"
+  - "# For each project in registry (except source repo):"
+  - cd "{{project.path}}"
+  - ccasp init --dev
+  - "```"
+  - "**Restore Single Project (S):**"
+  - "Show project picker:"
+  - "```"
+  - "Select project to restore:"
+  - "[1] Plan Design Calculator"
+  - "    Backup: 2026-02-02 @ 5:31 PM (121 files)"
+  - "[2] Benefits-Outreach-360"
+  - "    Backup: 2026-02-02 @ 5:32 PM (85 files)"
+  - "[C] Cancel"
+  - "```"
+  - "After selection, restore from backup:"
+  - "```bash"
+  - "# Remove dev .claude folder"
+  - rm -rf "{{project.path}}/.claude"
+  - "# Copy backup back"
+  - cp -r "{{backupPath}}/.claude" "{{project.path}}/.claude"
+  - echo "Restored {{project.name}} from backup"
+  - "```"
+  - "**Restore All Projects (A):**"
+  - "```bash"
+  - "# Loop through all projects in dev-state.projects"
+  - "for project in projects:"
+  - '    rm -rf "{{project.path}}/.claude"'
+  - '    cp -r "{{project.backupPath}}/.claude" "{{project.path}}/.claude"'
+  - '    echo "Restored {{project.name}}"'
+  - "```"
+  - "**Activate Dev Mode (D):**"
+  - "This is the full dev mode enablement workflow that syncs worktree with master before deploying:"
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ Activate Dev Mode                  │
+  - └────────────────────────────────────┘
+  - "Step 1: Checking worktree sync status..."
+  - "```"
+  - 1. **Get worktree path** from `.dev-worktree-config.json`
+  - 2. **Compare versions:**
+  - "```bash"
+  - "# Get worktree version"
+  - cd "{{worktree_path}}"
+  - "WORKTREE_VERSION=$(grep -o '\"version\": \"[^\"]*\"' package.json | head -1)"
+  - WORKTREE_COMMIT=$(git rev-parse --short HEAD)
+  - "# Get master version"
+  - cd "{{main_repo_path}}"
+  - "MASTER_VERSION=$(grep -o '\"version\": \"[^\"]*\"' package.json | head -1)"
+  - MASTER_COMMIT=$(git rev-parse --short HEAD)
+  - "```"
+  - 3. **If behind, sync automatically:**
+  - "```bash"
+  - cd "{{worktree_path}}"
+  - "# Stash local changes (usually just line ending diffs)"
+  - git stash 2>/dev/null || true
+  - "# Fetch and merge master"
+  - git fetch origin
+  - git merge origin/master --no-edit
+  - "# Copy dev commands that aren't in git"
+  - cp "{{main_repo_path}}/.claude/commands/dev-mode.md" ".claude/commands/" 2>/dev/null || true
+  - cp "{{main_repo_path}}/.claude/commands/dev-mode-merge.md" ".claude/commands/" 2>/dev/null || true
+  - "echo \"✓ Worktree synced: now at $(grep -o '\"version\": \"[^\"]*\"' package.json)\""
+  - "```"
+  - 4. **Deploy worktree:**
+  - "```bash"
+  - cd "{{worktree_path}}"
+  - ccasp dev-deploy --force
+  - "```"
+  - 5. **Display success:**
+  - "```"
+  - ┌────────────────────────────────────┐
+  - │ ✅ DEV MODE ACTIVATED              │
+  - └────────────────────────────────────┘
+  - "Worktree synced: v2.2.5 → v2.2.7"
+  - "Projects updated: 4"
+  - "Customizations preserved: 72"
+  - ⚠️  Restart Claude Code CLI to see changes
+  - "```"
+  - "#### Option 8: Merge to Main"
+  - "Run the `/dev-mode-merge` command:"
+  - "```"
+  - Launching merge workflow...
+  - "```"
+  - Then execute the `/dev-mode-merge` slash command which handles the full merge workflow interactively.
+  - "### Important: CommonJS/ESM Hook Fix"
+  - '**Why this matters**: CCASP uses `"type": "module"` in package.json, which means all `.js` files are treated as ES Modules. However, Claude Code hooks must use CommonJS syntax (`require()`, `module.exports`).'
+  - "**Solution**: All hook files that use CommonJS syntax must have `.cjs` extension."
+  - "**Files that need .cjs extension**:"
+  - "- `.ccasp-dev/hooks/ccasp-update-check.cjs`"
+  - "- `.ccasp-dev/hooks/ccasp-auto-build.cjs`"
+  - "- `.claude/hooks/github-progress-hook.cjs`"
+  - "**When creating new hooks**: Always use `.cjs` extension if the hook uses `require()`."
+  - "### State Files"
+  - "| File | Purpose |"
+  - "|------|---------|"
+  - "| `.dev-worktree-config.json` | Tracks worktrees in this repo |"
+  - "| `~/.claude/ccasp-dev-state.json` | Global dev mode state |"
+  - "| `~/.claude/ccasp-project-backups/` | Project backups before dev updates |"
+  - "### CLI Reference"
+  - "```bash"
+  - "# Create worktree"
+  - ccasp dev-deploy --create <name>
+  - "# Deploy (link globally)"
+  - ccasp dev-deploy
+  - "# List worktrees"
+  - ccasp dev-deploy --list
+  - "# Cleanup"
+  - ccasp dev-deploy --cleanup <name>
+  - "# With private remote branch"
+  - ccasp dev-deploy --create <name> --private
+  - "```"

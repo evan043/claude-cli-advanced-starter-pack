@@ -1,0 +1,69 @@
+id: create-task-list
+title: Create Task List
+description: Create intelligent task list with codebase exploration and GitHub integration
+codex_support: full
+options:
+  - label: New Task List
+    description: Create fresh task list with exploration
+  - label: Quick Task List
+    description: Create task list without exploration
+system: You are a senior systems architect.
+instructions:
+  - "# Intelligent Task List Generator"
+  - Create a comprehensive task list with codebase exploration, clarifying questions, and GitHub integration.
+  - "## Features"
+  - "- **Codebase Exploration** - Deploy agents to understand relevant files and patterns"
+  - "- **Clarifying Questions** - Ask follow-up questions when context is insufficient"
+  - "- **Testing Options** - Ralph Loop, ngrok/production, Playwright modes"
+  - "- **GitHub Integration** - Optionally create a tracked GitHub issue for the task"
+  - "- **Progress Hook** - Auto-update GitHub issue as tasks complete"
+  - "## Execution Flow"
+  - "### Step 1: Capture User Prompt"
+  - If no arguments provided, ask what the user wants to accomplish.
+  - "### Step 2: Context Assessment"
+  - Evaluate the prompt for specificity, scope, technical depth, and reproducibility.
+  - "**Score Calculation**:"
+  - "- 70-100%: Sufficient context -> Parallel exploration"
+  - "- 0-69%: Insufficient context -> Quick scan + clarifying questions"
+  - "### Step 3: Deploy Exploration Agents"
+  - "Deploy in parallel:"
+  - "- **Explore Agent 1**: Find files related to the task"
+  - "- **Explore Agent 2**: Search for tests and documentation"
+  - "- **Explore Agent 3** (if backend): Find API endpoints and models"
+  - "### Step 4: Synthesize and Ask Questions"
+  - "Present findings and ask mandatory questions:"
+  - "1. **Testing Approach**: Ralph Loop vs Manual vs Minimal"
+  - "2. **Playwright Environment**: ngrok vs production vs none"
+  - "3. **GitHub Integration** (NEW): Create tracked GitHub issue?"
+  - "4. **Confirm Plan**: Proceed or adjust?"
+  - "### Step 5: Create Task List"
+  - "Use TodoWrite to build the task list with:"
+  - "- Task 0: Persistent context (never marked complete)"
+  - "- Task 1: Login via Playwright (if E2E testing)"
+  - "- Tasks 2-N: Implementation tasks"
+  - "- Final tasks: Verification and commit"
+  - "### Step 6: Create GitHub Issue (Optional)"
+  - "If user selected GitHub integration:"
+  - 1. Create comprehensive issue with codebase analysis
+  - 2. Add to project board
+  - 3. Install progress hook to auto-update issue
+  - "## GitHub Integration Details"
+  - "When enabled, the command:"
+  - "1. Creates a GitHub issue with:"
+  - "   - Problem statement from user prompt"
+  - "   - Code analysis from exploration"
+  - "   - Task checklist (matching TodoWrite tasks)"
+  - "   - Reference documentation links"
+  - "2. Installs a PostToolUse hook that:"
+  - "   - Watches for TodoWrite calls"
+  - "   - Updates GitHub issue progress when tasks complete"
+  - "   - Adds comments for significant milestones"
+  - "## Instructions"
+  - "When invoked:"
+  - 1. Gather task description (from args or by asking)
+  - 2. Assess context quality
+  - 3. Deploy exploration agents (parallel if sufficient context)
+  - 4. Present findings and ask questions
+  - 5. Create task list with TodoWrite
+  - 6. Optionally create GitHub issue and install progress hook
+  - 7. Begin Task 1

@@ -1,0 +1,86 @@
+id: enhanced-refactor-analyze
+title: Enhanced Refactor Analyze
+description: Enhanced Refactor-Analyze System - Interactive Menu
+codex_support: full
+argument-hint:
+  - status|execute|menu
+system: You are a senior systems architect.
+instructions:
+  - "# Enhanced Refactor-Analyze System"
+  - Interactive menu for the Enhanced Refactor-Analyze System roadmap.
+  - "## Quick Start"
+  - "```bash"
+  - "/enhanced-refactor-analyze          # Show interactive menu"
+  - "/enhanced-refactor-analyze status   # View progress"
+  - "/enhanced-refactor-analyze execute  # Execute next phase"
+  - "```"
+  - "## Instructions for Claude"
+  - "When invoked, present the user with an interactive menu:"
+  - "### Step 1: Load Current State"
+  - "Read `.claude/roadmaps/enhanced-refactor-analyze/ROADMAP.json` to get:"
+  - "- Current status"
+  - "- Completion percentage"
+  - "- Current/next phase"
+  - "### Step 2: Display Menu"
+  - "Use AskUserQuestion:"
+  - "```"
+  - 'header: "Refactor System"'
+  - 'question: "Enhanced Refactor-Analyze System ({completion}% complete). What would you like to do?"'
+  - "options:"
+  - '  - label: "View Progress Dashboard"'
+  - '    description: "See detailed status of all 8 phases"'
+  - '  - label: "Execute Next Phase"'
+  - '    description: "Run Phase {next_phase}: {next_phase_name}"'
+  - '  - label: "View Roadmap Details"'
+  - '    description: "Read the full roadmap and executive summary"'
+  - '  - label: "Skip to Specific Phase"'
+  - '    description: "Choose a specific phase to execute"'
+  - "```"
+  - "### Step 3: Handle Selection"
+  - "**View Progress Dashboard:**"
+  - Run `/enhanced-refactor-analyze-executor status`
+  - "**Execute Next Phase:**"
+  - Run `/enhanced-refactor-analyze-executor next`
+  - "**View Roadmap Details:**"
+  - "Display contents of:"
+  - "- `.claude/roadmaps/enhanced-refactor-analyze/EXECUTIVE_SUMMARY.md`"
+  - "**Skip to Specific Phase:**"
+  - "Present phase selection:"
+  - "```"
+  - 'header: "Select Phase"'
+  - 'question: "Which phase would you like to execute?"'
+  - "options:"
+  - '  - label: "Phase 1: Script Infrastructure"'
+  - '    description: "Create token-efficient analysis scripts"'
+  - '  - label: "Phase 2: Project Management"'
+  - '    description: "Enable persistent project tracking"'
+  - '  - label: "Phase 3: Route-Based Analysis"'
+  - '    description: "Add route/page-based analysis mode"'
+  - '  - label: "Phase 4: Enhanced Analyze Command"'
+  - '    description: "Integrate all features into main command"'
+  - "```"
+  - Then run `/enhanced-refactor-analyze-executor {phase_number}`
+  - "## Roadmap Summary"
+  - "| Phase | Name | Status |"
+  - "|-------|------|--------|"
+  - "| 1 | Script Infrastructure | Creates Node.js/Python scripts for offline analysis |"
+  - "| 2 | Project Management | Persistent project tracking across sessions |"
+  - "| 3 | Route-Based Analysis | Analyze by app routes/pages |"
+  - "| 4 | Enhanced Analyze | Integrate all features |"
+  - "| 5 | RAG Agents | Tech-stack aware refactoring agents |"
+  - "| 6 | File Organization | Safe file moves with import updates |"
+  - "| 7 | Dependency Scripts | Offline dependency analysis |"
+  - "| 8 | Testing & Docs | Complete test suite and documentation |"
+  - "## Key Features (When Complete)"
+  - "- **80%+ token reduction** through script-based pre-analysis"
+  - "- **Project persistence** across sessions"
+  - "- **Route-based OR critical-factor analysis** modes"
+  - "- **Tech-stack RAG agents** for intelligent suggestions"
+  - "- **Safe file reorganization** with automatic import fixes"
+  - "- **GitHub integration** for epic/roadmap auto-creation"
+  - "## Related Files"
+  - "- Roadmap: `.claude/roadmaps/enhanced-refactor-analyze/ROADMAP.json`"
+  - "- Summary: `.claude/roadmaps/enhanced-refactor-analyze/EXECUTIVE_SUMMARY.md`"
+  - "- Exploration: `.claude/exploration/enhanced-refactor-analyze/`"
+  - ---
+  - "*Part of CCASP Roadmap Orchestration Framework*"

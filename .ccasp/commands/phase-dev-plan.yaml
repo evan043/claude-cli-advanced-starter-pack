@@ -1,0 +1,115 @@
+id: phase-dev-plan
+title: Phase Dev Plan
+description: Create phased development plans with 95%+ success probability
+codex_support: full
+options:
+  - label: Small (1-2 phases)
+    description: Quick feature or bug fix
+  - label: Medium (3-4 phases)
+    description: Standard feature implementation
+  - label: Large (5+ phases)
+    description: Complex multi-system changes
+system: You are a senior systems architect.
+instructions:
+  - "# Phased Development Plan Generator"
+  - Create comprehensive, executable development plans that maximize success probability.
+  - ---
+  - "## 🚨 MANDATORY FILE CREATION - DO NOT SKIP"
+  - "**CRITICAL:** Every phase-dev-plan MUST create ALL of these files. Skipping ANY file is a failure."
+  - "### Exploration Documentation (REQUIRED FIRST - Step 2)"
+  - "Before creating PROGRESS.json, you MUST create these 6 files in `.claude/exploration/{slug}/`:"
+  - "| File | Purpose | Required |"
+  - "|------|---------|----------|"
+  - "| `EXPLORATION_SUMMARY.md` | Overview + statistics | ✅ YES |"
+  - "| `CODE_SNIPPETS.md` | Extracted code examples | ✅ YES |"
+  - "| `REFERENCE_FILES.md` | File paths + line numbers | ✅ YES |"
+  - "| `AGENT_DELEGATION.md` | Agent assignments per task | ✅ YES |"
+  - "| `PHASE_BREAKDOWN.md` | Full phase/task detail | ✅ YES |"
+  - "| `findings.json` | Machine-readable data | ✅ YES |"
+  - "### Plan Files (AFTER Exploration - Step 3+)"
+  - "| File | Purpose | Required |"
+  - "|------|---------|----------|"
+  - "| `.claude/docs/{slug}/PROGRESS.json` | State tracking | ✅ YES |"
+  - "| `.claude/docs/{slug}/EXECUTIVE_SUMMARY.md` | Overview | ✅ YES |"
+  - "| `.claude/commands/{slug}-executor.md` | Phase executor agent | ✅ YES |"
+  - "| `.claude/commands/{slug}.md` | Interactive command | ✅ YES |"
+  - ---
+  - "## Why Phased Development?"
+  - "- Breaks complex tasks into manageable chunks"
+  - "- Each phase is independently testable"
+  - "- Clear checkpoints for progress tracking"
+  - "- Rollback points if issues arise"
+  - "## Execution Protocol"
+  - "### Step 1: Gather Requirements"
+  - "Use AskUserQuestion to collect:"
+  - 1. **Project name** (human-readable)
+  - 2. **Project slug** (kebab-case)
+  - 3. **Description** (what to build)
+  - 4. **Scale** (S/M/L)
+  - "### Step 2: L2 Exploration (MANDATORY - DO NOT SKIP)"
+  - "**CRITICAL:** You MUST run L2 exploration BEFORE creating plan files."
+  - '1. **Deploy Explore Agent** - Use Task tool with `subagent_type: "Explore"` thoroughness "very thorough"'
+  - 2. **Create Exploration Directory:** `mkdir -p .claude/exploration/{slug}`
+  - "3. **Write ALL 6 Exploration Files** in `.claude/exploration/{slug}/`:"
+  - "   - EXPLORATION_SUMMARY.md (overview + statistics)"
+  - "   - CODE_SNIPPETS.md (code examples from codebase)"
+  - "   - REFERENCE_FILES.md (files to modify/reference)"
+  - "   - AGENT_DELEGATION.md (agent assignments)"
+  - "   - PHASE_BREAKDOWN.md (full phase/task detail)"
+  - "   - findings.json (machine-readable)"
+  - 4. **Verification Checkpoint** - STOP and verify ALL 6 files exist before continuing
+  - "**⛔ DO NOT proceed to Step 3 until ALL 6 exploration files exist.**"
+  - "### Step 3: Generate Phase Breakdown"
+  - Based on exploration findings, create phases with clear objectives, success criteria, and agent assignments.
+  - "### Step 4: Create Plan Artifacts"
+  - Create `.claude/docs/{slug}/PROGRESS.json` and `EXECUTIVE_SUMMARY.md`
+  - "### Step 5: Create GitHub Issue (MANDATORY)"
+  - "After creating PROGRESS.json, create a tracked GitHub issue:"
+  - "1. **Generate issue body** with CCASP-META header:"
+  - "   ```markdown"
+  - "   <!-- CCASP-META"
+  - "   source: /phase-dev-plan"
+  - "   slug: {slug}"
+  - "   progress_file: .claude/docs/{slug}/PROGRESS.json"
+  - "   issue_type: feature"
+  - "   created_at: {timestamp}"
+  - "   -->"
+  - "   ## {Plan Name}"
+  - "   {Plan description and overview}"
+  - "   ---"
+  - "   ## 📁 Source & Generated Files"
+  - "   **Created from:** `/phase-dev-plan` → Project: `{slug}`"
+  - "   | File | Type | Path |"
+  - "   |------|------|------|"
+  - "   | Progress Tracking | JSON | `.claude/docs/{slug}/PROGRESS.json` |"
+  - "   | Executive Summary | MD | `.claude/docs/{slug}/EXECUTIVE_SUMMARY.md` |"
+  - "   | Exploration Summary | MD | `.claude/exploration/{slug}/EXPLORATION_SUMMARY.md` |"
+  - "   | Code Snippets | MD | `.claude/exploration/{slug}/CODE_SNIPPETS.md` |"
+  - "   | Reference Files | MD | `.claude/exploration/{slug}/REFERENCE_FILES.md` |"
+  - "   | Agent Delegation | MD | `.claude/exploration/{slug}/AGENT_DELEGATION.md` |"
+  - "   | Phase Breakdown | MD | `.claude/exploration/{slug}/PHASE_BREAKDOWN.md` |"
+  - "   | Findings | JSON | `.claude/exploration/{slug}/findings.json` |"
+  - "   ---"
+  - "   ## Implementation Plan"
+  - "   {Include phases, tasks, and acceptance criteria}"
+  - "   ```"
+  - 2. **Create issue using gh CLI:**
+  - "   ```bash"
+  - '   gh issue create --title "{Plan Name}" --body "$(cat issue-body.md)" --label "phase-dev-plan"'
+  - "   ```"
+  - 3. **Store issue number in PROGRESS.json:**
+  - "   Add `github_issue` field with the created issue number"
+  - "4. **Add to project board** (if configured):"
+  - "   ```bash"
+  - "   gh project item-add <project-number> --owner <owner> --url <issue-url>"
+  - "   ```"
+  - "### Step 6: Generate Executable Commands"
+  - Create `.claude/commands/{slug}-executor.md` and `.claude/commands/{slug}.md`
+  - "## Enforcement Rules"
+  - "| Rule | Mandatory |"
+  - "|------|-----------|"
+  - "| L2 Exploration FIRST | ✅ YES |"
+  - "| All 6 exploration files created | ✅ YES |"
+  - "| PROGRESS.json after exploration | ✅ YES |"
+  - "| GitHub issue created with CCASP-META | ✅ YES |"
+  - "| Issue number stored in PROGRESS.json | ✅ YES |"

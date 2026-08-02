@@ -92,17 +92,17 @@ describe("CCASP Layout", function()
     local initial_zones = appshell.calculate_zones()
     local initial_content_width = initial_zones.content.width
 
-    -- Get current config
-    local config_ok, config_module = pcall(require, "ccasp.config")
-    assert.is_true(config_ok, "Failed to require ccasp.config")
-
-    -- Change flyout visibility to true
-    local current_config = config_module.get()
-    current_config.appshell.flyout.visible = true
+    -- calculate_zones() reads the appshell module's own config table, not the
+    -- ccasp.config utils module -- mutate the one it actually consults.
+    local was_visible = appshell.config.flyout.visible
+    appshell.config.flyout.visible = true
 
     -- Recalculate zones
     local updated_zones = appshell.calculate_zones()
     local updated_content_width = updated_zones.content.width
+
+    -- Restore so later specs see the default hidden flyout
+    appshell.config.flyout.visible = was_visible
 
     -- Content width should decrease when flyout is visible
     assert.is_true(

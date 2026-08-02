@@ -108,27 +108,33 @@ end
 -- Get health check status
 function M.health_check()
   local checks = {}
-
-  -- Check Claude CLI
-  local claude_check = vim.fn.executable("claude") == 1
-  table.insert(checks, {
-    name = "Claude CLI",
-    status = claude_check,
-    message = claude_check and "Available" or "Not found in PATH",
-  })
-
-  -- Check .claude directory
+  local runtime = require("ccasp.runtime")
   local cwd = vim.fn.getcwd()
-  local claude_dir = cwd .. "/.claude"
-  local dir_check = vim.fn.isdirectory(claude_dir) == 1
+
+  -- Check each agent CLI. A missing non-default runtime is informational, not
+  -- a failure, so an unused runtime never shows the bar as unhealthy.
+  local active = runtime.default()
+  for _, name in ipairs(runtime.order) do
+    local spec = runtime.specs[name]
+    local found = runtime.is_available(name)
+    table.insert(checks, {
+      name = spec.label .. " CLI",
+      status = found or name ~= active,
+      message = found and "Available" or "Not found in PATH",
+    })
+  end
+
+  -- Check the active runtime's project directory
+  local runtime_dir = cwd .. "/" .. runtime.spec(active).root
+  local dir_check = vim.fn.isdirectory(runtime_dir) == 1
   table.insert(checks, {
-    name = ".claude directory",
+    name = runtime.spec(active).root .. " directory",
     status = dir_check,
     message = dir_check and "Found" or "Not found - run ccasp init",
   })
 
-  -- Check commands directory
-  local cmd_dir = cwd .. "/.claude/commands"
+  -- Check the active runtime's prompt directory
+  local cmd_dir = runtime.prompts_dir(cwd, active)
   local cmd_check = vim.fn.isdirectory(cmd_dir) == 1
   table.insert(checks, {
     name = "Commands directory",

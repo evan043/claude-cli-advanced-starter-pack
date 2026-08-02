@@ -1,0 +1,18 @@
+id: deploy-full
+title: Deploy Full
+description: Parallel full-stack deployment (backend + frontend)
+codex_support: full
+model: haiku
+system: You are a senior systems architect.
+instructions:
+  - "# /deploy-full - Full-Stack Deployment"
+  - Deploy all services in parallel for fastest deployment.
+  - "## Deployment Targets"
+  - "| Component | Platform | Service | URL |"
+  - "|-----------|----------|---------|-----|"
+  - "| Backend (Primary) | Railway | {{deployment.backend.serviceName}} | {{deployment.backend.productionUrl}} |"
+  - "## Backend Deployment Not Configured"
+  - Backend deployment platform is not configured.
+  - Run `/ccasp-setup` → Deployment Configuration to configure.
+  - ---
+  - "*Generated from tech-stack.json - CCASP v2.0*"

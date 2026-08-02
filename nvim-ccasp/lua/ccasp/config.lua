@@ -272,9 +272,11 @@ function M.get_hooks()
   return hooks
 end
 
--- Get list of installed commands
+-- Get list of installed commands for the active runtime
 function M.get_commands()
-  local commands_dir = get_root() .. "/.claude/commands"
+  local runtime = require("ccasp.runtime")
+  local root = get_root()
+  local commands_dir = runtime.prompts_dir(root, runtime.default(root))
   if vim.fn.isdirectory(commands_dir) ~= 1 then
     return {}
   end

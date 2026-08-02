@@ -1,0 +1,82 @@
+id: README
+title: claude-cli-advanced-starter-pack - Slash Commands
+description: claude-cli-advanced-starter-pack - Slash Commands
+codex_support: full
+system: You are a senior systems architect.
+instructions:
+  - This folder contains Claude Code CLI slash commands installed by Claude CLI Advanced Starter Pack.
+  - "## Interactive Menu"
+  - Type `/menu` to access the interactive ASCII menu with quick access to all commands.
+  - "## Commands by Category"
+  - "### Navigation"
+  - "- **/menu** - Interactive ASCII menu for project commands and tools"
+  - "- **/menu-happy** - Mobile-optimized menu for Happy CLI (40-char width)"
+  - "- **/ccasp-panel** - Launch control panel in new terminal (agents, skills, hooks, MCP)"
+  - "### Claude Code"
+  - "- **/ccasp-setup** - CCASP Setup Wizard - vibe-code friendly project configuration"
+  - "- **/create-agent** - Create L1/L2/L3 agents for Claude Code"
+  - "- **/create-hook** - Create enforcement hooks (PreToolUse, PostToolUse, UserPromptSubmit)"
+  - "- **/create-skill** - Create RAG-enhanced skill packages"
+  - "- **/claude-audit** - Audit CLAUDE.md and .claude/ against best practices"
+  - "- **/generate-agents** - Generate stack-specific agents from detected tech stack"
+  - "### Maintenance"
+  - "- **/update-check** - Check for CCASP updates and add new features to your project"
+  - "- **/update-smart** - Smart merge manager for customized assets during updates"
+  - "### Testing"
+  - "- **/e2e-test** - Run E2E tests with Playwright (ralph loop, headed, watch modes)"
+  - "- **/ralph** - Ralph Loop - Continuous test-fix cycle until all tests pass"
+  - "### Refactoring"
+  - "- **/refactor-workflow** - Guided refactoring workflow with branch, task list, and GitHub issue"
+  - "- **/refactor-analyze** - Deep complexity analysis for refactoring prioritization"
+  - "- **/golden-master** - Generate characterization tests before refactoring"
+  - "### GitHub"
+  - "- **/github-task** - Create GitHub issues with codebase analysis"
+  - "- **/github-menu-issues-list** - Mobile-friendly menu of open GitHub issues"
+  - "- **/create-task-list-for-issue** - Start working on a GitHub issue by number"
+  - "- **/github-project-menu** - View and sync GitHub Project Board status"
+  - "- **/github-task-start** - Start or complete a GitHub Project Board task"
+  - "### Planning"
+  - "- **/phase-dev-plan** - Create phased development plans (95%+ success rate)"
+  - "- **/create-task-list** - Create intelligent task list with codebase exploration and GitHub integration"
+  - "- **/todo-add** - Quick-add todo with auto-paraphrasing"
+  - "- **/todo** - Smart todo manager with AI intent routing"
+  - "- **/phase-track** - Track progress of phased development plan"
+  - "### MCP"
+  - "- **/explore-mcp** - Discover and install MCP servers based on tech stack"
+  - "### Analysis"
+  - "- **/detect-tech-stack** - Re-run tech stack detection and update configuration"
+  - "- **/codebase-explorer** - Analyze codebase structure and find relevant files"
+  - "- **/site-intel** - Website Intelligence - 5-layer site analysis"
+  - "### Scaffolding"
+  - "- **/project-explorer** - Interactive scaffolding wizard for fresh projects"
+  - "### Setup"
+  - "- **/init-ccasp-new-project** - Initialize CCASP Full preset on empty folder (for Happy users)"
+  - "- **/project-implementation-for-ccasp** - Complete CCASP project setup - tech stack, CLAUDE.md, GitHub, MCPs"
+  - "### Discovery"
+  - "- **/ask-claude** - Natural language command discovery - find the right command for any task"
+  - "### Orchestration"
+  - "- **/orchestration-settings** - View and modify parallel agent and compacting settings"
+  - "- **/orchestration-guide** - Quick reference for L1/L2/L3 agent orchestration"
+  - "## How Commands Work"
+  - Each `.md` file in this directory is a slash command. When you type `/command-name` in Claude Code CLI, Claude reads the corresponding `.md` file and follows the instructions.
+  - "### Command Structure"
+  - "```markdown"
+  - ---
+  - "description: Brief description shown in command list"
+  - "options:"
+  - '  - label: "Option 1"'
+  - '    description: "What this option does"'
+  - ---
+  - "# Command Title"
+  - Instructions for Claude to follow when this command is invoked.
+  - "```"
+  - "## Creating Custom Commands"
+  - 1. Create a new `.md` file in this directory
+  - 2. Add YAML frontmatter with description
+  - 3. Write instructions for Claude to follow
+  - 4. The command name is the filename (without .md)
+  - "## Reinstalling"
+  - "To reinstall or update commands:"
+  - "```bash"
+  - npx claude-cli-advanced-starter-pack init --force
+  - "```"

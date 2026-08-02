@@ -1,0 +1,47 @@
+id: site-intel-enhancements-executor
+title: Site Intelligence Enhancements - Phase Executor
+description: Site Intelligence Enhancements - Phase Executor
+codex_support: unsupported
+system: You are a senior systems architect.
+instructions:
+  - Execute phases of the site-intel-enhancements plan.
+  - "## Instructions"
+  - You are a phase executor for the Site Intelligence Enhancements plan. Read PROGRESS.json to determine what to execute.
+  - "### Setup"
+  - 1. Read `.claude/docs/site-intel-enhancements/PROGRESS.json` for current status
+  - 2. Read `.claude/exploration/site-intel-enhancements/PHASE_BREAKDOWN.md` for detailed task specs
+  - 3. Read `.claude/exploration/site-intel-enhancements/CODE_SNIPPETS.md` for exact integration points
+  - 4. Identify the next pending phase
+  - "### Execution Protocol"
+  - "**Phase 1: ChromaDB Activation**"
+  - "1. Task 1.1: Add `storeToChroma()` to `src/site-intel/memory/store.js` — async function that creates collection `site_intel_{domain}` and stores documents"
+  - "2. Task 1.2: Wire into `src/site-intel/orchestrator.js` after the existing `toChromaDocuments()` call (line ~102). Fail gracefully."
+  - "3. Task 1.3: Add `site_intel_search` tool to `src/site-intel/mcp-server.js` — queries ChromaDB for semantic page search"
+  - "4. Task 1.4: Add `search` subcommand to `src/commands/site-intel.js`"
+  - "5. Task 1.5: Write tests in `tests/site-intel-chroma.test.js`"
+  - "**Phase 2: Lighthouse + axe-core**"
+  - "1. Task 2.1: Create `src/site-intel/discovery/lighthouse.js` — wraps Lighthouse Node API using CDP port from existing Playwright browser"
+  - "2. Task 2.2: Create `src/site-intel/discovery/accessibility.js` — wraps `@axe-core/playwright` for WCAG 2.1 audit"
+  - "3. Task 2.3: Integrate into `src/site-intel/discovery/crawler.js` page loop (after screenshot, before page.close). Gate behind `opts.auditPerformance` flag."
+  - "4. Task 2.4: Add 8 new smell types to `src/site-intel/summarizer/page-analyzer.js` `detectSmells()` function"
+  - "5. Task 2.5: Update effort estimation in `src/site-intel/judgment/recommender.js`"
+  - "6. Task 2.6: Add Performance tab to `src/site-intel/dashboard/static/index.html`"
+  - "7. Task 2.7: Add `/api/sites/:domain/performance` endpoint to dashboard server"
+  - "8. Task 2.8: Write tests"
+  - "**Phase 3: ts-morph Route Tracing**"
+  - "1. Task 3.1: Create `src/site-intel/discovery/route-parser.js` — uses ts-morph to parse React Router v6 configs, extract route→component→hook→API mappings"
+  - "2. Task 3.2: Add edge types `route`, `component-uses`, `api-client` to `src/site-intel/graph/builder.js`"
+  - "3. Task 3.3: Wire into orchestrator between L1 (crawl) and L2 (summarize)"
+  - "4. Task 3.4: Add `site_intel_routes` MCP tool"
+  - "5. Task 3.5: Style route edges differently in dashboard Cytoscape.js graph"
+  - "6. Task 3.6: Write tests"
+  - "### After Each Task"
+  - '- Update PROGRESS.json task status to "complete"'
+  - "- Run `npm test` to verify no regressions"
+  - "- Report what was done"
+  - "### After Each Phase"
+  - '- Update PROGRESS.json phase status to "complete"'
+  - "- Summarize changes made"
+  - "- List any issues encountered"
+  - "### Agent Deployment"
+  - Use `l2-backend-specialist` for backend tasks, `l2-frontend-specialist` for dashboard UI, `l2-testing-specialist` for tests. Parallelize independent tasks.

@@ -49,7 +49,10 @@ for _, path_pattern in ipairs(plenary_paths) do
 end
 
 if not plenary_found then
-  error("plenary.nvim not found in standard locations. Please install it.")
+  -- Exit non-zero: a bare error() still leaves nvim exiting 0, so a skipped
+  -- suite reads as a clean pass in CI.
+  vim.api.nvim_err_writeln("plenary.nvim not found in standard locations. Please install it.")
+  vim.cmd("cquit 1")
 end
 
 -- Load ccasp plugin

@@ -305,7 +305,12 @@ end
 -- Execute menu action (dispatch table pattern)
 function M.execute_action(action, context)
   local actions = {
-    new_main = function() M.new_session("main") end,
+    new_main = function()
+      require("ccasp.runtime_picker").open({
+        prompt = "New session type",
+        on_select = function(name) M.new_session("main", nil, nil, name) end,
+      })
+    end,
     new_worktree = function() M.show_worktree_picker() end,
     new_branch = function() M.show_branch_picker() end,
     show_recent = function() M.show_recent_sessions() end,
@@ -542,7 +547,9 @@ function M.show_picker_window(title, items, on_select)
 end
 
 -- Create new session
-function M.new_session(session_type, path, branch)
+-- runtime_name picks which agent CLI the tab drives; defaults to the
+-- configured runtime.
+function M.new_session(session_type, path, branch, runtime_name)
   -- Check max tabs
   if #M.state.tabs >= M.config.max_tabs then
     vim.notify("Maximum tabs reached (" .. M.config.max_tabs .. ")", vim.log.levels.WARN)
@@ -578,13 +585,14 @@ function M.new_session(session_type, path, branch)
     pinned = false,
     group = nil,
     modified = false,
+    runtime = require("ccasp.runtime").normalize(runtime_name),
     created_at = os.time(),
   }
 
   table.insert(M.state.tabs, tab)
 
   -- Create terminal for this session
-  M.create_terminal_for_tab(tab_id, cwd)
+  M.create_terminal_for_tab(tab_id, cwd, tab.runtime)
 
   -- Set as active
   M.activate_tab(tab_id)
@@ -597,7 +605,7 @@ function M.new_session(session_type, path, branch)
 end
 
 -- Create terminal for a tab
-function M.create_terminal_for_tab(tab_id, cwd)
+function M.create_terminal_for_tab(tab_id, cwd, runtime_name)
   local tab = M.get_tab(tab_id)
   if not tab then
     return
@@ -607,9 +615,14 @@ function M.create_terminal_for_tab(tab_id, cwd)
   local term_buf = vim.api.nvim_create_buf(false, true)
   vim.bo[term_buf].bufhidden = "hide"
 
+  -- Unlike sessions.lua this execs the CLI directly rather than typing it into
+  -- a shell, so the runtime has to be resolved up front.
+  local runtime = require("ccasp.runtime")
+  local resolved = runtime.normalize(runtime_name) or runtime.normalize(tab.runtime) or runtime.default()
+
   -- Start terminal job
   vim.api.nvim_buf_call(term_buf, function()
-    vim.fn.termopen("claude", {
+    vim.fn.termopen(runtime.command(resolved), {
       cwd = cwd,
       on_exit = function(_, exit_code)
         tab.job_id = nil

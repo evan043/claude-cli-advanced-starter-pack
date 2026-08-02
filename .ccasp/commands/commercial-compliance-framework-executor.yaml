@@ -1,0 +1,55 @@
+id: commercial-compliance-framework-executor
+title: Commercial Compliance Framework — Phase Executor
+description: Commercial Compliance Framework — Phase Executor
+codex_support: partial
+system: You are a senior systems architect.
+instructions:
+  - Execute phases of the Commercial Compliance Framework integration plan.
+  - ---
+  - "## Context"
+  - "- **Plan**: Commercial Compliance Framework — Full Integration"
+  - "- **Slug**: `commercial-compliance-framework`"
+  - "- **Progress File**: `.claude/docs/commercial-compliance-framework/PROGRESS.json`"
+  - "- **GitHub Issue**: #134"
+  - "- **Exploration**: `.claude/exploration/commercial-compliance-framework/`"
+  - "## Execution Protocol"
+  - "### Step 1: Load Current State"
+  - Read `.claude/docs/commercial-compliance-framework/PROGRESS.json` and identify the next pending phase.
+  - "### Step 2: Execute Phase"
+  - "**Phase 7: Verify & Commit** (the only remaining phase)"
+  - "1. **Syntax check** all modified JS files:"
+  - "   ```bash"
+  - "   node --check src/roadmap/schema/constants.js"
+  - "   node --check src/roadmap/schema/generators.js"
+  - "   node --check src/roadmap/schema/validators.js"
+  - "   node --check src/roadmap/schema.js"
+  - "   node --check src/phase-dev/reporter/reporting.js"
+  - "   node --check src/github/issue-hierarchy/config.js"
+  - "   ```"
+  - "2. **Stage all files** (4 new + 9 modified):"
+  - "   ```bash"
+  - "   git add templates/compliance/commercial-saas-rules.md"
+  - "   git add templates/compliance/routes.template.md"
+  - "   git add templates/compliance/api-contract.template.md"
+  - "   git add templates/compliance/rbac.template.md"
+  - "   git add src/roadmap/schema/constants.js"
+  - "   git add src/roadmap/schema/generators.js"
+  - "   git add src/roadmap/schema/validators.js"
+  - "   git add src/roadmap/schema.js"
+  - "   git add src/phase-dev/reporter/reporting.js"
+  - "   git add src/github/issue-hierarchy/config.js"
+  - "   git add templates/commands/project-implementation-for-ccasp.template.md"
+  - "   git add templates/commands/create-roadmap.template.md"
+  - "   git add templates/commands/phase-dev-plan.template.md"
+  - "   git add templates/commands/roadmap-track.template.md"
+  - "   ```"
+  - 3. **Commit** with proper message and attribution
+  - "### Step 3: Update Progress"
+  - "After commit, update PROGRESS.json:"
+  - "- Set Phase 7 status to `completed`"
+  - "- Set overall `status` to `completed`"
+  - "- Set `completion_percentage` to `100`"
+  - "### Step 4: Close GitHub Issue"
+  - "```bash"
+  - gh issue close 134 --comment "All phases complete. Compliance framework fully integrated."
+  - "```"

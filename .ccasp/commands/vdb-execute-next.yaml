@@ -1,0 +1,99 @@
+id: vdb-execute-next
+title: Vdb Execute Next
+description: Vision Driver Bot execute next task
+codex_support: unsupported
+model: sonnet
+system: You are a senior systems architect.
+instructions:
+  - "# Vision Driver Bot - Execute Next Task"
+  - Execute the next task from the VDB queue. This runs the full autonomous execution cycle.
+  - "## Pre-Execution Checklist"
+  - "Before executing, verify:"
+  - "- [ ] VDB is configured (`.claude/vdb/config.json` exists)"
+  - "- [ ] Queue has pending tasks (`.claude/vdb/queue.json`)"
+  - "- [ ] No task currently executing"
+  - "## Execution Flow"
+  - "### 1. Dequeue Task"
+  - "Read and claim the next task from `.claude/vdb/queue.json`:"
+  - '- Find first item with `status: "queued"`'
+  - '- Update status to `"executing"`'
+  - "- Record `started_at` timestamp"
+  - "- Increment `attempts` counter"
+  - "### 2. Build Context"
+  - "Gather context for the task:"
+  - "**Phase Details:**"
+  - "- Goal and description"
+  - "- Inputs (issues, docs, prompts)"
+  - "- Expected outputs"
+  - "- Shipping criteria"
+  - "**Codebase Context:**"
+  - "- Tech stack from `.claude/config/tech-stack.json`"
+  - "- Relevant directories based on phase type"
+  - "- Assigned agents"
+  - "### 3. Execute Task"
+  - "This is where you (Claude) actually do the work:"
+  - "**Research Phase:**"
+  - "- Read relevant code to understand patterns"
+  - "- Check for existing implementations"
+  - "- Identify files to create/modify"
+  - "**Implementation Phase:**"
+  - "- Implement required changes"
+  - "- Follow existing code patterns"
+  - "- Add appropriate error handling"
+  - "**Testing Phase:**"
+  - "- Write tests for new functionality"
+  - "- Run existing tests: `npm test` or appropriate command"
+  - "- Fix any failures (RALPH loop if needed)"
+  - "**Completion Phase:**"
+  - "- Run linter: `npm run lint` or appropriate command"
+  - "- Prepare commit message"
+  - "### 4. Emit Progress Signals"
+  - "As you work, emit signals:"
+  - "```"
+  - TASK_COMPLETE:<task-id>     - After completing a subtask
+  - TASK_BLOCKED:<task-id>:<reason> - If you can't proceed
+  - PHASE_COMPLETE              - When all work is done
+  - ERROR:<description>         - If an error occurs
+  - "```"
+  - "### 5. Commit and Update"
+  - "After successful execution:"
+  - "- Commit changes with descriptive message"
+  - '- Update task status in queue to `"completed"`'
+  - "- Move to queue history"
+  - "- Update board status via `gh` commands"
+  - "## Example Execution"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════╗
+  - ║                    VDB TASK EXECUTION                         ║
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - "║ Epic: User Authentication System                              ║"
+  - "║ Phase: Implement Login Flow                                   ║"
+  - "║ Complexity: M                                                 ║"
+  - "║ Priority: P1                                                  ║"
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - ║ PROGRESS                                                      ║
+  - ║ [████████░░░░░░░░░░░░] 40%                                   ║
+  - ║                                                               ║
+  - ║ ✓ Research existing auth patterns                             ║
+  - ║ ✓ Create login component                                      ║
+  - ║ → Implement form validation                                   ║
+  - ║ ○ Add API integration                                         ║
+  - ║ ○ Write tests                                                 ║
+  - ╚═══════════════════════════════════════════════════════════════╝
+  - "```"
+  - "## Arguments"
+  - "- `--dry-run` - Show what would be executed without doing it"
+  - "- `--skip-tests` - Skip test execution (not recommended)"
+  - "- `--no-commit` - Don't commit changes after execution"
+  - "## Error Handling"
+  - "If execution fails:"
+  - 1. Record error in task history
+  - 2. Check retry eligibility (attempts < maxRetries)
+  - 3. If eligible, requeue with lower priority
+  - 4. If not, mark as failed and escalate
+  - "## Post-Execution"
+  - "After execution completes:"
+  - 1. Decision engine evaluates results
+  - 2. Next task is identified (if any)
+  - 3. Board is updated with progress
+  - 4. Notifications sent (if configured)

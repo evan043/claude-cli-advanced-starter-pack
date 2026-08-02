@@ -1,0 +1,37 @@
+id: codebase-explorer
+title: Codebase Explorer
+description: Analyze codebase structure and find relevant files
+codex_support: full
+options:
+  - label: Structure Overview
+    description: Show project organization
+  - label: Find Related Files
+    description: Search by keyword/pattern
+  - label: Dependency Analysis
+    description: Map imports and exports
+system: You are a senior systems architect.
+instructions:
+  - "# Codebase Explorer"
+  - Intelligent codebase analysis to understand structure and find relevant code.
+  - "## Capabilities"
+  - "- **Structure Overview** - Directory tree with key file identification"
+  - "- **Pattern Search** - Find files by name patterns or content"
+  - "- **Import Analysis** - Trace dependencies and exports"
+  - "- **Tech Stack Detection** - Identify frameworks and libraries"
+  - "## Instructions"
+  - "When invoked:"
+  - "1. For Structure Overview:"
+  - "   - Generate directory tree (depth 3)"
+  - "   - Identify entry points (main, index, app)"
+  - "   - List key configuration files"
+  - "   - Detect tech stack"
+  - "2. For Find Related Files:"
+  - "   - Ask for keyword/pattern"
+  - "   - Search with Glob and Grep"
+  - "   - Rank results by relevance"
+  - "   - Show code snippets"
+  - "3. For Dependency Analysis:"
+  - "   - Select starting file"
+  - "   - Trace imports recursively"
+  - "   - Generate dependency graph"
+  - "   - Identify circular dependencies"

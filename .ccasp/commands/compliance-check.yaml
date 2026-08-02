@@ -1,0 +1,193 @@
+id: compliance-check
+title: Compliance Check
+description: Run commercial compliance check on a vision or competitor URL
+codex_support: partial
+system: You are a senior systems architect.
+instructions:
+  - "# Commercial Compliance Check"
+  - Run a deep compliance analysis to ensure a commercial application is legally safe to sell. This command performs competitor research, identifies differentiation opportunities, audits dependency licenses, and generates compliance documentation.
+  - "## When This Runs"
+  - '- **Automatically** during `/vision-init` when the prompt contains URLs or references existing products (e.g., "Build something like Notion", "inspired by Linear")'
+  - "- **Manually** via `/compliance-check <url-or-vision-slug>`"
+  - "## Arguments"
+  - "- `/compliance-check` — Interactive mode, asks what to check"
+  - "- `/compliance-check https://competitor.com` — Analyze a specific competitor URL"
+  - "- `/compliance-check my-vision-slug` — Run compliance audit on an existing vision"
+  - ---
+  - "## Execution Protocol"
+  - "### Step 1: Detect Mode"
+  - "```javascript"
+  - const args = '$ARGUMENTS'.trim();
+  - // Determine mode
+  - let mode = 'interactive';
+  - let targetUrl = null;
+  - let visionSlug = null;
+  - if (args.startsWith('http')) {
+  - "  mode = 'url';"
+  - "  targetUrl = args;"
+  - "} else if (args.length > 0) {"
+  - "  mode = 'vision';"
+  - "  visionSlug = args;"
+  - "}"
+  - "```"
+  - "### Step 2: Competitor Deep Research"
+  - "**CRITICAL: This research is for DIFFERENTIATION, not cloning.**"
+  - "**The goal is to understand what exists so we can build something ORIGINAL and BETTER.**"
+  - "For each competitor URL or product reference:"
+  - "1. **Use WebFetch** to analyze the competitor's public-facing website:"
+  - "   - Product name and category"
+  - "   - Public feature list (from marketing pages only)"
+  - "   - Pricing model and tiers"
+  - "   - Target audience"
+  - "   - Visual style (colors, layout approach — to AVOID, not copy)"
+  - "2. **Use WebSearch** to find:"
+  - '   - `"{competitor_name} features list 2026"`'
+  - '   - `"{competitor_name} alternatives comparison"`'
+  - '   - `"{competitor_name} vs competitors"`'
+  - '   - `"{product_category} market landscape 2026"`'
+  - 3. **Extract and categorize:**
+  - "   - **Must-have features** (industry standard, expected by users)"
+  - "   - **Differentiator features** (unique to this competitor)"
+  - "   - **Gap features** (missing from competitor — OUR opportunity)"
+  - "   - **UX patterns** (to be aware of and intentionally diverge from)"
+  - "### Step 3: Differentiation Analysis"
+  - "For each feature identified, generate a differentiation plan:"
+  - "```"
+  - ╔══════════════════════════════════════════════════════════════════╗
+  - ║  DIFFERENTIATION ANALYSIS                                        ║
+  - ╠══════════════════════════════════════════════════════════════════╣
+  - ║                                                                  ║
+  - "║  Competitor: {name} ({url})                                      ║"
+  - "║  Category: {product_category}                                    ║"
+  - ║                                                                  ║
+  - ║  ┌─ Must-Have Features (implement with original design) ────┐    ║
+  - "║  │  These are industry-standard expectations:                │    ║"
+  - "║  │  • {feature_1} → Our name: {original_name_1}             │    ║"
+  - "║  │  • {feature_2} → Our name: {original_name_2}             │    ║"
+  - "║  │  • {feature_3} → Our name: {original_name_3}             │    ║"
+  - ║  └──────────────────────────────────────────────────────────┘    ║
+  - ║                                                                  ║
+  - ║  ┌─ Innovation Opportunities (what they DON'T have) ────────┐    ║
+  - "║  │  These are gaps we can fill:                              │    ║"
+  - "║  │  • {gap_1}: {our_innovation_idea}                         │    ║"
+  - "║  │  • {gap_2}: {our_innovation_idea}                         │    ║"
+  - ║  └──────────────────────────────────────────────────────────┘    ║
+  - ║                                                                  ║
+  - ║  ┌─ UX Divergence Plan ─────────────────────────────────────┐    ║
+  - "║  │  Intentional differences from competitor UX:              │    ║"
+  - "║  │  • Layout: {our_layout_approach}                          │    ║"
+  - "║  │  • Navigation: {our_nav_approach}                         │    ║"
+  - "║  │  • Color system: {our_color_approach}                     │    ║"
+  - "║  │  • Interaction model: {our_interaction_approach}          │    ║"
+  - ║  └──────────────────────────────────────────────────────────┘    ║
+  - ║                                                                  ║
+  - ║  ┌─ Naming Conflicts (MUST rename) ─────────────────────────┐    ║
+  - "║  │  Competitor uses these trademarked/branded terms:         │    ║"
+  - '║  │  • "{their_term_1}" → Use: "{our_term_1}"                │    ║'
+  - '║  │  • "{their_term_2}" → Use: "{our_term_2}"                │    ║'
+  - ║  └──────────────────────────────────────────────────────────┘    ║
+  - ║                                                                  ║
+  - ╚══════════════════════════════════════════════════════════════════╝
+  - "```"
+  - "### Step 4: Dependency License Audit"
+  - "If checking an existing vision, scan the project's dependencies:"
+  - 1. Read `package.json` dependencies and devDependencies
+  - "2. Classify each dependency's license:"
+  - "   **SAFE (permissive):** MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, 0BSD, Unlicense, CC0-1.0"
+  - "   **WARNING (weak copyleft):** MPL-2.0, LGPL-2.1, LGPL-3.0"
+  - "   **BLOCKED (strong copyleft):** GPL-2.0, GPL-3.0, AGPL-3.0, SSPL-1.0, BSL-1.1, Elastic-2.0"
+  - "3. Display results:"
+  - "```"
+  - "License Audit:"
+  - "  ✅ Safe: 42 packages (MIT, Apache-2.0, ISC)"
+  - "  ⚠️  Warning: 2 packages (MPL-2.0) — review needed"
+  - "  🚫 Blocked: 0 packages"
+  - "```"
+  - "### Step 5: Generate Compliance Documents"
+  - "Create these files in the vision directory (`.claude/visions/{slug}/`):"
+  - "1. **`DESIGN_ORIGIN.md`** — Using the design-origin template, filled with:"
+  - "   - Competitor names and URLs analyzed"
+  - "   - Market insights learned (not features to copy)"
+  - "   - Differentiation decisions made"
+  - "   - Original architecture rationale"
+  - "   - Original feature naming table"
+  - "2. **`compliance-audit.json`** — Structured audit data:"
+  - "   ```json"
+  - "   {"
+  - '     "audit_date": "2026-02-08T...",'
+  - '     "competitors_analyzed": [...],'
+  - '     "compliance_score": 95,'
+  - '     "verdict": "PASS",'
+  - '     "categories": {'
+  - '       "source_code": { "score": 100, "status": "PASS" },'
+  - '       "ui_ux": { "score": 90, "status": "PASS" },'
+  - '       "naming": { "score": 95, "status": "PASS" },'
+  - '       "data": { "score": 100, "status": "PASS" },'
+  - '       "licensing": { "score": 100, "status": "PASS" }'
+  - "     },"
+  - '     "differentiation_plan": [...],'
+  - '     "naming_conflicts_resolved": [...],'
+  - '     "innovation_opportunities": [...]'
+  - "   }"
+  - "   ```"
+  - "3. **Update VISION.json** — Add compliance section:"
+  - "   ```json"
+  - "   {"
+  - '     "compliance": {'
+  - '       "framework_version": "1.0",'
+  - '       "status": "PASS",'
+  - '       "audit_date": "...",'
+  - '       "competitors_analyzed": 3,'
+  - '       "compliance_score": 95,'
+  - '       "policy_injected": true,'
+  - '       "design_origin_generated": true'
+  - "     }"
+  - "   }"
+  - "   ```"
+  - "### Step 6: Inject Policy Into Vision"
+  - "If this is part of a vision-init flow, inject the compliance policy into:"
+  - "- The vision's agent prompts (so all generated code follows the rules)"
+  - "- The VISION.json metadata (so vision-run enforces compliance)"
+  - "- The architecture generation context (so designs are original)"
+  - "### Step 7: Display Summary"
+  - "```"
+  - ╔══════════════════════════════════════════════════════════════════╗
+  - ║  COMMERCIAL COMPLIANCE CHECK COMPLETE ✅                         ║
+  - ╠══════════════════════════════════════════════════════════════════╣
+  - ║                                                                  ║
+  - "║  Competitors Analyzed: {count}                                   ║"
+  - "║  Compliance Score: {score}/100                                   ║"
+  - "║  Verdict: {PASS | CONDITIONAL | FAIL}                            ║"
+  - ║                                                                  ║
+  - "║  Documents Generated:                                            ║"
+  - ║    📄 DESIGN_ORIGIN.md                                           ║
+  - ║    📊 compliance-audit.json                                      ║
+  - ║    📋 VISION.json updated with compliance section                ║
+  - ║                                                                  ║
+  - "║  Differentiation Plan:                                           ║"
+  - ║    • {X} features to implement with original design              ║
+  - ║    • {Y} innovation opportunities identified                     ║
+  - ║    • {Z} naming conflicts resolved                               ║
+  - ║    • {W} UX divergence points planned                            ║
+  - ║                                                                  ║
+  - ║  ⚡ The compliance policy has been injected into all agent        ║
+  - ║     prompts for this vision. All generated code will follow      ║
+  - ║     commercial safety rules automatically.                       ║
+  - ║                                                                  ║
+  - "║  📌 IMPORTANT: This compliance check ensures legal safety        ║"
+  - ║     but does NOT limit feature ambition. Build something          ║
+  - ║     BETTER and MORE INNOVATIVE than the competition.             ║
+  - ║                                                                  ║
+  - ╚══════════════════════════════════════════════════════════════════╝
+  - "```"
+  - ---
+  - "## Key Principle"
+  - "**Compliance is NOT about building less — it's about building DIFFERENTLY.**"
+  - "The compliance framework should:"
+  - "- INSPIRE innovation by identifying gaps in competitors"
+  - "- ENCOURAGE ambitious feature sets that go BEYOND what competitors offer"
+  - "- ENFORCE originality in naming, UI, and architecture"
+  - "- PROTECT the business by ensuring the product can be sold freely"
+  - Never use compliance as a reason to scale back features. Instead, use it as a catalyst to create something genuinely better and more original.
+  - ---
+  - "*CCASP Commercial Compliance Framework v1.0*"

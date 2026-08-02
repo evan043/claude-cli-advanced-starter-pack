@@ -1,0 +1,32 @@
+id: ui-bug
+title: Ui Bug
+description: File a structured bug report for Neovim UI issues
+codex_support: partial
+system: You are a senior systems architect.
+instructions:
+  - "# Neovim UI Bug Report"
+  - Create a structured bug report for nvim-ccasp UI issues with automatic context gathering (layout snapshot, error logs, reproduction steps).
+  - "## Usage"
+  - "```"
+  - /ui-bug
+  - /ui-bug "flyout doesn't close when pressing Esc"
+  - /ui-bug --with-snapshot
+  - "```"
+  - "## Bug Report Template"
+  - "The command generates a structured report containing:"
+  - 1. **Summary** - One-line description
+  - 2. **Environment** - Neovim version, OS, terminal, ccasp version
+  - 3. **Steps to Reproduce** - Numbered list of actions
+  - 4. **Expected Behavior** - What should happen
+  - 5. **Actual Behavior** - What happens instead
+  - 6. **Layout Snapshot** - Auto-captured window state at time of bug
+  - 7. **Error Log** - Any Lua errors from vim.v.errmsg or :messages
+  - 8. **Affected Files** - Which Lua modules are likely involved
+  - "## Protocol"
+  - "When the user runs `/ui-bug`:"
+  - 1. Ask for a brief description of the issue (or use argument)
+  - 2. Run `./scripts/nvim-snapshot.ps1` to capture current state
+  - 3. Check `:messages` output for recent errors
+  - 4. Identify the likely affected module(s) based on description
+  - 5. Generate structured bug report in markdown
+  - 6. Optionally create a GitHub issue with `/github-task`

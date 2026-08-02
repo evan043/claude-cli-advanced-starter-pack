@@ -1,0 +1,66 @@
+id: vdb-scan
+title: Vdb Scan
+description: Vision Driver Bot board scan
+codex_support: unsupported
+model: haiku
+system: You are a senior systems architect.
+instructions:
+  - "# Vision Driver Bot - Scan Board"
+  - Scan the Vision/Epic board for actionable items and queue them for execution.
+  - "## Instructions"
+  - 1. **Load Configuration**
+  - Read `.claude/vdb/config.json` for board settings.
+  - 2. **Fetch Board State**
+  - "Scan for epics and phases from configured sources:"
+  - "**GitHub (if enabled):**"
+  - "```bash"
+  - "# Fetch epic issues"
+  - gh issue list --label "epic" --json number,title,body,state,labels --limit 100
+  - "# Fetch phase issues for each epic"
+  - gh issue list --label "phase-dev" --json number,title,body,state,labels --limit 100
+  - "```"
+  - "**Local (always enabled):**"
+  - "- Read `.claude/github-epics/*.json`"
+  - "- Read `.claude/roadmaps/*.json` (legacy)"
+  - 3. **Find Actionable Items**
+  - "For each active epic, check phases:"
+  - "- Status is `pending` (not completed or in_progress)"
+  - "- All dependencies are resolved (completed)"
+  - "- Not already in queue"
+  - 4. **Calculate Priority**
+  - "Score each actionable item:"
+  - "- Epic priority (P0=100, P1=80, P2=60, P3=40, P4=20)"
+  - "- Complexity bonus (S=30, M=20, L=10)"
+  - "- Vision alignment bonus (Core=15, Strategic=10)"
+  - "- Staleness bonus (days since update × 2, max 20)"
+  - 5. **Queue Items**
+  - "Add top items to queue (up to `maxQueuePerScan` from config):"
+  - "- Write to `.claude/vdb/queue.json`"
+  - "- Apply prioritization strategy (priority/balanced/fifo)"
+  - 6. **Report Results**
+  - "Display scan summary:"
+  - "```"
+  - ╔═══════════════════════════════════════╗
+  - ║           VDB BOARD SCAN              ║
+  - ╠═══════════════════════════════════════╣
+  - "║ Epics scanned: [n]                    ║"
+  - "║ Active epics: [n]                     ║"
+  - "║ Phases checked: [n]                   ║"
+  - "║ Actionable items found: [n]           ║"
+  - "║ Queued: [n]                           ║"
+  - ╠═══════════════════════════════════════╣
+  - "║ TOP ITEMS:                            ║"
+  - "║ 1. [Phase Title] (Score: [n])         ║"
+  - "║ 2. [Phase Title] (Score: [n])         ║"
+  - "║ 3. [Phase Title] (Score: [n])         ║"
+  - ╚═══════════════════════════════════════╝
+  - "```"
+  - "## Arguments"
+  - "- `--dry-run` - Scan without queuing (show what would be queued)"
+  - "- `--include-blocked` - Also check blocked items for unblock status"
+  - "- `--limit N` - Maximum items to queue (default: from config)"
+  - "## After Scanning"
+  - "The queued items can be executed by:"
+  - 1. GitHub Actions workflow (automatic, every 15 min)
+  - 2. `/vdb-execute-next` command (manual)
+  - 3. `ccasp vdb execute-next` CLI command

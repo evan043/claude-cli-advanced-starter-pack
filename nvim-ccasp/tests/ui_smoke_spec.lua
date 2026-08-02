@@ -60,7 +60,7 @@ describe("CCASP UI Smoke Test", function()
     local initial_count = #initial_windows
 
     -- Toggle flyout for terminal section
-    local toggle_ok, toggle_err = pcall(ccasp.toggle_flyout, "terminal")
+    local toggle_ok, toggle_err = pcall(ccasp.appshell.toggle_flyout, "terminal")
     assert.is_true(toggle_ok, "Toggle flyout failed: " .. tostring(toggle_err))
 
     -- Wait for flyout to appear
@@ -83,7 +83,7 @@ describe("CCASP UI Smoke Test", function()
     end, 1000, 50)
 
     -- Open flyout
-    pcall(ccasp.toggle_flyout, "terminal")
+    pcall(ccasp.appshell.toggle_flyout, "terminal")
     local flyout_opened = helpers.wait_for(function()
       local windows = helpers.get_float_windows()
       for _, win in ipairs(windows) do
@@ -99,7 +99,7 @@ describe("CCASP UI Smoke Test", function()
     local count_with_flyout = #windows_with_flyout
 
     -- Toggle flyout again to close
-    local close_ok, close_err = pcall(ccasp.toggle_flyout, "terminal")
+    local close_ok, close_err = pcall(ccasp.appshell.toggle_flyout, "terminal")
     assert.is_true(close_ok, "Toggle flyout close failed: " .. tostring(close_err))
 
     -- Wait for flyout to close

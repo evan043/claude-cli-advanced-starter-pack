@@ -1,0 +1,17 @@
+id: create-extensibility-for-managing-openclaw-bots-3-executor
+title: Create Extensibility For Managing Openclaw Bots 3 Executor
+description: Execute phases of the create-extensibility-for-managing-openclaw-bots-3 phase-dev plan
+codex_support: partial
+instructions:
+  - Execute the phase-dev plan non-interactively.
+  - ""
+  - "## Inputs"
+  - "- Progress file: `.claude/docs/create-extensibility-for-managing-openclaw-bots-3/PROGRESS.json`"
+  - "- Exploration docs: `.claude/exploration/create-extensibility-for-managing-openclaw-bots-3/`"
+  - ""
+  - "## Execution Protocol"
+  - 1. Load PROGRESS.json and select first phase with pending tasks.
+  - 2. Execute tasks in order and update task `status/completed`.
+  - 3. Run tests for each completed task cluster.
+  - 4. Update `completion_percentage` and phase status.
+  - 5. Stop only when all phases are complete or a blocking failure is detected.

@@ -1,0 +1,31 @@
+id: vision-init-mockup-preview
+title: Vision Init Mockup Preview - Interactive Tracker
+description: Vision Init Mockup Preview - Interactive Tracker
+codex_support: partial
+system: You are a senior systems architect.
+instructions:
+  - View and manage progress for the Vision Init HTML Mockup Preview phase-dev-plan.
+  - "## Quick Status"
+  - "Read `.claude/phase-plans/vision-init-mockup-preview/PROGRESS.json` and display:"
+  - "```"
+  - ╔═══════════════════════════════════════════════════════════════╗
+  - "║  Vision Init: HTML Mockup Preview via Playwright              ║"
+  - ╠═══════════════════════════════════════════════════════════════╣
+  - ║                                                               ║
+  - "║  Status: {{status}}                                           ║"
+  - "║  Progress: {{completion_percentage}}%                         ║"
+  - "║  Scale: S (Small)                                             ║"
+  - ║                                                               ║
+  - "║  Phase 1: Finalize Template & Deploy                          ║"
+  - ║  ├── 1.1 Review Step 4b content        {{status_icon}}        ║
+  - ║  ├── 1.2 Deploy to CCASP               {{status_icon}}        ║
+  - ║  ├── 1.3 Deploy to BO360               {{status_icon}}        ║
+  - ║  ├── 1.4 Run npm test                  {{status_icon}}        ║
+  - ║  └── 1.5 Commit changes                {{status_icon}}        ║
+  - ║                                                               ║
+  - ╚═══════════════════════════════════════════════════════════════╝
+  - "```"
+  - "## Actions"
+  - "- **Execute next task**: `/vision-init-mockup-preview-executor`"
+  - "- **View exploration docs**: Read `.claude/exploration/vision-init-mockup-preview/`"
+  - "- **View template diff**: `git diff templates/commands/vision-init.template.md`"

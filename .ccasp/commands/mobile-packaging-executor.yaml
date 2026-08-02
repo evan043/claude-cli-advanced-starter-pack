@@ -1,0 +1,74 @@
+id: mobile-packaging-executor
+title: Mobile Packaging Executor
+description: Execute phases of the Mobile App Packaging feature plan
+codex_support: partial
+allowed-tools:
+  - Read
+  - Edit
+  - Write
+  - Bash
+  - Grep
+  - Glob
+  - Task
+  - TodoWrite
+model: sonnet
+system: You are a senior systems architect.
+instructions:
+  - "# Mobile App Packaging — Phase Executor"
+  - Execute the remaining phase of the Mobile App Packaging feature plan.
+  - "## MANDATORY: Read Current State First"
+  - 1. **Read PROGRESS.json:**
+  - "   ```"
+  - "   Read .claude/docs/mobile-packaging/PROGRESS.json"
+  - "   ```"
+  - 2. **Find the next `pending` phase** and execute its tasks in order
+  - 3. **Update PROGRESS.json** after each task completes
+  - ---
+  - "## Phase 1: Test File Alignment"
+  - "### Task 1.1: Update project_config_test.lua"
+  - "**File:** `nvim-ccasp/tests/project_config_test.lua`"
+  - "**Changes:**"
+  - '1. After line 125 (`assert_eq(true, cfg.features.api_contracts, "api_contracts default")`), add:'
+  - "   ```lua"
+  - '   assert_eq(false, cfg.features.mobile_packaging, "mobile_packaging default")'
+  - "   ```"
+  - '2. Line 128: Change test name from `"get_default: has all 12 feature keys"` to `"get_default: has all 13 feature keys"`'
+  - '3. Line 132: Change `assert_eq(12, count, "feature count")` to `assert_eq(13, count, "feature count")`'
+  - "**Acceptance:** Read file back and verify all 3 changes are present."
+  - "### Task 1.2: Update project_config_bridge_test.lua"
+  - "**File:** `nvim-ccasp/tests/project_config_bridge_test.lua`"
+  - "**Changes:**"
+  - '1. After line 95 (`"hooks",`), add:'
+  - "   ```lua"
+  - '   "mobile_packaging",'
+  - "   ```"
+  - '2. After line 209 (`hooks = "Step 2e",`), add:'
+  - "   ```lua"
+  - '   mobile_packaging = "Step 1.7",'
+  - "   ```"
+  - "**Acceptance:** Read file back and verify both additions."
+  - "### Task 1.3: Run Verification Tests"
+  - "Run in sequence:"
+  - "```bash"
+  - "# Test 1: Config storage tests"
+  - nvim --headless --clean -c "lua vim.opt.rtp:prepend('nvim-ccasp')" -c "luafile nvim-ccasp/tests/project_config_test.lua" 2>&1
+  - "# Test 2: Bridge tests"
+  - nvim --headless --clean -c "lua vim.opt.rtp:prepend('nvim-ccasp')" -c "luafile nvim-ccasp/tests/project_config_bridge_test.lua" 2>&1
+  - "# Test 3: JS syntax check"
+  - node --check src/commands/detect-tech-stack.js && node --check src/commands/tech-stack/patterns.js && echo "JS syntax OK"
+  - "```"
+  - "**Expected Results:**"
+  - "- Test 1: 18 passed, 0 failed"
+  - "- Test 2: 29 passed, 0 failed"
+  - '- Test 3: "JS syntax OK"'
+  - "### After All Tasks Complete"
+  - "Update PROGRESS.json:"
+  - '- Set phase-1 status to `"completed"`'
+  - '- Set all task statuses to `"completed"`'
+  - '- Set top-level status to `"completed"`'
+  - "- Set `updated_at` to current timestamp"
+  - ---
+  - "## OUTPUT REQUIREMENTS (MANDATORY)"
+  - "1. Write detailed results to: `.claude/cache/agent-outputs/mobile-packaging-executor.json`"
+  - 2. Return ONLY a brief summary of what was done and test results
+  - 3. DO NOT include full file contents in response

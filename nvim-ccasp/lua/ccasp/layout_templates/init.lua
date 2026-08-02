@@ -9,6 +9,8 @@ local function get_layers() return require("ccasp.layers") end
 local function get_sessions() return require("ccasp.sessions") end
 local function get_titlebar() return require("ccasp.session_titlebar") end
 
+local runtime = require("ccasp.runtime")
+
 local function deep_copy(t)
   if type(t) ~= "table" then return t end
   local copy = {}
@@ -16,6 +18,18 @@ local function deep_copy(t)
     copy[k] = type(v) == "table" and deep_copy(v) or v
   end
   return copy
+end
+
+-- Command a saved session definition should launch.
+-- Templates written before multi-runtime support stored a bare "claude"
+-- literal. Honor whatever a template actually recorded so existing layouts keep
+-- the runtime they were saved with; fall back to the configured runtime only
+-- when a template expresses no preference at all.
+local function template_command(sess_def)
+  if type(sess_def.command) == "string" and sess_def.command ~= "" then
+    return sess_def.command
+  end
+  return runtime.command(sess_def.runtime or runtime.default())
 end
 
 -- ═══════════════════════════════════════════════════════════════════
@@ -72,11 +86,15 @@ function M.save_current(name)
           local session = sess_data.sessions[id]
           if session then
             local color_idx = (tb_data and tb_data.session_colors and tb_data.session_colors[id]) or 1
+            local session_runtime = session.runtime
+              or runtime.from_command(session.command)
+              or runtime.default()
             table.insert(layer_sessions, {
-              name = session.name or "Claude",
+              name = session.name or runtime.label(session_runtime),
               path = session.path or vim.fn.getcwd(),
               color_idx = color_idx,
-              command = session.command or "claude",
+              command = session.command or runtime.command(session_runtime),
+              runtime = session_runtime,
             })
           end
         end
@@ -175,7 +193,7 @@ function M.apply(name)
           if #all > 0 then
             local first_id = all[1].id
             sessions.set_name(first_id, sess_def.name)
-            sessions.set_command(first_id, sess_def.command or "claude")
+            sessions.set_command(first_id, template_command(sess_def))
             titlebar.set_color(first_id, sess_def.color_idx or 1)
             -- Set working directory for the existing terminal
             local first_session = sessions.get(first_id)
@@ -190,7 +208,7 @@ function M.apply(name)
             if first_session and first_session.bufnr then
               table.insert(pending_launches, {
                 bufnr = first_session.bufnr,
-                command = sess_def.command or "claude",
+                command = template_command(sess_def),
                 cd_path = path,
               })
             end
@@ -199,7 +217,7 @@ function M.apply(name)
         else
           -- Subsequent sessions: spawn new ones with saved command type
           local id = sessions.spawn_at_path(path, {
-            command = sess_def.command or "claude",
+            command = template_command(sess_def),
             name = sess_def.name,
             color_idx = sess_def.color_idx or 1,
           })
@@ -210,7 +228,7 @@ function M.apply(name)
             if sess and sess.bufnr then
               table.insert(pending_launches, {
                 bufnr = sess.bufnr,
-                command = sess_def.command or "claude",
+                command = template_command(sess_def),
               })
             end
             table.insert(spawned_ids, id)
