@@ -180,6 +180,72 @@ test("legacy templates without a runtime field still resolve a command", functio
 end)
 
 pcall(layout_templates.delete, "Hybrid Layer Test")
+
+print("")
+print("-- launch wiring --")
+
+test("Happy honours an explicit runtime", function()
+  local launcher = require("ccasp.repo_launcher")
+  launcher.open_repo_happy(cwd, "codex")
+  vim.wait(600, function() return false end)
+
+  local found
+  for _, listed in ipairs(sessions.list()) do
+    local s = sessions.get(listed.id)
+    if s and s.command == runtime.happy_command("codex") then found = s end
+  end
+  assert_true(found ~= nil, "a session launched with `happy codex`")
+  assert_eq("codex", found.runtime, "tagged as codex")
+end)
+
+test("sessions.list exposes command and runtime", function()
+  local listed = sessions.list()
+  assert_true(#listed > 0, "at least one session listed")
+  local any = false
+  for _, s in ipairs(listed) do
+    if s.command ~= nil and s.runtime ~= nil then any = true end
+  end
+  assert_true(any, "list projection carries command/runtime for UIs to render")
+end)
+
+-- Every interactive entry point must go through the picker. A bare
+-- open_repo/open_repo_happy call silently falls back to the default runtime,
+-- which is how Happy ended up always launching Claude.
+test("no interactive launch site bypasses the runtime picker", function()
+  local root = "H:/CCASP/claude-cli-advanced-starter-pack/nvim-ccasp/lua/ccasp/"
+  local offenders = {}
+  for _, rel in ipairs({ "repo_launcher/ui.lua", "appshell/flyout.lua" }) do
+    local fh = io.open(root .. rel, "r")
+    if fh then
+      local n = 0
+      for line in fh:lines() do
+        n = n + 1
+        -- Match calls that are NOT the _pick variants.
+        if line:match("open_repo_happy%s*%(") and not line:match("open_repo_happy_pick") then
+          table.insert(offenders, rel .. ":" .. n)
+        elseif line:match("%.open_repo%s*%(") and not line:match("open_repo_pick") then
+          table.insert(offenders, rel .. ":" .. n)
+        end
+      end
+      fh:close()
+    end
+  end
+  assert_true(#offenders == 0, "bypassing call sites: " .. table.concat(offenders, ", "))
+end)
+
+test("the <C-S-n> spawn action routes through the picker", function()
+  -- Resolved lazily so the test fails loudly if the module name ever moves.
+  local ok = pcall(require, "ccasp.runtime_picker")
+  assert_true(ok, "runtime_picker resolvable")
+  local map
+  for _, m in ipairs(vim.api.nvim_get_keymap("n")) do
+    if m.lhs == "<C-S-N>" or m.lhs == "<C-S-n>" then map = m end
+  end
+  assert_true(map ~= nil, "<C-S-n> is mapped")
+  assert_true(not tostring(map.desc or ""):match("Claude"),
+    "description should not name a single runtime, got: " .. tostring(map.desc))
+end)
+
 sessions.suppress_cli_launch(false)
 pcall(sessions.kill_all)
 

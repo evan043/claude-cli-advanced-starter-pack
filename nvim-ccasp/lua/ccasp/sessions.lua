@@ -190,6 +190,9 @@ function M.list()
         winid = session.winid,
         claude_running = session.claude_running,
         is_primary = id == state.primary_session,
+        -- Exposed so list-rendering UIs can show which agent a session drives.
+        command = session.command,
+        runtime = session.runtime,
       })
     end
   end

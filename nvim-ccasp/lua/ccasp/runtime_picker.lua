@@ -71,6 +71,24 @@ end
 -- opts.names       explicit runtime list (defaults to installed runtimes)
 function M.open(opts)
   opts = opts or {}
+
+  -- Callers usually reach here from a focused terminal session. In terminal or
+  -- insert mode the picker's normal-mode mappings never fire -- keystrokes go
+  -- to the terminal instead -- so leave those modes and reopen on the next
+  -- tick, since the mode change does not land synchronously.
+  local mode = vim.api.nvim_get_mode().mode
+  if (mode == "t" or mode == "i" or mode == "ic") and not opts._mode_settled then
+    if mode == "t" then
+      vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
+    else
+      vim.cmd("stopinsert")
+    end
+    opts._mode_settled = true
+    vim.schedule(function() M.open(opts) end)
+    return
+  end
+
   M.close()
 
   local names = opts.names or runtime.available()

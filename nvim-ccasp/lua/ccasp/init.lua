@@ -767,7 +767,12 @@ local function setup_modern_keymaps()
     browser = function() require("ccasp.browser").open_dashboard() end,
     project_config = function() require("ccasp.project_config").toggle() end,
     -- Session management
-    spawn_session = function() M.sessions.spawn() end,
+    spawn_session = function()
+      require("ccasp.runtime_picker").open({
+        prompt = "New session type",
+        on_select = function(name) M.sessions.spawn(nil, name) end,
+      })
+    end,
     session_picker = function() M.sessions.show_picker() end,
     session_next = function() M.sessions.focus_next() end,
     session_prev = function() M.sessions.focus_prev() end,
@@ -794,7 +799,7 @@ local function setup_modern_keymaps()
   -- Ctrl+Shift+N: New session
   -- Ctrl+Tab / Ctrl+Shift+Tab: Cycle through sessions (works in terminal mode too!)
   -- Backtick (`): Quick toggle to next session (easy single key)
-  vim.keymap.set("n", "<C-S-n>", actions.spawn_session, { desc = "CCASP: New Claude Session" })
+  vim.keymap.set("n", "<C-S-n>", actions.spawn_session, { desc = "CCASP: New Session" })
   vim.keymap.set("n", prefix .. "S", actions.session_picker, { desc = "CCASP: Session Picker" })
   vim.keymap.set("n", "<C-Tab>", actions.session_next, { desc = "CCASP: Next Session" })
   vim.keymap.set("n", "<C-S-Tab>", actions.session_prev, { desc = "CCASP: Previous Session" })

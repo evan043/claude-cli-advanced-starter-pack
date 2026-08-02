@@ -699,14 +699,14 @@ function M.open_happy_browser()
   vim.keymap.set("n", "<Down>", function() navigate_happy_browser(1) end, opts)
   vim.keymap.set("n", "<Up>", function() navigate_happy_browser(-1) end, opts)
 
-  -- Enter: open selected repo with Happy
+  -- Enter: open selected repo with Happy, asking which agent to drive
   vim.keymap.set("n", "<CR>", function()
     local line = vim.api.nvim_win_get_cursor(happy_browser_state.winid)[1]
     local repo = happy_browser_state.item_lines[line]
     if repo then
       close_happy_browser()
       vim.schedule(function()
-        require("ccasp.repo_launcher").open_repo_happy(repo.path)
+        require("ccasp.repo_launcher").open_repo_happy_pick(repo.path)
       end)
     end
   end, opts)
